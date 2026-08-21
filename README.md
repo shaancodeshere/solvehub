@@ -15,8 +15,10 @@ Core Modes:
 - Library Mode
 
 Primary Tools:
+- Google Gemini
 - Google AI Studio
 - Google Antigravity
+- Google Firebase
 - Google Stitch
 - Google Omni
 - GitHub
