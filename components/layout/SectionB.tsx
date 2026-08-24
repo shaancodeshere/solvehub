@@ -15,6 +15,10 @@ export default function SectionB() {
         }
     }, [rawScratchpad, mode, setReceipt]);
 
+    const handleClearScratchpad = () => {
+        setRawScratchpad('');
+    };
+
     return (
         <main className="flex-1 h-full bg-neutral-900 overflow-y-auto flex flex-col justify-between text-neutral-100">
             {/* Workspace Header Bar */}
@@ -39,8 +43,18 @@ export default function SectionB() {
             <div className="p-8 max-w-3xl w-full mx-auto flex-1 flex flex-col gap-4 font-mono">
                 {mode === 'canvas' ? (
                     <div className="flex flex-col gap-3 h-full">
-                        <div className="text-xs uppercase text-neutral-500 tracking-wider">
-                            Interactive Scratchpad
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs uppercase text-neutral-500 tracking-wider">
+                                Interactive Scratchpad
+                            </span>
+                            {rawScratchpad.length > 0 && (
+                                <button
+                                    onClick={handleClearScratchpad}
+                                    className="text-[11px] text-neutral-500 hover:text-rose-400 transition"
+                                >
+                                    Clear Buffer
+                                </button>
+                            )}
                         </div>
                         <textarea
                             value={rawScratchpad}

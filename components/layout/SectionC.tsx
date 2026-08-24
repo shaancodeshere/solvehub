@@ -1,20 +1,62 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useWorkspace } from '@/lib/WorkspaceContext';
 
 export default function SectionC() {
     const { receipt } = useWorkspace();
+    const [copied, setCopied] = useState(false);
+
+    const handleCopyReceipt = async () => {
+        let summaryText = `--- SolveHub Calculation Receipt ---\n`;
+        summaryText += `Primary Output: ${receipt.primaryVariable} = ${receipt.primaryValue}\n\n`;
+
+        if (receipt.secondaryMetrics && receipt.secondaryMetrics.length > 0) {
+            summaryText += `Key Metrics:\n`;
+            receipt.secondaryMetrics.forEach((m) => {
+                summaryText += `- ${m.label}: ${m.value}\n`;
+            });
+            summaryText += `\n`;
+        }
+
+        if (receipt.variables.length > 0) {
+            summaryText += `Variables:\n`;
+            receipt.variables.forEach((v) => {
+                summaryText += `- ${v.name}: ${v.formattedValue} (${v.rawExpression})\n`;
+            });
+        }
+
+        try {
+            await navigator.clipboard.writeText(summaryText);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch {
+            // Fallback if clipboard API is blocked
+        }
+    };
 
     return (
         <aside className="w-full md:w-[320px] md:min-w-[320px] md:max-w-[320px] h-full border-l border-neutral-800 bg-neutral-950 p-4 flex flex-col justify-between text-neutral-200 select-none">
             <div className="flex flex-col gap-5">
                 {/* Panel Header */}
                 <div className="flex items-center justify-between border-b border-neutral-800/80 pb-3 px-1">
-                    <span className="text-xs font-semibold tracking-wide text-neutral-300">Live Receipt</span>
-                    <span className="text-[10px] font-mono uppercase bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-1.5 py-0.5 rounded">
-                        Live
-                    </span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold tracking-wide text-neutral-300">Live Receipt</span>
+                        <span className="text-[10px] font-mono uppercase bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-1.5 py-0.5 rounded">
+                            Live
+                        </span>
+                    </div>
+                    <button
+                        onClick={handleCopyReceipt}
+                        className="text-[11px] font-mono text-neutral-400 hover:text-emerald-400 transition flex items-center gap-1"
+                        title="Copy formatted calculation receipt"
+                    >
+                        {copied ? (
+                            <span className="text-emerald-400 font-semibold">✓ Copied</span>
+                        ) : (
+                            <span>Copy</span>
+                        )}
+                    </button>
                 </div>
 
                 {/* Live Variable Tokens */}
@@ -54,7 +96,7 @@ export default function SectionC() {
                             {receipt.primaryValue}
                         </span>
                         {receipt.secondaryMetrics && receipt.secondaryMetrics.length > 0 && (
-                            <div className="flex items-center gap-2 mt-1 border-t border-neutral-800/60 pt-2">
+                            <div className="flex flex-wrap items-center gap-2 mt-1 border-t border-neutral-800/60 pt-2">
                                 {receipt.secondaryMetrics.map((metric, i) => (
                                     <span key={i} className="text-[10px] text-neutral-400 font-mono">
                                         {metric.label}: <strong className="text-neutral-200">{metric.value}</strong>
