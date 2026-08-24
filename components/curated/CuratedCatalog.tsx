@@ -2,23 +2,15 @@
 
 import React, { useState } from 'react';
 import { CURATED_TOOLS } from '@/lib/curatedTools';
-import MarginCalculator from './MarginCalculator';
+import CuratedToolView from './CuratedToolView';
 
 export default function CuratedCatalog() {
     const [selectedToolId, setSelectedToolId] = useState<string | null>(null);
 
-    if (selectedToolId === 'margin-calculator') {
-        return (
-            <div className="flex flex-col gap-4">
-                <button
-                    onClick={() => setSelectedToolId(null)}
-                    className="self-start text-xs font-mono text-neutral-400 hover:text-emerald-400 flex items-center gap-1.5 transition"
-                >
-                    ← Back to Catalog
-                </button>
-                <MarginCalculator />
-            </div>
-        );
+    const activeTool = CURATED_TOOLS.find((t) => t.id === selectedToolId);
+
+    if (activeTool) {
+        return <CuratedToolView tool={activeTool} onBack={() => setSelectedToolId(null)} />;
     }
 
     return (
@@ -28,7 +20,7 @@ export default function CuratedCatalog() {
                     Curated Calculator Catalog
                 </h2>
                 <p className="text-xs text-neutral-500 mt-1">
-                    Select a domain calculator with pre-built mathematical models and instant parameters.
+                    Select a domain calculator with pre-built models and instant parameter controls.
                 </p>
             </div>
 

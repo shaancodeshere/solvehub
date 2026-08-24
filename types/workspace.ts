@@ -11,14 +11,27 @@ export interface CalculatedVariable {
 export interface CalculationReceipt {
     primaryVariable: string;
     primaryValue: string;
-    secondaryMetrics: { label: string; value: string }[];
+    secondaryMetrics?: Array<{ label: string; value: string }>;
     variables: CalculatedVariable[];
+}
+
+export interface ToolInputParam {
+    key: string;
+    label: string;
+    defaultValue: number;
+    prefix?: string;
+    suffix?: string;
+    step?: number;
+    min?: number;
+    max?: number;
 }
 
 export interface CuratedTool {
     id: string;
     title: string;
-    category: 'Business' | 'Finance' | 'Engineering' | 'Utility';
+    category: 'Business' | 'Finance' | 'Engineering' | 'Operations';
     description: string;
     icon: string;
+    inputs?: ToolInputParam[];
+    calculate?: (values: Record<string, number>) => CalculationReceipt;
 }
