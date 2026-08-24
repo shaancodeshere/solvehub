@@ -3,11 +3,11 @@
 import React, { useEffect } from 'react';
 import { useWorkspace } from '@/lib/WorkspaceContext';
 import { evaluateScratchpad } from '@/lib/evaluator';
+import CuratedCatalog from '@/components/curated/CuratedCatalog';
 
 export default function SectionB() {
     const { mode, rawScratchpad, setRawScratchpad, setReceipt } = useWorkspace();
 
-    // Evaluate calculation whenever text changes
     useEffect(() => {
         if (mode === 'canvas') {
             const result = evaluateScratchpad(rawScratchpad);
@@ -18,16 +18,20 @@ export default function SectionB() {
     return (
         <main className="flex-1 h-full bg-neutral-900 overflow-y-auto flex flex-col justify-between text-neutral-100">
             {/* Workspace Header Bar */}
-            <header className="h-12 border-b border-neutral-800 px-6 flex items-center justify-between text-xs font-mono text-neutral-400 bg-neutral-950/40">
-                <div className="flex items-center gap-2">
-                    <span className="text-neutral-500">Active Mode:</span>
-                    <span className="text-emerald-400 font-semibold uppercase">
-                        {mode === 'canvas' ? 'Canvas (Scratchpad)' : 'Curated Tools Catalog'}
+            <header className="h-12 border-b border-neutral-800 px-6 flex items-center justify-between text-xs font-mono text-neutral-400 bg-neutral-950/60 shrink-0 select-none">
+                <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-neutral-500 shrink-0">Mode:</span>
+                    <span className="text-emerald-400 font-semibold tracking-wide uppercase truncate">
+                        {mode === 'canvas' ? 'Canvas (Scratchpad)' : 'Curated Tools'}
                     </span>
                 </div>
-                <div className="flex items-center gap-4">
-                    <span>Auto-eval: <span className="text-emerald-400 font-semibold">ON</span></span>
-                    <span>Section B (Fluid)</span>
+                <div className="flex items-center gap-4 shrink-0 pl-4">
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-neutral-400">Auto-eval</span>
+                    </div>
+                    <span className="text-neutral-600 hidden sm:inline">|</span>
+                    <span className="text-neutral-500 hidden sm:inline">Section B</span>
                 </div>
             </header>
 
@@ -41,7 +45,7 @@ export default function SectionB() {
                         <textarea
                             value={rawScratchpad}
                             onChange={(e) => setRawScratchpad(e.target.value)}
-                            placeholder="Type your calculations here... (e.g., revenue = 5000 * 12)"
+                            placeholder="Type your calculations here... (e.g., price 200)"
                             className="w-full h-64 p-4 rounded-lg bg-neutral-950/70 border border-neutral-800 text-sm text-neutral-200 font-mono focus:outline-none focus:border-emerald-500/50 resize-none leading-relaxed transition"
                             spellCheck={false}
                         />
@@ -50,17 +54,12 @@ export default function SectionB() {
                         </p>
                     </div>
                 ) : (
-                    <div className="border border-neutral-800 rounded-lg p-6 bg-neutral-950/40 flex flex-col gap-3">
-                        <div className="text-xs uppercase text-emerald-400 font-semibold tracking-wider">Curated Catalog Mode</div>
-                        <p className="text-sm text-neutral-300">
-                            Interactive domain calculator cards (Margin Calculators, Amortization, ROI models) mount here.
-                        </p>
-                    </div>
+                    <CuratedCatalog />
                 )}
             </div>
 
             {/* Workspace Status Footer */}
-            <footer className="h-8 border-t border-neutral-800 px-6 flex items-center justify-between text-[11px] font-mono text-neutral-500 bg-neutral-950/40">
+            <footer className="h-8 border-t border-neutral-800 px-6 flex items-center justify-between text-[11px] font-mono text-neutral-500 bg-neutral-950/60 shrink-0 select-none">
                 <span>Ready</span>
                 <span>UTF-8 • Client Execution Engine</span>
             </footer>

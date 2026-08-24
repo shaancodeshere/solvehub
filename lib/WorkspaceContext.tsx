@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { WorkspaceMode, CalculatedVariable, CalculationReceipt } from '@/types/workspace';
+import { WorkspaceMode, CalculationReceipt } from '@/types/workspace';
 
 interface WorkspaceContextType {
     mode: WorkspaceMode;
@@ -32,6 +32,28 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     const [mode, setMode] = useState<WorkspaceMode>('canvas');
     const [rawScratchpad, setRawScratchpad] = useState<string>(defaultScratchpad);
     const [receipt, setReceipt] = useState<CalculationReceipt>(defaultReceipt);
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    // Load persisted buffer from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('solvehub_scratchpad');
+        if (saved !== null) {
+            setRawScratchpad(saved);
+        }
+        const savedMode = localStorage.getItem('solvehub_mode') as WorkspaceMode | null;
+        if (savedMode) {
+            setMode(savedMode);
+        }
+        setIsHydrated(true);
+    }, []);
+
+    // Save changes to localStorage
+    useEffect(() => {
+        if (isHydrated) {
+            localStorage.setItem('solvehub_scratchpad', rawScratchpad);
+            localStorage.setItem('solvehub_mode', mode);
+        }
+    }, [rawScratchpad, mode, isHydrated]);
 
     return (
         <WorkspaceContext.Provider
