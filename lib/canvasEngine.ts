@@ -9,6 +9,7 @@ export interface EvaluatedVariable {
     errorMessage?: string;
     type: 'base' | 'addition' | 'deduction' | 'summary' | 'modifier';
     note?: string;
+    currency?: string;
 }
 
 export interface CanvasExecutionResult {
@@ -20,20 +21,60 @@ export interface CanvasExecutionResult {
     totalTaxes: number;
     finalTotal: number;
     splitResult: EvaluatedVariable | null;
+    detectedCurrency: string;
 }
 
-function formatNumber(val: number): string {
-    if (Math.abs(val) >= 1000) {
-        return Number.isInteger(val)
-            ? val.toLocaleString()
-            : val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const KNOWN_CURRENCIES = [
+    { symbol: '$', code: 'USD' },
+    { symbol: '€', code: 'EUR' },
+    { symbol: '£', code: 'GBP' },
+    { symbol: '₹', code: 'INR' },
+    { symbol: '¥', code: 'JPY' },
+    { symbol: 'AED', code: 'AED' },
+    { symbol: 'USD', code: 'USD' },
+    { symbol: 'EUR', code: 'EUR' },
+    { symbol: 'GBP', code: 'GBP' },
+    { symbol: 'INR', code: 'INR' },
+];
+
+function detectCurrencySymbol(text: string): string {
+    for (const c of KNOWN_CURRENCIES) {
+        // Check for symbol or word boundary on codes
+        if (text.includes(c.symbol)) {
+            return c.symbol;
+        }
     }
-    return Number.isInteger(val) ? val.toString() : val.toFixed(2);
+    return '';
+}
+
+function formatAmount(val: number, currency: string = ''): string {
+    const isNeg = val < 0;
+    const absVal = Math.abs(val);
+    const formatted =
+        absVal >= 1000
+            ? Number.isInteger(absVal)
+                ? absVal.toLocaleString()
+                : absVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            : Number.isInteger(absVal)
+                ? absVal.toString()
+                : absVal.toFixed(2);
+
+    const prefix = currency ? `${currency} ` : '';
+    return isNeg ? `-${prefix}${formatted}` : `${prefix}${formatted}`;
 }
 
 export function executeCanvasScript(rawText: string): CanvasExecutionResult {
     const lines = rawText.split('\n');
-    const rawParsedItems: EvaluatedVariable[] = [];
+
+    // Detect dominant currency across the entire script
+    let sessionCurrency = '';
+    for (const line of lines) {
+        const found = detectCurrencySymbol(line);
+        if (found) {
+            sessionCurrency = found;
+            break;
+        }
+    }
 
     const baseItems: EvaluatedVariable[] = [];
     const discountItems: EvaluatedVariable[] = [];
@@ -41,7 +82,7 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
     let userWroteTotal = false;
     let splitModifier: { lineNum: number; count: number; raw: string } | null = null;
 
-    // Pass 1: Categorize and parse all statements
+    // Pass 1: Parse and categorize statements
     for (let i = 0; i < lines.length; i++) {
         const rawLine = lines[i].trim();
         if (!rawLine || rawLine.startsWith('#') || rawLine.startsWith('//')) {
@@ -49,14 +90,17 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
         }
 
         let note: string | undefined = undefined;
-        let clean = rawLine.replace(/[$€£₹]/g, '').trim();
+        let clean = rawLine;
 
-        // Extract note if wrapped in ()
+        // Extract inline parenthetical note
         const parenNoteMatch = clean.match(/\(([^)]+)\)\s*$/);
         if (parenNoteMatch) {
             note = parenNoteMatch[1].trim();
             clean = clean.replace(/\(([^)]+)\)\s*$/, '').trim();
         }
+
+        // Strip currency symbols for evaluation calculations
+        clean = clean.replace(/[$€£₹¥]/g, '').replace(/\b(AED|USD|EUR|GBP|INR)\b/gi, '').trim();
 
         const lower = clean.toLowerCase();
 
@@ -75,7 +119,7 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
             continue;
         }
 
-        // 3. Discount / Deductions
+        // 3. Deductions / Discounts
         const isDiscount = /\b(discount|coupon|off|rebate|deduction|less|markdown)\b/i.test(lower);
         if (isDiscount) {
             const pctMatch = lower.match(/(\d+(?:\.\d+)?)%/);
@@ -90,12 +134,12 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
                 formattedValue: '',
                 isError: false,
                 type: 'deduction',
-                // Notes strictly forbidden on discounts
+                currency: sessionCurrency,
             });
             continue;
         }
 
-        // 4. Tax / Additions
+        // 4. Additions / Tax / Surcharge
         const isTax = /\b(tax|tip|fee|service charge|vat|gst|interest)\b/i.test(lower);
         if (isTax) {
             const pctMatch = lower.match(/(\d+(?:\.\d+)?)%/);
@@ -110,12 +154,12 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
                 formattedValue: '',
                 isError: false,
                 type: 'addition',
-                // Notes strictly forbidden on taxes
+                currency: sessionCurrency,
             });
             continue;
         }
 
-        // 5. Standard Base Line Items (ticket, hotel, food, misc, etc.)
+        // 5. Standard Base Line Items
         const kvMatch = clean.match(/^([a-zA-Z_\s]+?)(?:\s*[:=]\s*|\s+)([\d,.]+(?:\s*[+\-*/]\s*[\d,.]+)*)$/);
         if (kvMatch) {
             const label = kvMatch[1].trim();
@@ -130,10 +174,11 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
                         name: label,
                         expression: expr,
                         value: val,
-                        formattedValue: formatNumber(val),
+                        formattedValue: formatAmount(val, sessionCurrency),
                         isError: false,
                         type: 'base',
-                        note: note, // Notes permitted on base items
+                        note: note,
+                        currency: sessionCurrency,
                     });
                     continue;
                 }
@@ -155,10 +200,11 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
                         name: `Item ${baseItems.length + 1}`,
                         expression: clean,
                         value: val,
-                        formattedValue: formatNumber(val),
+                        formattedValue: formatAmount(val, sessionCurrency),
                         isError: false,
                         type: 'base',
                         note: note,
+                        currency: sessionCurrency,
                     });
                     continue;
                 }
@@ -168,7 +214,7 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
         }
     }
 
-    // Pass 2: Reconcile Reordered Canonical Financial Ledger
+    // Pass 2: Reconcile Ledger and format with currency
     const rawBaseSubtotal = baseItems.reduce((acc, item) => acc + (item.value || 0), 0);
 
     // Evaluate Discounts against Base Subtotal
@@ -178,8 +224,8 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
         const actualVal = isPct ? (rawBaseSubtotal * (d.value || 0)) / 100 : (d.value || 0);
         evaluatedDiscountSum += actualVal;
         d.value = -actualVal;
-        d.formattedValue = `-${formatNumber(actualVal)}`;
-        d.expression = isPct ? `-${formatNumber(actualVal)}` : `-${formatNumber(actualVal)}`;
+        d.formattedValue = `-${formatAmount(actualVal, sessionCurrency)}`;
+        d.expression = `-${formatAmount(actualVal, sessionCurrency)}`;
     });
 
     const discountedSubtotal = Math.max(0, rawBaseSubtotal - evaluatedDiscountSum);
@@ -191,8 +237,8 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
         const actualVal = isPct ? (discountedSubtotal * (t.value || 0)) / 100 : (t.value || 0);
         evaluatedTaxSum += actualVal;
         t.value = actualVal;
-        t.formattedValue = `+${formatNumber(actualVal)}`;
-        t.expression = `+${formatNumber(actualVal)}`;
+        t.formattedValue = `+${formatAmount(actualVal, sessionCurrency)}`;
+        t.expression = `+${formatAmount(actualVal, sessionCurrency)}`;
     });
 
     const finalTotal = discountedSubtotal + evaluatedTaxSum;
@@ -200,21 +246,22 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
     // Build Ordered Template: Base -> Discounts -> Taxes -> Total -> Split
     const orderedList: EvaluatedVariable[] = [...baseItems, ...discountItems, ...taxItems];
 
-    // Insert TOTAL card if user typed 'total' or if there are modifiers
+    // Insert TOTAL Card
     if (userWroteTotal || discountItems.length > 0 || taxItems.length > 0 || splitModifier) {
         orderedList.push({
             id: 'template-total',
             lineNumber: -1,
-            name: 'TOTAL',
+            name: 'Total',
             expression: `${baseItems.length} items consolidated`,
             value: finalTotal,
-            formattedValue: formatNumber(finalTotal),
+            formattedValue: formatAmount(finalTotal, sessionCurrency),
             isError: false,
             type: 'summary',
+            currency: sessionCurrency,
         });
     }
 
-    // Insert Split Card (Strictly comes last)
+    // Insert Split Card
     let splitResult: EvaluatedVariable | null = null;
     if (splitModifier) {
         const perPerson = finalTotal / splitModifier.count;
@@ -222,11 +269,12 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
             id: 'template-split',
             lineNumber: splitModifier.lineNum,
             name: `Split between ${splitModifier.count}`,
-            expression: `${formatNumber(finalTotal)} / ${splitModifier.count}`,
+            expression: `${formatAmount(finalTotal, sessionCurrency)} / ${splitModifier.count}`,
             value: perPerson,
-            formattedValue: `${formatNumber(perPerson)} / person`,
+            formattedValue: `${formatAmount(perPerson, sessionCurrency)} / person`,
             isError: false,
             type: 'modifier',
+            currency: sessionCurrency,
         };
         orderedList.push(splitResult);
     }
@@ -242,5 +290,6 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
         totalTaxes: evaluatedTaxSum,
         finalTotal,
         splitResult,
+        detectedCurrency: sessionCurrency,
     };
 }

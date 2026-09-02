@@ -153,6 +153,8 @@ export default function HomePage() {
     URL.revokeObjectURL(url);
   };
 
+  const isHeroSplit = Boolean(canvasReceipt.splitResult);
+
   return (
     <main className="h-screen w-screen bg-[#0d1117] text-slate-100 flex overflow-hidden font-sans">
       {/* ──────────────────────────────────────────────────────────
@@ -308,7 +310,7 @@ export default function HomePage() {
                 style={{
                   backgroundImage: 'radial-gradient(#38bdf8 0.85px, transparent 0.85px)',
                   backgroundSize: '24px 28px',
-                  backgroundPosition: '24px 40px',
+                  backgroundPosition: '24px 25px',
                 }}
               />
 
@@ -342,17 +344,25 @@ export default function HomePage() {
                 </span>
               </div>
 
-              {/* Primary Output Display: Total / Split */}
+              {/* Top Hero Output Display: 2 Clean Lines */}
               {canvasReceipt.lastResult && !canvasReceipt.lastResult.isError && (
-                <div className="mb-6 p-4 bg-emerald-950/40 border border-emerald-500/40 rounded-xl">
-                  <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider block">
+                <div
+                  className={`mb-6 p-4 rounded-xl border transition-colors flex flex-col justify-center gap-1.5 ${isHeroSplit
+                    ? 'bg-purple-950/40 border-purple-500/40'
+                    : 'bg-emerald-950/40 border-emerald-500/40'
+                    }`}
+                >
+                  <span
+                    className={`text-[10px] font-mono uppercase tracking-wider block ${isHeroSplit ? 'text-purple-300' : 'text-emerald-400'
+                      }`}
+                  >
                     {canvasReceipt.lastResult.name}
                   </span>
-                  <div className="text-2xl font-bold text-white font-mono mt-1 break-all">
+                  <div
+                    className={`text-2xl font-bold font-mono tracking-tight break-all ${isHeroSplit ? 'text-purple-200' : 'text-white'
+                      }`}
+                  >
                     {canvasReceipt.lastResult.formattedValue}
-                  </div>
-                  <div className="text-xs font-mono text-slate-400 mt-1 truncate">
-                    {canvasReceipt.lastResult.expression}
                   </div>
                 </div>
               )}
@@ -386,7 +396,7 @@ export default function HomePage() {
                           : isSummary
                             ? 'bg-emerald-950/40 border-emerald-500/50 font-semibold'
                             : isModifier
-                              ? 'bg-purple-950/25 border-purple-800/50 text-purple-200'
+                              ? 'bg-purple-950/30 border-purple-500/40 text-purple-200'
                               : isDeduction
                                 ? 'bg-amber-950/20 border-amber-500/30'
                                 : isTax
@@ -403,7 +413,9 @@ export default function HomePage() {
                                   ? 'text-sky-400'
                                   : isSummary
                                     ? 'text-emerald-400 font-bold'
-                                    : 'text-slate-300'
+                                    : isModifier
+                                      ? 'text-purple-300'
+                                      : 'text-slate-300'
                             }
                           >
                             {v.name}
@@ -415,7 +427,9 @@ export default function HomePage() {
                                 ? 'text-sky-400'
                                 : isSummary
                                   ? 'text-emerald-400 text-sm'
-                                  : 'text-white'
+                                  : isModifier
+                                    ? 'text-purple-300 font-semibold'
+                                    : 'text-white'
                               }`}
                           >
                             {v.formattedValue}
@@ -476,7 +490,10 @@ export default function HomePage() {
                           </div>
                         )}
 
-                        <div className="text-[10px] text-slate-500 truncate">
+                        <div
+                          className={`text-[10px] truncate ${isModifier ? 'text-purple-300/60' : 'text-slate-500'
+                            }`}
+                        >
                           {v.expression}
                         </div>
                       </div>
@@ -542,9 +559,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {masterCategories.map((category) => {
-              const count = allCalculators.filter(
-                (c) => c.category === category.slug || c.category === category.id
-              ).length;
+              const count = allCalculators.filter((c) => c.category === category.slug).length;
 
               return (
                 <Link
