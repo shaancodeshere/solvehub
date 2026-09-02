@@ -14,7 +14,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
     {
         id: 'percentage-calculator',
         name: 'Percentage Calculator',
-        category: 'math-science',
+        category: 'math-algebra',
         group: '3A',
         bucket: 'Bucket B',
         tier: 1,
@@ -87,7 +87,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
     {
         id: 'scientific-notation-calculator',
         name: 'Scientific Notation Calculator',
-        category: 'math-science',
+        category: 'math-algebra',
         group: '3A',
         bucket: 'Bucket B',
         tier: 2,
@@ -142,7 +142,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
     {
         id: 'quadratic-formula-calculator',
         name: 'Quadratic Equation Solver',
-        category: 'math-science',
+        category: 'math-algebra',
         group: '3A',
         bucket: 'Bucket B',
         tier: 1,
@@ -220,7 +220,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
     {
         id: 'fraction-calculator',
         name: 'Fraction to Decimal & Percentage Converter',
-        category: 'math-science',
+        category: 'math-algebra',
         group: '3A',
         bucket: 'Bucket B',
         tier: 1,
@@ -270,7 +270,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
     {
         id: 'permutations-combinations-calculator',
         name: 'Permutations & Combinations Calculator',
-        category: 'math-science',
+        category: 'math-algebra',
         group: '3A',
         bucket: 'Bucket B',
         tier: 2,
@@ -318,7 +318,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
     {
         id: 'logarithm-calculator',
         name: 'Logarithm Calculator',
-        category: 'math-science',
+        category: 'math-algebra',
         group: '3A',
         bucket: 'Bucket B',
         tier: 2,
@@ -367,7 +367,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
     {
         id: 'standard-deviation-calculator',
         name: 'Standard Deviation & Variance Calculator',
-        category: 'math-science',
+        category: 'math-algebra',
         group: '3A',
         bucket: 'Bucket B',
         tier: 1,
@@ -426,7 +426,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
     {
         id: 'matrix-determinant-calculator',
         name: '2x2 Matrix Determinant & Inverse Calculator',
-        category: 'math-science',
+        category: 'math-algebra',
         group: '3A',
         bucket: 'Bucket B',
         tier: 3,

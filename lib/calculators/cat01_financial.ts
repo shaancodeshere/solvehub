@@ -1,4 +1,4 @@
-import { CalculatorDefinition } from '@/types/calculator';
+import { CalculatorDefinition } from '../../types/calculator';
 
 // Core Financial Helper Functions
 function calculateAmortizationMonthlyPayment(principal: number, annualRatePct: number, termYears: number): number {
@@ -13,7 +13,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'mortgage-calculator',
         name: 'Mortgage Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket A',
         tier: 1,
@@ -78,7 +78,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'loan-calculator',
         name: 'General Loan Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket B',
         tier: 1,
@@ -122,7 +122,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'auto-loan-calculator',
         name: 'Auto Loan Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket A',
         tier: 1,
@@ -185,7 +185,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'compound-interest-calculator',
         name: 'Compound Interest Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket B',
         tier: 1,
@@ -248,7 +248,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'retirement-401k-calculator',
         name: '401(k) Retirement Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket A',
         tier: 1,
@@ -315,7 +315,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'credit-card-payoff-calculator',
         name: 'Credit Card Payoff Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket B',
         tier: 1,
@@ -378,7 +378,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'refinance-calculator',
         name: 'Mortgage Refinance Break-Even Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket A',
         tier: 1,
@@ -433,7 +433,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'amortization-calculator',
         name: 'Loan Amortization Schedule Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket B',
         tier: 1,
@@ -495,7 +495,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'inflation-calculator',
         name: 'Historical Inflation & Purchasing Power Calculator',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket B',
         tier: 1,
@@ -540,7 +540,7 @@ export const financialCalculators: CalculatorDefinition[] = [
     {
         id: 'salary-to-hourly-calculator',
         name: 'Salary to Hourly Pay Converter',
-        category: 'financial-money',
+        category: 'finance-business',
         group: '1A',
         bucket: 'Bucket B',
         tier: 1,

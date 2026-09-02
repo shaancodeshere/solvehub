@@ -5,7 +5,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
     {
         id: 'solar-payback-calculator',
         name: 'Rooftop Solar Payback & Output Calculator',
-        category: 'environment-sustainability',
+        category: 'environmental-energy',
         group: '11A',
         bucket: 'Bucket B',
         tier: 1,
@@ -60,7 +60,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
     {
         id: 'ev-vs-gas-calculator',
         name: 'EV vs. Gas Vehicle Cost Parity Calculator',
-        category: 'environment-sustainability',
+        category: 'environmental-energy',
         group: '11A',
         bucket: 'Bucket B',
         tier: 1,
@@ -122,7 +122,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
     {
         id: 'rainwater-harvesting-calculator',
         name: 'Rainwater Harvesting Collection Calculator',
-        category: 'environment-sustainability',
+        category: 'environmental-energy',
         group: '11A',
         bucket: 'Bucket B',
         tier: 2,
@@ -177,7 +177,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
     {
         id: 'compost-ratio-calculator',
         name: 'Compost C:N Carbon-to-Nitrogen Balance Calculator',
-        category: 'environment-sustainability',
+        category: 'environmental-energy',
         group: '11A',
         bucket: 'Bucket B',
         tier: 3,

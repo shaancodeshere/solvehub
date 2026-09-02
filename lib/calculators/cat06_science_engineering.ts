@@ -5,7 +5,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
     {
         id: 'ohms-law-calculator',
         name: "Ohm's Law & Electrical Power Calculator",
-        category: 'science-engineering',
+        category: 'engineering-physics',
         group: '6A',
         bucket: 'Bucket B',
         tier: 1,
@@ -83,7 +83,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
     {
         id: 'kinetic-energy-calculator',
         name: 'Kinetic & Potential Energy Calculator',
-        category: 'science-engineering',
+        category: 'engineering-physics',
         group: '6A',
         bucket: 'Bucket B',
         tier: 1,
@@ -130,7 +130,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
     {
         id: 'ideal-gas-law-calculator',
         name: 'Ideal Gas Law Calculator (PV = nRT)',
-        category: 'science-engineering',
+        category: 'engineering-physics',
         group: '6A',
         bucket: 'Bucket B',
         tier: 2,
@@ -201,7 +201,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
     {
         id: 'reynolds-number-calculator',
         name: 'Reynolds Number Fluid Flow Calculator',
-        category: 'science-engineering',
+        category: 'engineering-physics',
         group: '6A',
         bucket: 'Bucket B',
         tier: 2,
@@ -252,7 +252,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
     {
         id: 'projectile-motion-calculator',
         name: 'Projectile Motion Trajectory Calculator',
-        category: 'science-engineering',
+        category: 'engineering-physics',
         group: '6A',
         bucket: 'Bucket B',
         tier: 2,
@@ -307,7 +307,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
     {
         id: 'resistor-color-code-calculator',
         name: '4-Band Resistor Color Code Calculator',
-        category: 'science-engineering',
+        category: 'engineering-physics',
         group: '6A',
         bucket: 'Bucket B',
         tier: 2,

@@ -5,7 +5,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
     {
         id: 'concrete-calculator',
         name: 'Concrete Slab & Footing Calculator',
-        category: 'construction-home',
+        category: 'construction-trades',
         group: '5A',
         bucket: 'Bucket B',
         tier: 1,
@@ -66,7 +66,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
     {
         id: 'paint-calculator',
         name: 'Interior Paint & Primer Calculator',
-        category: 'construction-home',
+        category: 'construction-trades',
         group: '5A',
         bucket: 'Bucket B',
         tier: 1,
@@ -125,7 +125,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
     {
         id: 'tile-calculator',
         name: 'Floor & Wall Tile Calculator',
-        category: 'construction-home',
+        category: 'construction-trades',
         group: '5A',
         bucket: 'Bucket B',
         tier: 1,
@@ -183,7 +183,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
     {
         id: 'mulch-calculator',
         name: 'Mulch, Topsoil & Gravel Calculator',
-        category: 'construction-home',
+        category: 'construction-trades',
         group: '5A',
         bucket: 'Bucket B',
         tier: 1,
@@ -237,7 +237,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
     {
         id: 'hvac-btu-calculator',
         name: 'HVAC Air Conditioner BTU & Tonnage Calculator',
-        category: 'construction-home',
+        category: 'construction-trades',
         group: '5A',
         bucket: 'Bucket B',
         tier: 1,
@@ -309,7 +309,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
     {
         id: 'drywall-calculator',
         name: 'Drywall Sheet & Mud Calculator',
-        category: 'construction-home',
+        category: 'construction-trades',
         group: '5A',
         bucket: 'Bucket B',
         tier: 2,

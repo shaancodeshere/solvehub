@@ -5,7 +5,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
     {
         id: 'ipv4-subnet-calculator',
         name: 'IPv4 Subnet & CIDR Calculator',
-        category: 'technology-computing',
+        category: 'computer-science',
         group: '7A',
         bucket: 'Bucket B',
         tier: 1,
@@ -81,7 +81,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
     {
         id: 'download-time-calculator',
         name: 'Download & Data Transfer Time Calculator',
-        category: 'technology-computing',
+        category: 'computer-science',
         group: '7A',
         bucket: 'Bucket B',
         tier: 1,
@@ -167,7 +167,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
     {
         id: 'storage-converter',
         name: 'Storage Converter (GB vs. GiB)',
-        category: 'technology-computing',
+        category: 'computer-science',
         group: '7A',
         bucket: 'Bucket B',
         tier: 2,
@@ -219,7 +219,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
     {
         id: 'color-converter',
         name: 'Color Code Converter (HEX / RGB / HSL)',
-        category: 'technology-computing',
+        category: 'computer-science',
         group: '7A',
         bucket: 'Bucket B',
         tier: 2,
@@ -291,7 +291,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
     {
         id: 'raid-calculator',
         name: 'RAID Storage & Parity Calculator',
-        category: 'technology-computing',
+        category: 'computer-science',
         group: '7A',
         bucket: 'Bucket B',
         tier: 2,
