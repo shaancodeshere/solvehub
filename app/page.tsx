@@ -1,10 +1,21 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { masterCategories } from '@/lib/categories';
 import { allCalculators } from '@/lib/calculators';
 import { executeCanvasScript, EvaluatedVariable } from '@/lib/canvasEngine';
+
+interface HistoryItem {
+  id: string;
+  title: string;
+  timestamp: string;
+  content: string;
+  totalDisplay: string;
+  itemCount: number;
+}
+
+const DEFAULT_CANVAS_TEXT = `ticket 450\nhotel 320\nfood 290\ndiscount 10%\ntax 18%\ntotal\nsplit between 3 people`;
 
 export default function HomePage() {
   const [activeMode, setActiveMode] = useState<'canvas' | 'library'>('canvas');
@@ -16,15 +27,72 @@ export default function HomePage() {
   const [showSplitInput, setShowSplitInput] = useState(false);
   const [splitCount, setSplitCount] = useState<number>(3);
 
+  // History Drawer State
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyList, setHistoryList] = useState<HistoryItem[]>([]);
+
+  // Clear Confirmation / Tagging Modal State
+  const [showClearModal, setShowClearModal] = useState(false);
+  const [clearSheetTag, setClearSheetTag] = useState('');
+  const modalInputRef = useRef<HTMLInputElement>(null);
+
   // Active note being edited in Section C
+  // Inline tag editing in History Drawer
+  const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
+  const [tempHistoryTag, setTempHistoryTag] = useState('');
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [tempNoteText, setTempNoteText] = useState('');
 
-  // Default clean canvas text with no pre-filled notes
-  const [canvasCode, setCanvasCode] = useState<string>(
-    `ticket 450\nhotel 320\nfood 290\ndiscount 10%\ntax 18%\ntotal\nsplit between 3 people`
-  );
+  // Canvas State initialized from LocalStorage or default
+  const [canvasCode, setCanvasCode] = useState<string>(DEFAULT_CANVAS_TEXT);
+  const [isHydrated, setIsHydrated] = useState(false);
 
+  // 1. Hydrate from LocalStorage on mount
+  useEffect(() => {
+    try {
+      const savedActive = localStorage.getItem('solvehub_active_canvas');
+      if (savedActive !== null) {
+        setCanvasCode(savedActive);
+      }
+
+      const savedHistory = localStorage.getItem('solvehub_canvas_history');
+      if (savedHistory) {
+        setHistoryList(JSON.parse(savedHistory));
+      }
+    } catch {
+      // Ignore storage errors in restricted environments
+    }
+    setIsHydrated(true);
+  }, []);
+
+  // 2. Persist active canvas to LocalStorage
+  useEffect(() => {
+    if (!isHydrated) return;
+    try {
+      localStorage.setItem('solvehub_active_canvas', canvasCode);
+    } catch {
+      // Ignore
+    }
+  }, [canvasCode, isHydrated]);
+
+  // Autofocus modal input when clear modal opens
+  useEffect(() => {
+    if (showClearModal) {
+      setTimeout(() => {
+        modalInputRef.current?.focus();
+      }, 50);
+    }
+  }, [showClearModal]);
+  // Close history on physical Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showHistory) {
+        setShowHistory(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showHistory]);
   const canvasReceipt = useMemo(() => {
     return executeCanvasScript(canvasCode);
   }, [canvasCode]);
@@ -47,6 +115,100 @@ export default function HomePage() {
       );
     });
   }, [searchQuery, selectedCategoryFilter]);
+
+  // Core Save to History
+  const saveToHistory = (customTitle?: string) => {
+    if (!canvasCode.trim() || canvasReceipt.variables.length === 0) return;
+
+    // Derive intelligent default title if none provided
+    const fallbackTitle =
+      canvasReceipt.variables.find((v) => v.note)?.note ||
+      canvasReceipt.variables[0]?.name ||
+      'Untitled Ledger';
+
+    const finalTitle = customTitle?.trim() || fallbackTitle;
+
+    const newItem: HistoryItem = {
+      id: `hist-${Date.now()}`,
+      title: finalTitle,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        month: 'short',
+        day: 'numeric',
+      }),
+      content: canvasCode,
+      totalDisplay: canvasReceipt.lastResult?.formattedValue || '0',
+      itemCount: canvasReceipt.variables.length,
+    };
+
+    const updated = [newItem, ...historyList.filter((h) => h.content !== canvasCode)].slice(0, 20);
+    setHistoryList(updated);
+    try {
+      localStorage.setItem('solvehub_canvas_history', JSON.stringify(updated));
+    } catch {
+      // Ignore
+    }
+  };
+
+  // Intercept Clear Click
+  const handleClearClick = () => {
+    if (!canvasCode.trim() || canvasReceipt.variables.length === 0) {
+      setCanvasCode('');
+      return;
+    }
+    // Prefill tag suggestion from first available note
+    const firstNote = canvasReceipt.variables.find((v) => v.note)?.note || '';
+    setClearSheetTag(firstNote);
+    setShowClearModal(true);
+  };
+
+  // Confirm save and clear
+  const handleConfirmSaveAndClear = () => {
+    saveToHistory(clearSheetTag);
+    setShowClearModal(false);
+    setClearSheetTag('');
+    setCanvasCode('');
+  };
+
+  // Discard without saving and clear
+  const handleDiscardAndClear = () => {
+    setShowClearModal(false);
+    setClearSheetTag('');
+    setCanvasCode('');
+  };
+
+  const restoreHistory = (item: HistoryItem) => {
+    setCanvasCode(item.content);
+    setShowHistory(false);
+  };
+
+  const deleteHistoryItem = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = historyList.filter((item) => item.id !== id);
+    setHistoryList(updated);
+    try {
+      localStorage.setItem('solvehub_canvas_history', JSON.stringify(updated));
+    } catch {
+      // Ignore
+    }
+  };
+
+  const handleSaveHistoryTag = (id: string) => {
+    const updated = historyList.map((item) => {
+      if (item.id === id) {
+        return { ...item, title: tempHistoryTag.trim() };
+      }
+      return item;
+    });
+    setHistoryList(updated);
+    try {
+      localStorage.setItem('solvehub_canvas_history', JSON.stringify(updated));
+    } catch {
+      // Ignore
+    }
+    setEditingHistoryId(null);
+  };
 
   const appendSyntax = (syntax: string) => {
     setCanvasCode((prev) => (prev ? `${prev.trimEnd()}\n${syntax}` : syntax));
@@ -156,7 +318,78 @@ export default function HomePage() {
   const isHeroSplit = Boolean(canvasReceipt.splitResult);
 
   return (
-    <main className="h-screen w-screen bg-[#0d1117] text-slate-100 flex overflow-hidden font-sans">
+    <main className="h-screen w-screen bg-[#0d1117] text-slate-100 flex overflow-hidden font-sans relative">
+      {/* ──────────────────────────────────────────────────────────
+          CLEAR / SAVE MODAL DIALOG
+         ────────────────────────────────────────────────────────── */}
+      {showClearModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fadeIn">
+          <div
+            className="w-full max-w-md bg-[#131822] border border-slate-700/80 rounded-2xl p-6 shadow-2xl relative space-y-5"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleConfirmSaveAndClear();
+              } else if (e.key === 'Escape') {
+                e.preventDefault();
+                handleDiscardAndClear();
+              }
+            }}
+          >
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>SAVE SNAPSHOT</span>
+              </div>
+              <h3 className="text-base font-semibold text-white font-mono">
+                Save sheet before clearing?
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 font-mono">
+                Tag this calculation so you can easily identify and restore it later.
+              </p>
+            </div>
+
+            <div>
+              <input
+                ref={modalInputRef}
+                type="text"
+                value={clearSheetTag}
+                onChange={(e) => setClearSheetTag(e.target.value)}
+                placeholder="e.g., Pasta and drinks, Roundtrip ticket..."
+                className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition"
+              />
+            </div>
+
+            {/* Keyboard-styled Action Buttons */}
+            <div className="flex items-center justify-end gap-3 pt-2">
+              {/* Exit / Skip Badge Button */}
+              <button
+                type="button"
+                onClick={handleDiscardAndClear}
+                className="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 transition text-xs font-mono"
+              >
+                <kbd className="px-1.5 py-0.5 text-[10px] font-semibold bg-slate-800 border border-slate-600 rounded text-slate-400 group-hover:text-slate-200">
+                  esc
+                </kbd>
+                <span>Exit</span>
+              </button>
+
+              {/* Enter / Save Badge Button */}
+              <button
+                type="button"
+                onClick={handleConfirmSaveAndClear}
+                className="group flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 hover:text-white transition text-xs font-mono font-medium shadow-sm"
+              >
+                <kbd className="px-1.5 py-0.5 text-[10px] font-semibold bg-emerald-900/60 border border-emerald-500/50 rounded text-emerald-300 group-hover:text-emerald-100">
+                  ↵
+                </kbd>
+                <span>Save</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ──────────────────────────────────────────────────────────
           SECTION A: Sidebar Navigation
          ────────────────────────────────────────────────────────── */}
@@ -218,7 +451,7 @@ export default function HomePage() {
           CANVAS WORKSPACE & LIVE RECEIPT
          ────────────────────────────────────────────────────────── */}
       {activeMode === 'canvas' && (
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex overflow-hidden relative">
           {/* Section B: Natural Editor */}
           <section className="flex-1 p-8 overflow-hidden border-r border-slate-800 flex flex-col">
             {/* Clean Header */}
@@ -227,13 +460,30 @@ export default function HomePage() {
                 <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
                 <span>CANVAS • NATURAL LANGUAGE SOLVER</span>
               </div>
-              <button
-                type="button"
-                onClick={() => setCanvasCode('')}
-                className="text-[11px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2.5 py-1 rounded border border-slate-700 transition"
-              >
-                Clear
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowHistory(!showHistory)}
+                  className={`text-[11px] font-mono px-2.5 py-1 rounded border transition flex items-center gap-1.5 ${showHistory
+                    ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                    }`}
+                >
+                  <span>⏱ History</span>
+                  {historyList.length > 0 && (
+                    <span className="text-[9px] bg-slate-900 text-emerald-400 px-1 rounded border border-emerald-500/30">
+                      {historyList.length}
+                    </span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClearClick}
+                  className="text-[11px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2.5 py-1 rounded border border-slate-700 transition"
+                >
+                  Clear
+                </button>
+              </div>
             </div>
 
             {/* Quick Inserts Toolbar */}
@@ -331,6 +581,129 @@ export default function HomePage() {
               <span>Lines: {canvasCode.split('\n').length}</span>
             </div>
           </section>
+
+          {/* Transparent Backdrop to Dismiss on Canvas Click */}
+          {showHistory && (
+            <div
+              className="absolute inset-0 z-20"
+              onClick={() => setShowHistory(false)}
+            />
+          )}
+
+          {/* Slide-over History Drawer */}
+          {showHistory && (
+            <div className="absolute inset-y-0 right-88 w-80 bg-[#121720]/95 backdrop-blur-md border-l border-slate-800 shadow-2xl z-30 p-6 flex flex-col">
+              <div>
+                <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider">
+                      Calculation History
+                    </span>
+                  </div>
+                  {/* Keyboard-styled ESC Close Button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowHistory(false)}
+                    className="group flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 transition text-[11px] font-mono"
+                  >
+                    <kbd className="px-1.5 py-0.5 text-[9px] font-semibold bg-slate-800 border border-slate-600 rounded text-slate-400 group-hover:text-slate-200">
+                      esc
+                    </kbd>
+                    <span className="text-slate-400 group-hover:text-slate-200">Exit</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3 overflow-y-auto flex-1 pr-1">
+                  {historyList.length === 0 ? (
+                    <div className="text-center text-slate-500 text-xs py-12 font-mono">
+                      No saved sheets yet.<br />Calculations save on Clear.
+                    </div>
+                  ) : (
+                    historyList.map((item) => (
+                      <div
+                        key={item.id}
+                        onClick={() => restoreHistory(item)}
+                        className="p-3 bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl cursor-pointer transition group"
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[10px] font-mono text-slate-500">{item.timestamp}</span>
+                          <button
+                            type="button"
+                            onClick={(e) => deleteHistoryItem(item.id, e)}
+                            className="text-[10px] text-slate-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                        <div className="text-xs font-mono text-emerald-400 font-bold truncate">
+                          {item.totalDisplay}
+                        </div>
+                        <div className="mt-1.5" onClick={(e) => e.stopPropagation()}>
+                          {editingHistoryId === item.id ? (
+                            <div className="flex items-center gap-1.5">
+                              <input
+                                type="text"
+                                value={tempHistoryTag}
+                                onChange={(e) => setTempHistoryTag(e.target.value)}
+                                placeholder="add tag..."
+                                className="w-full bg-slate-950 border border-emerald-500/50 rounded px-2 py-0.5 text-[11px] font-mono text-white focus:outline-none"
+                                autoFocus
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handleSaveHistoryTag(item.id);
+                                  if (e.key === 'Escape') setEditingHistoryId(null);
+                                }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleSaveHistoryTag(item.id)}
+                                className="text-[10px] bg-emerald-700 hover:bg-emerald-600 text-white px-2 py-0.5 rounded font-mono font-semibold"
+                              >
+                                Save
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingHistoryId(item.id);
+                                setTempHistoryTag(item.title || '');
+                              }}
+                              className="group/tag flex items-center gap-1.5 text-[11px] font-mono text-left transition"
+                            >
+                              <svg
+                                className={`w-3 h-3 shrink-0 ${item.title ? 'text-emerald-400' : 'text-slate-500 group-hover/tag:text-slate-400'
+                                  }`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+                                />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+                              </svg>
+                              <span
+                                className={`truncate ${item.title
+                                  ? 'text-white font-medium group-hover/tag:text-emerald-300'
+                                  : 'text-slate-500 group-hover/tag:text-slate-300'
+                                  }`}
+                              >
+                                {item.title || 'add tag'}
+                              </span>
+                              <span className="opacity-0 group-hover/tag:opacity-100 text-[9px] text-slate-400">✎</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Section C: Live Structured Receipt */}
           <aside className="w-88 bg-[#161b22] p-6 flex flex-col justify-between shrink-0 overflow-y-auto border-l border-slate-800">
@@ -469,11 +842,24 @@ export default function HomePage() {
                                   setTempNoteText(v.note || '');
                                 }}
                                 title="Click to edit note"
-                                className="group/note text-[10px] text-emerald-400/90 bg-emerald-950/40 hover:bg-emerald-900/40 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1 transition"
+                                className="group/note text-[10px] text-emerald-300 bg-emerald-950/40 hover:bg-emerald-900/40 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1.5 transition"
                               >
-                                <span>📌</span>
+                                <svg
+                                  className="w-2.5 h-2.5 text-emerald-400 shrink-0"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+                                  />
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+                                </svg>
                                 <span>{v.note}</span>
-                                <span className="opacity-0 group-hover/note:opacity-100 text-[9px] text-slate-400 ml-1">✎</span>
+                                <span className="opacity-0 group-hover/note:opacity-100 text-[9px] text-slate-400 ml-0.5">✎</span>
                               </button>
                             ) : (
                               <button
@@ -533,7 +919,7 @@ export default function HomePage() {
       )}
 
       {/* ──────────────────────────────────────────────────────────
-          LIBRARY VIEW (Restored Category Counts + Vector Icons)
+          LIBRARY VIEW
          ────────────────────────────────────────────────────────── */}
       {activeMode === 'library' && (
         <section className="flex-1 p-8 overflow-y-auto">
