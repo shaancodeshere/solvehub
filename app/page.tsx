@@ -15,7 +15,7 @@ interface HistoryItem {
   itemCount: number;
 }
 
-const DEFAULT_CANVAS_TEXT = `ticket 450\nhotel 320\nfood 290\ndiscount 10%\ntax 18%\ntotal\nsplit between 3 people`;
+const DEFAULT_CANVAS_TEXT = `ticket 450`;
 
 export default function HomePage() {
   const [activeMode, setActiveMode] = useState<'canvas' | 'library'>('canvas');
@@ -560,17 +560,17 @@ export default function HomePage() {
                 style={{
                   backgroundImage: 'radial-gradient(#38bdf8 0.85px, transparent 0.85px)',
                   backgroundSize: '24px 28px',
-                  backgroundPosition: '24px 25px',
+                  backgroundPosition: '24px 28px',
                 }}
               />
 
               <textarea
                 value={canvasCode}
                 onChange={(e) => setCanvasCode(e.target.value)}
-                placeholder="Type anything naturally, e.g.:&#10;ticket 450&#10;hotel 320&#10;food 290&#10;discount 10%&#10;tax 18%&#10;total&#10;split between 3 people"
+                placeholder="Start Calculating"
                 className="relative z-10 w-full flex-1 bg-transparent border-none px-6 py-6 text-[14px] font-mono text-emerald-400 focus:outline-none placeholder-slate-600 resize-none selection:bg-emerald-500/20"
                 style={{
-                  lineHeight: '28px',
+                  lineHeight: '27px',
                 }}
                 spellCheck={false}
               />
@@ -891,21 +891,48 @@ export default function HomePage() {
 
             {/* Bottom Action Footer */}
             <div className="pt-6 border-t border-slate-800/80 space-y-3">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
+                {/* Copy Receipt Button with Line-Art SVG */}
                 <button
                   type="button"
                   onClick={handleCopyReceipt}
-                  className="flex-1 py-2 px-3 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-mono text-xs border border-slate-700 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-white font-mono text-xs border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]"
                 >
-                  <span>📋</span>
+                  <svg
+                    className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
                   <span>{copied ? 'Copied!' : 'Copy Receipt'}</span>
                 </button>
+
+                {/* Download Button with Line-Art SVG */}
                 <button
                   type="button"
                   onClick={handleDownloadReceipt}
-                  className="flex-1 py-2 px-3 rounded-full bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-400 hover:text-emerald-300 font-mono text-xs border border-emerald-500/40 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-white font-mono text-xs border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]"
                 >
-                  <span>💾</span>
+                  <svg
+                    className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
+                  </svg>
                   <span>Download</span>
                 </button>
               </div>
