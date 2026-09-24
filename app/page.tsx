@@ -46,6 +46,10 @@ export default function HomePage() {
   // Canvas State initialized from LocalStorage or default
   const [canvasCode, setCanvasCode] = useState<string>(DEFAULT_CANVAS_TEXT);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [calculatorOutput, setCalculatorOutput] = useState<{
+    primaryOutput?: { label: string; value: string | number; prefix?: string; suffix?: string };
+    secondaryMetrics?: { label: string; value: string | number; prefix?: string; suffix?: string }[];
+  } | null>(null);
 
   // 1. Hydrate from LocalStorage on mount
   useEffect(() => {
@@ -58,6 +62,10 @@ export default function HomePage() {
       const savedHistory = localStorage.getItem('solvehub_canvas_history');
       if (savedHistory) {
         setHistoryList(JSON.parse(savedHistory));
+      }
+      const savedOutput = localStorage.getItem('solvehub_active_calculator_output');
+      if (savedOutput) {
+        setCalculatorOutput(JSON.parse(savedOutput));
       }
     } catch {
       // Ignore storage errors in restricted environments
@@ -151,10 +159,21 @@ export default function HomePage() {
     }
   };
 
+  // Helper to clear bridged calculator state
+  const clearCalculatorOutputState = () => {
+    try {
+      localStorage.removeItem('solvehub_active_calculator_output');
+    } catch {
+      // Ignore
+    }
+    setCalculatorOutput(null);
+  };
+
   // Intercept Clear Click
   const handleClearClick = () => {
     if (!canvasCode.trim() || canvasReceipt.variables.length === 0) {
       setCanvasCode('');
+      clearCalculatorOutputState();
       return;
     }
     // Prefill tag suggestion from first available note
@@ -169,6 +188,7 @@ export default function HomePage() {
     setShowClearModal(false);
     setClearSheetTag('');
     setCanvasCode('');
+    clearCalculatorOutputState();
   };
 
   // Discard without saving and clear
@@ -176,6 +196,7 @@ export default function HomePage() {
     setShowClearModal(false);
     setClearSheetTag('');
     setCanvasCode('');
+    clearCalculatorOutputState();
   };
 
   const restoreHistory = (item: HistoryItem) => {
@@ -555,22 +576,21 @@ export default function HomePage() {
 
             {/* Technical Dot-Grid Canvas Notepad */}
             <div className="relative flex-1 w-full rounded-2xl border border-slate-800/80 overflow-hidden bg-[#0e131b] shadow-2xl flex flex-col">
-              <div
-                className="absolute inset-0 pointer-events-none opacity-25"
-                style={{
-                  backgroundImage: 'radial-gradient(#38bdf8 0.85px, transparent 0.85px)',
-                  backgroundSize: '24px 28px',
-                  backgroundPosition: '24px 28px',
-                }}
-              />
-
               <textarea
                 value={canvasCode}
                 onChange={(e) => setCanvasCode(e.target.value)}
                 placeholder="Start Calculating"
-                className="relative z-10 w-full flex-1 bg-transparent border-none px-6 py-6 text-[14px] font-mono text-emerald-400 focus:outline-none placeholder-slate-600 resize-none selection:bg-emerald-500/20"
+                className="w-full flex-1 bg-transparent border-none text-[14px] font-mono text-emerald-400 focus:outline-none placeholder-slate-600 resize-none selection:bg-emerald-500/20"
                 style={{
-                  lineHeight: '27px',
+                  lineHeight: '28px',
+                  paddingTop: '24px',
+                  paddingBottom: '24px',
+                  paddingLeft: '24px',
+                  paddingRight: '24px',
+                  backgroundImage: 'radial-gradient(rgba(56, 189, 248, 0.25) 1px, transparent 1px)',
+                  backgroundSize: '24px 28px',
+                  backgroundPosition: '24px 30px',
+                  backgroundAttachment: 'local',
                 }}
                 spellCheck={false}
               />
@@ -717,8 +737,19 @@ export default function HomePage() {
                 </span>
               </div>
 
-              {/* Top Hero Output Display: 2 Clean Lines */}
-              {canvasReceipt.lastResult && !canvasReceipt.lastResult.isError && (
+              {/* Top Hero Output Display */}
+              {calculatorOutput?.primaryOutput ? (
+                <div className="mb-6 p-4 rounded-xl border bg-emerald-950/40 border-emerald-500/40 flex flex-col justify-center gap-1.5">
+                  <span className="text-[10px] font-mono uppercase tracking-wider block text-emerald-400">
+                    {calculatorOutput.primaryOutput.label}
+                  </span>
+                  <div className="text-2xl font-bold font-mono tracking-tight break-all text-white">
+                    {calculatorOutput.primaryOutput.prefix || ''}
+                    {calculatorOutput.primaryOutput.value}
+                    {calculatorOutput.primaryOutput.suffix || ''}
+                  </div>
+                </div>
+              ) : canvasReceipt.lastResult && !canvasReceipt.lastResult.isError ? (
                 <div
                   className={`mb-6 p-4 rounded-xl border transition-colors flex flex-col justify-center gap-1.5 ${isHeroSplit
                     ? 'bg-purple-950/40 border-purple-500/40'
@@ -738,7 +769,7 @@ export default function HomePage() {
                     {canvasReceipt.lastResult.formattedValue}
                   </div>
                 </div>
-              )}
+              ) : null}
 
               {/* Canonical Statement Breakdown */}
               <div className="space-y-2.5 font-mono text-xs">
@@ -876,17 +907,40 @@ export default function HomePage() {
                           </div>
                         )}
 
-                        <div
-                          className={`text-[10px] truncate ${isModifier ? 'text-purple-300/60' : 'text-slate-500'
-                            }`}
-                        >
-                          {v.expression}
-                        </div>
                       </div>
                     );
                   })
                 )}
               </div>
+
+              {/* Dedicated Calculation Metrics Block */}
+              {calculatorOutput?.secondaryMetrics && calculatorOutput.secondaryMetrics.length > 0 && (
+                <div className="mt-6 pt-4 border-t border-slate-800/80 space-y-2.5 font-mono">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 uppercase tracking-wider text-[10px] block">
+                      Calculation Metrics
+                    </span>
+                    <span className="text-[10px] text-emerald-500 font-mono">Library Linked</span>
+                  </div>
+                  <div className="space-y-2">
+                    {calculatorOutput.secondaryMetrics.map((metric, idx) => (
+                      <div
+                        key={idx}
+                        className="p-2.5 rounded border border-slate-800/80 bg-slate-900/60 flex justify-between items-center gap-4 text-xs"
+                      >
+                        <span className="text-slate-400 flex-1 min-w-0 pr-2 leading-relaxed">
+                          {metric.label}
+                        </span>
+                        <span className="font-semibold text-slate-200 shrink-0 text-right whitespace-nowrap">
+                          {metric.prefix || ''}
+                          {metric.value}
+                          {metric.suffix ? ` ${metric.suffix}` : ''}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Bottom Action Footer */}

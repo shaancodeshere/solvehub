@@ -140,7 +140,9 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
         }
 
         // 4. Additions / Tax / Surcharge
-        const isTax = /\b(tax|tip|fee|service charge|vat|gst|interest)\b/i.test(lower);
+        // Exclude compound parameter labels like "interest rate", "rate", etc. so they remain standard base items
+        const isInterestRateParam = /\b(interest\s*rate|rate\s*apr|apr)\b/i.test(lower);
+        const isTax = !isInterestRateParam && /\b(tax|tip|fee|service charge|vat|gst)\b/i.test(lower);
         if (isTax) {
             const pctMatch = lower.match(/(\d+(?:\.\d+)?)%/);
             const flatMatch = clean.match(/\d+(?:\.\d+)?/);
@@ -159,8 +161,8 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
             continue;
         }
 
-        // 5. Standard Base Line Items
-        const kvMatch = clean.match(/^([a-zA-Z_\s]+?)(?:\s*[:=]\s*|\s+)([\d,.]+(?:\s*[+\-*/]\s*[\d,.]+)*)$/);
+        // 5. Standard Base Line Items (supports letters, numbers, parentheses, and brackets in names)
+        const kvMatch = clean.match(/^([a-zA-Z0-9_\s()[\]/%-]+?)(?:\s*[:=]\s*|\s+)([\d,.]+(?:\s*[+\-*/]\s*[\d,.]+)*)$/);
         if (kvMatch) {
             const label = kvMatch[1].trim();
             const expr = kvMatch[2].replace(/,/g, '');
