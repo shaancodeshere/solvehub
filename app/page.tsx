@@ -276,7 +276,7 @@ export default function HomePage() {
   };
 
   const handleCopyReceipt = () => {
-    if (canvasReceipt.variables.length === 0) return;
+    if (canvasReceipt.variables.length === 0 && !calculatorOutput) return;
 
     const padName = 22;
     const padVal = 14;
@@ -286,6 +286,16 @@ export default function HomePage() {
       '│           SOLVEHUB RECEIPT             │',
       '├────────────────────────────────────────┤',
     ];
+
+    const calcObj = calculatorOutput as any;
+    if (calcObj && calcObj.primaryOutput) {
+      const calcTitle = (calcObj.title || 'CALCULATOR RESULT').toUpperCase().slice(0, 36);
+      lines.push(`│ ${calcTitle.padEnd(38)} │`);
+      const primaryVal = `${calcObj.primaryOutput.prefix || ''}${calcObj.primaryOutput.value}${calcObj.primaryOutput.suffix || ''}`;
+      lines.push(`│ ${String(calcObj.primaryOutput.label || 'Result').slice(0, 18).padEnd(20)} ${primaryVal.padStart(16)} │`);
+      lines.push('├────────────────────────────────────────┤');
+      lines.push('│ INPUT PARAMETERS:                      │');
+    }
 
     canvasReceipt.variables.forEach((v) => {
       if (v.type === 'summary') {
@@ -302,6 +312,15 @@ export default function HomePage() {
       }
     });
 
+    if (calcObj?.secondaryMetrics && Array.isArray(calcObj.secondaryMetrics) && calcObj.secondaryMetrics.length > 0) {
+      lines.push('├────────────────────────────────────────┤');
+      lines.push('│ CALCULATION METRICS:                   │');
+      calcObj.secondaryMetrics.forEach((m: any) => {
+        const val = `${m.prefix || ''}${m.value}${m.suffix ? ` ${m.suffix}` : ''}`;
+        lines.push(`│ ${String(m.label || '').slice(0, 20).padEnd(21)} ${val.padStart(16)} │`);
+      });
+    }
+
     lines.push('└────────────────────────────────────────┘');
     const textOutput = lines.join('\n');
 
@@ -311,7 +330,7 @@ export default function HomePage() {
   };
 
   const handleDownloadReceipt = () => {
-    if (canvasReceipt.variables.length === 0) return;
+    if (canvasReceipt.variables.length === 0 && !calculatorOutput) return;
 
     const dateStr = new Date().toLocaleString();
     const outputLines: string[] = [
@@ -321,9 +340,20 @@ export default function HomePage() {
       `  Date: ${dateStr}`,
       '==================================================',
       '',
-      'ITEMIZED BREAKDOWN:',
-      '--------------------------------------------------',
     ];
+
+    const calcObj = calculatorOutput as any;
+    if (calcObj && calcObj.primaryOutput) {
+      outputLines.push(`CALCULATOR: ${calcObj.title || 'CALCULATION'}`);
+      const primaryVal = `${calcObj.primaryOutput.prefix || ''}${calcObj.primaryOutput.value}${calcObj.primaryOutput.suffix || ''}`;
+      outputLines.push(`RESULT: ${calcObj.primaryOutput.label || 'Result'} = ${primaryVal}`);
+      outputLines.push('--------------------------------------------------');
+      outputLines.push('INPUT PARAMETERS:');
+      outputLines.push('--------------------------------------------------');
+    } else {
+      outputLines.push('ITEMIZED BREAKDOWN:');
+      outputLines.push('--------------------------------------------------');
+    }
 
     canvasReceipt.variables.forEach((v) => {
       if (v.type === 'summary') {
@@ -340,8 +370,18 @@ export default function HomePage() {
       }
     });
 
+    if (calcObj?.secondaryMetrics && Array.isArray(calcObj.secondaryMetrics) && calcObj.secondaryMetrics.length > 0) {
+      outputLines.push('--------------------------------------------------');
+      outputLines.push('CALCULATION METRICS:');
+      outputLines.push('--------------------------------------------------');
+      calcObj.secondaryMetrics.forEach((m: any) => {
+        const val = `${m.prefix || ''}${m.value}${m.suffix ? ` ${m.suffix}` : ''}`;
+        outputLines.push(`${String(m.label || '').padEnd(32)} ${val.padStart(15)}`);
+      });
+    }
+
     outputLines.push('==================================================');
-    outputLines.push('             Thank you for calculating.           ');
+    outputLines.push('              Thank you for calculating.           ');
     outputLines.push('==================================================');
 
     const blob = new Blob([outputLines.join('\n')], { type: 'text/plain;charset=utf-8' });
