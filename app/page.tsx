@@ -13,8 +13,8 @@ interface HistoryItem {
   content: string;
   totalDisplay: string;
   itemCount: number;
+  calculatorOutput?: any;
 }
-
 const DEFAULT_CANVAS_TEXT = `ticket 450`;
 
 export default function HomePage() {
@@ -146,8 +146,12 @@ export default function HomePage() {
         day: 'numeric',
       }),
       content: canvasCode,
-      totalDisplay: canvasReceipt.lastResult?.formattedValue || '0',
+      totalDisplay:
+        calculatorOutput?.primaryOutput?.value
+          ? `${calculatorOutput.primaryOutput.prefix || ''}${calculatorOutput.primaryOutput.value}${calculatorOutput.primaryOutput.suffix || ''}`
+          : canvasReceipt.lastResult?.formattedValue || '0',
       itemCount: canvasReceipt.variables.length,
+      calculatorOutput: calculatorOutput ? JSON.parse(JSON.stringify(calculatorOutput)) : null,
     };
 
     const updated = [newItem, ...historyList.filter((h) => h.content !== canvasCode)].slice(0, 20);
@@ -201,6 +205,19 @@ export default function HomePage() {
 
   const restoreHistory = (item: HistoryItem) => {
     setCanvasCode(item.content);
+    if (item.calculatorOutput) {
+      setCalculatorOutput(item.calculatorOutput);
+      try {
+        localStorage.setItem(
+          'solvehub_active_calculator_output',
+          JSON.stringify(item.calculatorOutput)
+        );
+      } catch {
+        // Ignore
+      }
+    } else {
+      clearCalculatorOutputState();
+    }
     setShowHistory(false);
   };
 
