@@ -119,8 +119,13 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
             continue;
         }
 
-        // 3. Deductions / Discounts
-        const isDiscount = /\b(discount|coupon|off|rebate|deduction|less|markdown)\b/i.test(lower);
+        // 3. Deductions / Discounts (only match actual discount modifier commands, not multi-word parameters like "Discount Rate")
+        const isParameterNameDiscount = /\b(discount\s*rate|discount\s*factor|payoff|takeoff)\b/i.test(lower);
+        const isDiscount = !isParameterNameDiscount && (
+            /^(discount|coupon|rebate|markdown|less)\s*[:=]?\s*[\d.]+%?$/i.test(clean) ||
+            /\b\d+(?:\.\d+)?%\s*(?:off|discount)\b/i.test(clean) ||
+            /^(?:less\s+)?(?:discount|coupon)\s+\d+/i.test(clean)
+        );
         if (isDiscount) {
             const pctMatch = lower.match(/(\d+(?:\.\d+)?)%/);
             const flatMatch = clean.match(/\d+(?:\.\d+)?/);
@@ -139,10 +144,12 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
             continue;
         }
 
-        // 4. Additions / Tax / Surcharge
-        // Exclude compound parameter labels like "interest rate", "rate", etc. so they remain standard base items
-        const isInterestRateParam = /\b(interest\s*rate|rate\s*apr|apr)\b/i.test(lower);
-        const isTax = !isInterestRateParam && /\b(tax|tip|fee|service charge|vat|gst)\b/i.test(lower);
+        // 4. Additions / Tax / Surcharge (only match transaction surcharges, not properties like "Annual Property Tax" or "Legal Fee")
+        const isParameterNameTax = /\b(property\s*tax|income\s*tax|annual|interest|monthly|rate|apr)\b/i.test(lower);
+        const isTax = !isParameterNameTax && (
+            /^(tax|sales\s*tax|vat|gst|tip|service\s*charge|gratuity)\s*[:=]?\s*[\d.]+%?$/i.test(clean) ||
+            /^(?:add\s+)?(?:tax|tip|fee)\s+\d+/i.test(clean)
+        );
         if (isTax) {
             const pctMatch = lower.match(/(\d+(?:\.\d+)?)%/);
             const flatMatch = clean.match(/\d+(?:\.\d+)?/);
