@@ -29,7 +29,7 @@ export interface CalculatorDefinition {
     name: string;
     category: string;
     group?: string;
-    bucket: 'Bucket A' | 'Bucket B' | 'Bucket C1';
+    bucket: 'Bucket A' | 'Bucket B' | 'Bucket C1' | 'Bucket C';
     tier?: number;
     phase?: number;
     monthlySearches?: string;

@@ -1,4 +1,4 @@
-import { CalculatorDefinition } from '../../types/calculator';
+import { CalculatorDefinition } from '@/types/calculator';
 
 // Import all 12 category files
 import { financialCalculators } from './cat01_financial';
@@ -35,7 +35,7 @@ export function getCalculatorById(id: string): CalculatorDefinition | undefined 
     return allCalculators.find((c) => c.id === id);
 }
 
-export function getCalculatorsByBucket(bucket: 'Bucket A' | 'Bucket B' | 'Bucket C1'): CalculatorDefinition[] {
+export function getCalculatorsByBucket(bucket: 'Bucket A' | 'Bucket B' | 'Bucket C1' | 'Bucket C'): CalculatorDefinition[] {
     return allCalculators.filter((c) => c.bucket === bucket);
 }
 

@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# workspace & IDE
+*.code-workspace
+.gemini/
+scratch/
+Calculator Inventory/
