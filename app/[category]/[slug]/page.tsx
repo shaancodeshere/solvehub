@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { allCalculators, getCalculatorById } from '@/lib/calculators';
+import { masterCategories } from '@/lib/categories';
 import UniversalCalculator from '@/components/calculator/UniversalCalculator';
 
 interface PageProps {
@@ -38,15 +40,28 @@ export default async function CalculatorPage({ params }: PageProps) {
         notFound();
     }
 
+    const categoryDef = masterCategories.find(
+        (c) => c.slug === calculator.category || c.id === calculator.category
+    );
+    const categoryName = categoryDef?.name || calculator.category;
+
     return (
         <main className="min-h-screen bg-slate-900 text-white py-12 px-4 sm:px-6">
             <div className="max-w-4xl mx-auto mb-6">
-                <a
-                    href="/"
-                    className="text-xs text-emerald-400 hover:underline uppercase tracking-wider font-mono"
-                >
-                    ← Back to Catalog
-                </a>
+                <nav className="flex items-center gap-2 text-xs font-mono text-slate-400">
+                    <Link href="/" className="hover:text-emerald-400 transition">
+                        Home
+                    </Link>
+                    <span className="text-slate-600">/</span>
+                    <Link
+                        href={`/library/${calculator.category}`}
+                        className="hover:text-emerald-400 transition"
+                    >
+                        {categoryName}
+                    </Link>
+                    <span className="text-slate-600">/</span>
+                    <span className="text-emerald-400 font-semibold truncate">{calculator.name}</span>
+                </nav>
             </div>
             <UniversalCalculator calculatorId={calculator.id} />
         </main>
