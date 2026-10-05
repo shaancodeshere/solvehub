@@ -416,10 +416,10 @@ export default function HomePage() {
           >
             <div>
               <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                 <span>SAVE SNAPSHOT</span>
               </div>
-              <h3 className="text-base font-semibold text-white font-mono">
+              <h3 className="text-lg font-semibold text-white font-mono">
                 Save sheet before clearing?
               </h3>
               <p className="text-xs text-slate-400 mt-1 font-mono">
@@ -434,7 +434,7 @@ export default function HomePage() {
                 value={clearSheetTag}
                 onChange={(e) => setClearSheetTag(e.target.value)}
                 placeholder="e.g., Pasta and drinks, Roundtrip ticket..."
-                className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition"
+                className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-sm font-mono text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition"
               />
             </div>
 
@@ -444,7 +444,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleDiscardAndClear}
-                className="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 transition text-xs font-mono"
+                className="group flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 transition text-xs font-mono"
               >
                 <kbd className="px-1.5 py-0.5 text-[10px] font-semibold bg-slate-800 border border-slate-600 rounded text-slate-400 group-hover:text-slate-200">
                   esc
@@ -456,7 +456,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleConfirmSaveAndClear}
-                className="group flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 hover:text-white transition text-xs font-mono font-medium shadow-sm"
+                className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 hover:text-white transition text-xs font-mono font-medium shadow-sm"
               >
                 <kbd className="px-1.5 py-0.5 text-[10px] font-semibold bg-emerald-900/60 border border-emerald-500/50 rounded text-emerald-300 group-hover:text-emerald-100">
                   ↵
@@ -473,44 +473,54 @@ export default function HomePage() {
          ────────────────────────────────────────────────────────── */}
       <aside className="w-64 border-r border-slate-800 p-6 flex flex-col justify-between shrink-0 select-none hidden md:flex">
         <div>
-          <div className="flex items-center gap-2 mb-8">
-            <span className="bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded text-xs font-mono">
+          <div className="flex items-center gap-3 mb-8">
+            <span className="w-8 h-8 bg-emerald-500 text-slate-950 font-bold rounded-lg text-base font-mono flex items-center justify-center shadow-sm">
               S
             </span>
-            <span className="font-bold tracking-wider text-sm text-white font-mono">SolveHub</span>
-            <span className="text-[10px] text-slate-500 font-mono">v1.0</span>
+            <span className="font-bold tracking-wider text-lg text-white font-mono">SolveHub</span>
+            <span className="text-xs text-slate-400 font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
+              v1.0
+            </span>
           </div>
 
-          <div className="space-y-4 text-xs font-mono">
+          <div className="space-y-4">
             <div>
-              <span className="text-slate-500 uppercase tracking-wider block mb-2 text-[10px]">
-                Modes
+              <span className="text-slate-400 uppercase tracking-widest block mb-2.5 text-xs font-mono font-bold">
+                MODES
               </span>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <button
                   type="button"
                   onClick={() => setActiveMode('canvas')}
-                  className={`w-full text-left px-3 py-2 rounded transition flex items-center justify-between ${activeMode === 'canvas'
-                    ? 'bg-slate-800 text-emerald-400 font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                    }`}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between text-base font-mono ${
+                    activeMode === 'canvas'
+                      ? 'bg-slate-800 text-emerald-400 font-semibold shadow-sm border border-emerald-500/20'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  }`}
                 >
-                  <span>Canvas</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-lg">📝</span>
+                    <span className="font-medium">Canvas</span>
+                  </div>
                   {activeMode === 'canvas' && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
                   )}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveMode('library')}
-                  className={`w-full text-left px-3 py-2 rounded transition flex items-center justify-between ${activeMode === 'library'
-                    ? 'bg-slate-800 text-emerald-400 font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                    }`}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between text-base font-mono ${
+                    activeMode === 'library'
+                      ? 'bg-slate-800 text-emerald-400 font-semibold shadow-sm border border-emerald-500/20'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  }`}
                 >
-                  <span>Library</span>
-                  <span className="text-[10px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-lg">📚</span>
+                    <span className="font-medium">Library</span>
+                  </div>
+                  <span className="text-xs sm:text-sm font-mono bg-slate-900 text-slate-300 px-2.5 py-0.5 rounded-md border border-slate-700/80 font-bold">
                     {allCalculators.length}
                   </span>
                 </button>
@@ -519,8 +529,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="text-[11px] text-slate-600 font-mono flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <div className="text-xs sm:text-sm text-slate-400 font-mono flex items-center gap-2 pt-4 border-t border-slate-800/80">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
           <span>Canonical Ledger Active</span>
         </div>
       </aside>
@@ -534,22 +544,23 @@ export default function HomePage() {
           <section className="flex-1 p-8 overflow-hidden border-r border-slate-800 flex flex-col">
             {/* Clean Header */}
             <div className="flex items-center justify-between mb-4 shrink-0">
-              <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+              <div className="flex items-center gap-2.5 text-sm sm:text-base font-mono text-emerald-400 font-semibold tracking-wide">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]"></span>
                 <span>CANVAS • NATURAL LANGUAGE SOLVER</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button
                   type="button"
                   onClick={() => setShowHistory(!showHistory)}
-                  className={`text-[11px] font-mono px-2.5 py-1 rounded border transition flex items-center gap-1.5 ${showHistory
-                    ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                    }`}
+                  className={`text-sm font-mono px-3.5 py-2 rounded-xl border transition flex items-center gap-2 ${
+                    showHistory
+                      ? 'bg-emerald-950/80 border-emerald-500/60 text-emerald-300'
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700 shadow-sm'
+                  }`}
                 >
                   <span>⏱ History</span>
                   {historyList.length > 0 && (
-                    <span className="text-[9px] bg-slate-900 text-emerald-400 px-1 rounded border border-emerald-500/30">
+                    <span className="text-xs bg-slate-900 text-emerald-400 px-2 py-0.5 rounded-md border border-emerald-500/30 font-bold">
                       {historyList.length}
                     </span>
                   )}
@@ -557,7 +568,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handleClearClick}
-                  className="text-[11px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2.5 py-1 rounded border border-slate-700 transition"
+                  className="text-sm font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3.5 py-2 rounded-xl border border-slate-700 transition shadow-sm font-medium"
                 >
                   Clear
                 </button>
@@ -565,13 +576,15 @@ export default function HomePage() {
             </div>
 
             {/* Quick Inserts Toolbar */}
-            <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-mono shrink-0">
-              <span className="text-slate-500 text-[10px] uppercase tracking-wider">Quick Inserts:</span>
+            <div className="mb-4 flex flex-wrap items-center gap-2 text-sm font-mono shrink-0">
+              <span className="text-slate-400 text-xs uppercase tracking-wider font-semibold mr-1">
+                Quick Inserts:
+              </span>
 
               <button
                 type="button"
                 onClick={() => appendSyntax('total')}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 transition"
+                className="px-3.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-emerald-400 border border-slate-700 hover:border-emerald-500/40 transition shadow-sm font-medium"
               >
                 + total
               </button>
@@ -579,7 +592,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => appendSyntax('discount 10%')}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 transition"
+                className="px-3.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-amber-400 border border-slate-700 hover:border-amber-500/40 transition shadow-sm font-medium"
               >
                 + discount
               </button>
@@ -587,7 +600,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => appendSyntax('tax 18%')}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 transition"
+                className="px-3.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-sky-400 border border-slate-700 hover:border-sky-500/40 transition shadow-sm font-medium"
               >
                 + tax
               </button>
@@ -597,33 +610,33 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setShowSplitInput(true)}
-                  className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700 transition"
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-purple-300 border border-slate-700 hover:border-purple-500/40 transition shadow-sm font-medium"
                 >
                   + split bill
                 </button>
               ) : (
-                <div className="flex items-center gap-1.5 bg-slate-800 px-2 py-0.5 rounded border border-purple-500/40">
-                  <span className="text-[11px] text-purple-300">People:</span>
+                <div className="flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-xl border border-purple-500/50">
+                  <span className="text-xs sm:text-sm text-purple-300 font-semibold">People:</span>
                   <input
                     type="number"
                     min={1}
                     max={99}
                     value={splitCount}
                     onChange={(e) => setSplitCount(parseInt(e.target.value, 10) || 1)}
-                    className="w-10 bg-slate-950 text-center text-xs text-white border border-slate-700 rounded px-1 py-0.5 focus:outline-none focus:border-purple-400 font-mono"
+                    className="w-12 bg-slate-950 text-center text-sm text-white border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none focus:border-purple-400 font-mono"
                     autoFocus
                   />
                   <button
                     type="button"
                     onClick={handleApplySplit}
-                    className="bg-purple-600 hover:bg-purple-500 text-white text-[10px] px-2 py-0.5 rounded font-semibold transition"
+                    className="bg-purple-600 hover:bg-purple-500 text-white text-xs px-2.5 py-1 rounded-md font-semibold transition"
                   >
                     Insert
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowSplitInput(false)}
-                    className="text-slate-400 hover:text-white text-[10px] px-1"
+                    className="text-slate-400 hover:text-white text-xs px-1"
                   >
                     ✕
                   </button>
@@ -637,23 +650,23 @@ export default function HomePage() {
                 value={canvasCode}
                 onChange={(e) => setCanvasCode(e.target.value)}
                 placeholder="Start Calculating"
-                className="w-full flex-1 bg-transparent border-none text-[14px] font-mono text-emerald-400 focus:outline-none placeholder-slate-600 resize-none selection:bg-emerald-500/20"
+                className="w-full flex-1 bg-transparent border-none text-base sm:text-lg font-mono text-emerald-400 focus:outline-none placeholder-slate-600 resize-none selection:bg-emerald-500/20"
                 style={{
-                  lineHeight: '28px',
-                  paddingTop: '24px',
-                  paddingBottom: '24px',
-                  paddingLeft: '24px',
-                  paddingRight: '24px',
-                  backgroundImage: 'radial-gradient(rgba(56, 189, 248, 0.25) 1px, transparent 1px)',
-                  backgroundSize: '24px 28px',
-                  backgroundPosition: '24px 30px',
+                  lineHeight: '36px',
+                  paddingTop: '28px',
+                  paddingBottom: '28px',
+                  paddingLeft: '32px',
+                  paddingRight: '32px',
+                  backgroundImage: 'radial-gradient(rgba(56, 189, 248, 0.4) 1.5px, transparent 1.5px)',
+                  backgroundSize: '28px 36px',
+                  backgroundPosition: '32px 38px',
                   backgroundAttachment: 'local',
                 }}
                 spellCheck={false}
               />
             </div>
 
-            <div className="pt-3 text-xs font-mono text-slate-500 flex justify-between items-center shrink-0">
+            <div className="pt-3 text-xs sm:text-sm font-mono text-slate-400 flex justify-between items-center shrink-0">
               <span>Section B • Zero-Friction Input</span>
               <span>Lines: {canvasCode.split('\n').length}</span>
             </div>
@@ -669,11 +682,11 @@ export default function HomePage() {
 
           {/* Slide-over History Drawer */}
           {showHistory && (
-            <div className="absolute inset-y-0 right-88 w-80 bg-[#121720]/95 backdrop-blur-md border-l border-slate-800 shadow-2xl z-30 p-6 flex flex-col">
+            <div className="absolute inset-y-0 right-96 w-96 bg-[#121720]/95 backdrop-blur-md border-l border-slate-800 shadow-2xl z-30 p-6 flex flex-col">
               <div>
                 <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider">
+                    <span className="text-sm sm:text-base font-mono text-emerald-400 font-bold uppercase tracking-wider">
                       Calculation History
                     </span>
                   </div>
@@ -681,9 +694,9 @@ export default function HomePage() {
                   <button
                     type="button"
                     onClick={() => setShowHistory(false)}
-                    className="group flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 transition text-[11px] font-mono"
+                    className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 transition text-xs font-mono"
                   >
-                    <kbd className="px-1.5 py-0.5 text-[9px] font-semibold bg-slate-800 border border-slate-600 rounded text-slate-400 group-hover:text-slate-200">
+                    <kbd className="px-1.5 py-0.5 text-[10px] font-semibold bg-slate-800 border border-slate-600 rounded text-slate-400 group-hover:text-slate-200">
                       esc
                     </kbd>
                     <span className="text-slate-400 group-hover:text-slate-200">Exit</span>
@@ -692,7 +705,7 @@ export default function HomePage() {
 
                 <div className="space-y-3 overflow-y-auto flex-1 pr-1">
                   {historyList.length === 0 ? (
-                    <div className="text-center text-slate-500 text-xs py-12 font-mono">
+                    <div className="text-center text-slate-400 text-sm py-12 font-mono">
                       No saved sheets yet.<br />Calculations save on Clear.
                     </div>
                   ) : (
@@ -700,22 +713,22 @@ export default function HomePage() {
                       <div
                         key={item.id}
                         onClick={() => restoreHistory(item)}
-                        className="p-3 bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl cursor-pointer transition group"
+                        className="p-3.5 bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl cursor-pointer transition group"
                       >
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-[10px] font-mono text-slate-500">{item.timestamp}</span>
+                          <span className="text-xs font-mono text-slate-400">{item.timestamp}</span>
                           <button
                             type="button"
                             onClick={(e) => deleteHistoryItem(item.id, e)}
-                            className="text-[10px] text-slate-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition"
+                            className="text-xs text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition"
                           >
                             Delete
                           </button>
                         </div>
-                        <div className="text-xs font-mono text-emerald-400 font-bold truncate">
+                        <div className="text-sm sm:text-base font-mono text-emerald-400 font-bold truncate">
                           {item.totalDisplay}
                         </div>
-                        <div className="mt-1.5" onClick={(e) => e.stopPropagation()}>
+                        <div className="mt-2" onClick={(e) => e.stopPropagation()}>
                           {editingHistoryId === item.id ? (
                             <div className="flex items-center gap-1.5">
                               <input
@@ -723,7 +736,7 @@ export default function HomePage() {
                                 value={tempHistoryTag}
                                 onChange={(e) => setTempHistoryTag(e.target.value)}
                                 placeholder="add tag..."
-                                className="w-full bg-slate-950 border border-emerald-500/50 rounded px-2 py-0.5 text-[11px] font-mono text-white focus:outline-none"
+                                className="w-full bg-slate-950 border border-emerald-500/50 rounded px-2 py-1 text-xs font-mono text-white focus:outline-none"
                                 autoFocus
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') handleSaveHistoryTag(item.id);
@@ -733,7 +746,7 @@ export default function HomePage() {
                               <button
                                 type="button"
                                 onClick={() => handleSaveHistoryTag(item.id)}
-                                className="text-[10px] bg-emerald-700 hover:bg-emerald-600 text-white px-2 py-0.5 rounded font-mono font-semibold"
+                                className="text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded font-mono font-semibold"
                               >
                                 Save
                               </button>
@@ -745,11 +758,12 @@ export default function HomePage() {
                                 setEditingHistoryId(item.id);
                                 setTempHistoryTag(item.title || '');
                               }}
-                              className="group/tag flex items-center gap-1.5 text-[11px] font-mono text-left transition"
+                              className="group/tag flex items-center gap-1.5 text-xs font-mono text-left transition"
                             >
                               <svg
-                                className={`w-3 h-3 shrink-0 ${item.title ? 'text-emerald-400' : 'text-slate-500 group-hover/tag:text-slate-400'
-                                  }`}
+                                className={`w-3.5 h-3.5 shrink-0 ${
+                                  item.title ? 'text-emerald-400' : 'text-slate-500 group-hover/tag:text-slate-400'
+                                }`}
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -763,14 +777,15 @@ export default function HomePage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
                               </svg>
                               <span
-                                className={`truncate ${item.title
-                                  ? 'text-white font-medium group-hover/tag:text-emerald-300'
-                                  : 'text-slate-500 group-hover/tag:text-slate-300'
-                                  }`}
+                                className={`truncate ${
+                                  item.title
+                                    ? 'text-white font-medium group-hover/tag:text-emerald-300'
+                                    : 'text-slate-500 group-hover/tag:text-slate-300'
+                                }`}
                               >
                                 {item.title || 'add tag'}
                               </span>
-                              <span className="opacity-0 group-hover/tag:opacity-100 text-[9px] text-slate-400">✎</span>
+                              <span className="opacity-0 group-hover/tag:opacity-100 text-[10px] text-slate-400">✎</span>
                             </button>
                           )}
                         </div>
@@ -783,24 +798,24 @@ export default function HomePage() {
           )}
 
           {/* Section C: Live Structured Receipt */}
-          <aside className="w-88 bg-[#161b22] p-6 flex flex-col justify-between shrink-0 overflow-y-auto border-l border-slate-800">
+          <aside className="w-96 min-w-[380px] max-w-[430px] bg-[#161b22] p-6 flex flex-col justify-between shrink-0 overflow-y-auto border-l border-slate-800">
             <div>
               <div className="flex justify-between items-center mb-6 pb-3 border-b border-slate-800">
-                <span className="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider">
+                <span className="text-sm sm:text-base font-mono text-emerald-400 font-bold uppercase tracking-wider">
                   Live Receipt
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 uppercase">
+                <span className="text-xs sm:text-sm font-mono px-3 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 uppercase font-semibold">
                   {canvasReceipt.variables.length} Items
                 </span>
               </div>
 
               {/* Top Hero Output Display */}
               {calculatorOutput?.primaryOutput ? (
-                <div className="mb-6 p-4 rounded-xl border bg-emerald-950/40 border-emerald-500/40 flex flex-col justify-center gap-1.5">
-                  <span className="text-[10px] font-mono uppercase tracking-wider block text-emerald-400">
+                <div className="mb-6 p-5 rounded-2xl border bg-emerald-950/40 border-emerald-500/40 flex flex-col justify-center gap-1.5 shadow-lg">
+                  <span className="text-xs sm:text-sm font-mono uppercase tracking-wider block font-semibold text-emerald-400">
                     {calculatorOutput.primaryOutput.label}
                   </span>
-                  <div className="text-2xl font-bold font-mono tracking-tight break-all text-white">
+                  <div className="text-3xl sm:text-4xl font-bold font-mono tracking-tight break-all text-white">
                     {calculatorOutput.primaryOutput.prefix || ''}
                     {calculatorOutput.primaryOutput.value}
                     {calculatorOutput.primaryOutput.suffix || ''}
@@ -808,20 +823,23 @@ export default function HomePage() {
                 </div>
               ) : canvasReceipt.lastResult && !canvasReceipt.lastResult.isError ? (
                 <div
-                  className={`mb-6 p-4 rounded-xl border transition-colors flex flex-col justify-center gap-1.5 ${isHeroSplit
-                    ? 'bg-purple-950/40 border-purple-500/40'
-                    : 'bg-emerald-950/40 border-emerald-500/40'
-                    }`}
+                  className={`mb-6 p-5 rounded-2xl border transition-colors flex flex-col justify-center gap-1.5 shadow-lg ${
+                    isHeroSplit
+                      ? 'bg-purple-950/40 border-purple-500/40'
+                      : 'bg-emerald-950/40 border-emerald-500/40'
+                  }`}
                 >
                   <span
-                    className={`text-[10px] font-mono uppercase tracking-wider block ${isHeroSplit ? 'text-purple-300' : 'text-emerald-400'
-                      }`}
+                    className={`text-xs sm:text-sm font-mono uppercase tracking-wider block font-semibold ${
+                      isHeroSplit ? 'text-purple-300' : 'text-emerald-400'
+                    }`}
                   >
                     {canvasReceipt.lastResult.name}
                   </span>
                   <div
-                    className={`text-2xl font-bold font-mono tracking-tight break-all ${isHeroSplit ? 'text-purple-200' : 'text-white'
-                      }`}
+                    className={`text-3xl sm:text-4xl font-bold font-mono tracking-tight break-all ${
+                      isHeroSplit ? 'text-purple-200' : 'text-white'
+                    }`}
                   >
                     {canvasReceipt.lastResult.formattedValue}
                   </div>
@@ -829,16 +847,16 @@ export default function HomePage() {
               ) : null}
 
               {/* Canonical Statement Breakdown */}
-              <div className="space-y-2.5 font-mono text-xs">
+              <div className="space-y-3 font-mono">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 uppercase tracking-wider text-[10px] block">
+                  <span className="text-slate-400 uppercase tracking-wider text-xs sm:text-sm font-semibold block">
                     Statement Breakdown
                   </span>
-                  <span className="text-[10px] text-slate-600 font-mono">Auto-Reordered</span>
+                  <span className="text-xs sm:text-sm text-slate-500 font-mono">Auto-Reordered</span>
                 </div>
 
                 {canvasReceipt.variables.length === 0 ? (
-                  <div className="p-6 text-center border border-dashed border-slate-800 rounded-lg text-slate-600 text-xs">
+                  <div className="p-8 text-center border border-dashed border-slate-800 rounded-xl text-slate-500 text-sm font-mono">
                     Type items in Section B (e.g. ticket 450).
                   </div>
                 ) : (
@@ -852,22 +870,23 @@ export default function HomePage() {
                     return (
                       <div
                         key={v.id}
-                        className={`p-2.5 rounded border transition flex flex-col gap-1 ${v.isError
-                          ? 'bg-rose-950/20 border-rose-800/60 text-rose-300'
-                          : isSummary
-                            ? 'bg-emerald-950/40 border-emerald-500/50 font-semibold'
-                            : isModifier
-                              ? 'bg-purple-950/30 border-purple-500/40 text-purple-200'
-                              : isDeduction
-                                ? 'bg-amber-950/20 border-amber-500/30'
-                                : isTax
-                                  ? 'bg-sky-950/20 border-sky-500/30'
-                                  : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
-                          }`}
+                        className={`p-3.5 rounded-xl border transition flex flex-col gap-1.5 ${
+                          v.isError
+                            ? 'bg-rose-950/20 border-rose-800/60 text-rose-300'
+                            : isSummary
+                              ? 'bg-emerald-950/40 border-emerald-500/50 font-semibold'
+                              : isModifier
+                                ? 'bg-purple-950/30 border-purple-500/40 text-purple-200'
+                                : isDeduction
+                                  ? 'bg-amber-950/20 border-amber-500/30'
+                                  : isTax
+                                    ? 'bg-sky-950/20 border-sky-500/30'
+                                    : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
+                        }`}
                       >
                         <div className="flex justify-between items-center">
                           <span
-                            className={
+                            className={`text-sm sm:text-base font-mono ${
                               isDeduction
                                 ? 'text-amber-400'
                                 : isTax
@@ -876,22 +895,23 @@ export default function HomePage() {
                                     ? 'text-emerald-400 font-bold'
                                     : isModifier
                                       ? 'text-purple-300'
-                                      : 'text-slate-300'
-                            }
+                                      : 'text-slate-200'
+                            }`}
                           >
                             {v.name}
                           </span>
                           <span
-                            className={`font-bold ${isDeduction
-                              ? 'text-amber-400'
-                              : isTax
-                                ? 'text-sky-400'
-                                : isSummary
-                                  ? 'text-emerald-400 text-sm'
-                                  : isModifier
-                                    ? 'text-purple-300 font-semibold'
-                                    : 'text-white'
-                              }`}
+                            className={`font-mono font-bold ${
+                              isDeduction
+                                ? 'text-amber-400 text-sm sm:text-base'
+                                : isTax
+                                  ? 'text-sky-400 text-sm sm:text-base'
+                                  : isSummary
+                                    ? 'text-emerald-400 text-base sm:text-lg font-extrabold'
+                                    : isModifier
+                                      ? 'text-purple-300 text-sm sm:text-base font-semibold'
+                                      : 'text-white text-sm sm:text-base'
+                            }`}
                           >
                             {v.formattedValue}
                           </span>
@@ -907,7 +927,7 @@ export default function HomePage() {
                                   value={tempNoteText}
                                   onChange={(e) => setTempNoteText(e.target.value)}
                                   placeholder="Add or edit note..."
-                                  className="w-full bg-slate-950 border border-emerald-500/50 rounded px-1.5 py-0.5 text-[11px] text-white focus:outline-none font-mono"
+                                  className="w-full bg-slate-950 border border-emerald-500/50 rounded px-2.5 py-1 text-xs sm:text-sm text-white focus:outline-none font-mono"
                                   autoFocus
                                   onKeyDown={(e) => {
                                     if (e.key === 'Enter') handleSaveNote(v);
@@ -917,7 +937,7 @@ export default function HomePage() {
                                 <button
                                   type="button"
                                   onClick={() => handleSaveNote(v)}
-                                  className="text-[10px] bg-emerald-700 hover:bg-emerald-600 text-white px-2 py-0.5 rounded font-semibold"
+                                  className="text-xs sm:text-sm bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded font-semibold font-mono"
                                 >
                                   Save
                                 </button>
@@ -930,10 +950,10 @@ export default function HomePage() {
                                   setTempNoteText(v.note || '');
                                 }}
                                 title="Click to edit note"
-                                className="group/note text-[10px] text-emerald-300 bg-emerald-950/40 hover:bg-emerald-900/40 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1.5 transition"
+                                className="group/note text-xs sm:text-sm text-emerald-300 bg-emerald-950/40 hover:bg-emerald-900/40 px-2.5 py-1 rounded-md border border-emerald-500/30 flex items-center gap-1.5 transition font-mono"
                               >
                                 <svg
-                                  className="w-2.5 h-2.5 text-emerald-400 shrink-0"
+                                  className="w-3.5 h-3.5 text-emerald-400 shrink-0"
                                   fill="none"
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
@@ -947,7 +967,7 @@ export default function HomePage() {
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
                                 </svg>
                                 <span>{v.note}</span>
-                                <span className="opacity-0 group-hover/note:opacity-100 text-[9px] text-slate-400 ml-0.5">✎</span>
+                                <span className="opacity-0 group-hover/note:opacity-100 text-[10px] text-slate-400 ml-0.5">✎</span>
                               </button>
                             ) : (
                               <button
@@ -956,14 +976,13 @@ export default function HomePage() {
                                   setEditingNoteId(v.id);
                                   setTempNoteText('');
                                 }}
-                                className="text-[10px] text-slate-500 hover:text-slate-300 font-mono transition"
+                                className="text-xs sm:text-sm text-slate-400 hover:text-slate-200 font-mono transition"
                               >
                                 + add note
                               </button>
                             )}
                           </div>
                         )}
-
                       </div>
                     );
                   })
@@ -972,23 +991,23 @@ export default function HomePage() {
 
               {/* Dedicated Calculation Metrics Block */}
               {calculatorOutput?.secondaryMetrics && calculatorOutput.secondaryMetrics.length > 0 && (
-                <div className="mt-6 pt-4 border-t border-slate-800/80 space-y-2.5 font-mono">
+                <div className="mt-6 pt-4 border-t border-slate-800/80 space-y-3 font-mono">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500 uppercase tracking-wider text-[10px] block">
+                    <span className="text-slate-400 uppercase tracking-wider text-xs sm:text-sm font-semibold block">
                       Calculation Metrics
                     </span>
-                    <span className="text-[10px] text-emerald-500 font-mono">Library Linked</span>
+                    <span className="text-xs sm:text-sm text-emerald-400 font-mono">Library Linked</span>
                   </div>
                   <div className="space-y-2">
                     {calculatorOutput.secondaryMetrics.map((metric, idx) => (
                       <div
                         key={idx}
-                        className="p-2.5 rounded border border-slate-800/80 bg-slate-900/60 flex justify-between items-center gap-4 text-xs"
+                        className="p-3.5 rounded-xl border border-slate-800/80 bg-slate-900/60 flex justify-between items-center gap-4 text-sm sm:text-base"
                       >
-                        <span className="text-slate-400 flex-1 min-w-0 pr-2 leading-relaxed">
+                        <span className="text-slate-300 flex-1 min-w-0 pr-2 leading-relaxed">
                           {metric.label}
                         </span>
-                        <span className="font-semibold text-slate-200 shrink-0 text-right whitespace-nowrap">
+                        <span className="font-bold text-white shrink-0 text-right whitespace-nowrap font-mono">
                           {metric.prefix || ''}
                           {metric.value}
                           {metric.suffix ? ` ${metric.suffix}` : ''}
@@ -1002,15 +1021,15 @@ export default function HomePage() {
 
             {/* Bottom Action Footer */}
             <div className="pt-6 border-t border-slate-800/80 space-y-3">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
                 {/* Copy Receipt Button with Line-Art SVG */}
                 <button
                   type="button"
                   onClick={handleCopyReceipt}
-                  className="flex-1 py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-white font-mono text-xs border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]"
+                  className="flex-1 py-3.5 px-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-white font-mono text-sm sm:text-base border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-2.5 shadow-sm active:scale-[0.98] font-medium"
                 >
                   <svg
-                    className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0"
+                    className="w-4 h-4 text-slate-400 group-hover:text-white shrink-0"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -1029,10 +1048,10 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handleDownloadReceipt}
-                  className="flex-1 py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-white font-mono text-xs border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]"
+                  className="flex-1 py-3.5 px-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-white font-mono text-sm sm:text-base border border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-2.5 shadow-sm active:scale-[0.98] font-medium"
                 >
                   <svg
-                    className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0"
+                    className="w-4 h-4 text-slate-400 group-hover:text-white shrink-0"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -1048,7 +1067,7 @@ export default function HomePage() {
                 </button>
               </div>
 
-              <div className="text-[10px] font-mono text-slate-600 text-center">
+              <div className="text-xs sm:text-sm font-mono text-slate-400 text-center">
                 Section C • Instant Calculation Ledger
               </div>
             </div>
@@ -1061,14 +1080,23 @@ export default function HomePage() {
          ────────────────────────────────────────────────────────── */}
       {activeMode === 'library' && (
         <section className="flex-1 p-8 overflow-y-auto">
-          <header className="mb-6">
-            <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-              <span>LIBRARY • {allCalculators.length} CALCULATORS</span>
+          <header className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                <span>LIBRARY • {allCalculators.length} CALCULATORS</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-wide uppercase font-mono">
+                Calculator Library
+              </h1>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-wide uppercase font-mono">
-              Calculator Library
-            </h1>
+            <Link
+              href="/library"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 hover:text-white transition text-xs sm:text-sm font-mono font-medium shadow-sm shrink-0"
+            >
+              <span>Explore All 487 Tools</span>
+              <span>→</span>
+            </Link>
           </header>
 
           <div className="mb-8 space-y-4">
@@ -1077,7 +1105,7 @@ export default function HomePage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search calculators across all categories..."
-              className="w-full max-w-3xl bg-[#161b22] border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono transition"
+              className="w-full max-w-3xl bg-[#161b22] border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono transition shadow-inner"
             />
           </div>
 
@@ -1102,24 +1130,24 @@ export default function HomePage() {
                           dangerouslySetInnerHTML={{ __html: category.iconSvg }}
                         />
                       </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                      <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
                         {category.groupCode}
                       </span>
                     </div>
 
-                    <h2 className="text-lg font-semibold text-white group-hover:text-emerald-400 transition">
+                    <h2 className="text-lg font-semibold text-white group-hover:text-emerald-400 transition font-sans">
                       {category.name}
                     </h2>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
                       {category.description}
                     </p>
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs font-mono">
+                  <div className="mt-6 pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs sm:text-sm font-mono">
                     <span className="text-slate-400">
                       {count} {count === 1 ? 'Calculator' : 'Calculators'}
                     </span>
-                    <span className="text-emerald-400 group-hover:translate-x-1 transition-transform">
+                    <span className="text-emerald-400 group-hover:translate-x-1 transition-transform font-medium">
                       Explore Category →
                     </span>
                   </div>
