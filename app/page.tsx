@@ -6,6 +6,13 @@ import { masterCategories } from '@/lib/categories';
 import { allCalculators } from '@/lib/calculators';
 import { executeCanvasScript, EvaluatedVariable } from '@/lib/canvasEngine';
 
+export interface CanvasTab {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: number;
+}
+
 interface HistoryItem {
   id: string;
   title: string;
@@ -36,6 +43,19 @@ export default function HomePage() {
   const [clearSheetTag, setClearSheetTag] = useState('');
   const modalInputRef = useRef<HTMLInputElement>(null);
 
+  // Multi-Tab Canvas Workspace State
+  const [tabs, setTabs] = useState<CanvasTab[]>([
+    {
+      id: 'tab-1',
+      title: 'Sheet 1',
+      content: DEFAULT_CANVAS_TEXT,
+      createdAt: 1,
+    },
+  ]);
+  const [activeTabId, setActiveTabId] = useState<string>('tab-1');
+  const [editingTabId, setEditingTabId] = useState<string | null>(null);
+  const [tempTabTitle, setTempTabTitle] = useState('');
+
   // Active note being edited in Section C
   // Inline tag editing in History Drawer
   const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
@@ -43,20 +63,58 @@ export default function HomePage() {
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [tempNoteText, setTempNoteText] = useState('');
 
-  // Canvas State initialized from LocalStorage or default
-  const [canvasCode, setCanvasCode] = useState<string>(DEFAULT_CANVAS_TEXT);
   const [isHydrated, setIsHydrated] = useState(false);
   const [calculatorOutput, setCalculatorOutput] = useState<{
     primaryOutput?: { label: string; value: string | number; prefix?: string; suffix?: string };
     secondaryMetrics?: { label: string; value: string | number; prefix?: string; suffix?: string }[];
   } | null>(null);
 
+  // Active Tab and Canvas Code derivation
+  const activeTab = useMemo(() => {
+    return tabs.find((t) => t.id === activeTabId) || tabs[0];
+  }, [tabs, activeTabId]);
+
+  const canvasCode = activeTab ? activeTab.content : '';
+
+  const setCanvasCode = (updater: string | ((prev: string) => string)) => {
+    setTabs((prevTabs) => {
+      const currentActiveId = activeTab?.id || prevTabs[0]?.id;
+      return prevTabs.map((t) => {
+        if (t.id === currentActiveId) {
+          const nextContent = typeof updater === 'function' ? updater(t.content) : updater;
+          return { ...t, content: nextContent };
+        }
+        return t;
+      });
+    });
+  };
+
   // 1. Hydrate from LocalStorage on mount
   useEffect(() => {
     try {
-      const savedActive = localStorage.getItem('solvehub_active_canvas');
-      if (savedActive !== null) {
-        setCanvasCode(savedActive);
+      const savedTabsData = localStorage.getItem('solvehub_canvas_tabs_v1');
+      if (savedTabsData) {
+        const parsed = JSON.parse(savedTabsData);
+        if (parsed && Array.isArray(parsed.tabs) && parsed.tabs.length > 0) {
+          setTabs(parsed.tabs);
+          if (parsed.activeTabId && parsed.tabs.some((t: CanvasTab) => t.id === parsed.activeTabId)) {
+            setActiveTabId(parsed.activeTabId);
+          } else {
+            setActiveTabId(parsed.tabs[0].id);
+          }
+        }
+      } else {
+        const savedActive = localStorage.getItem('solvehub_active_canvas');
+        if (savedActive !== null) {
+          setTabs([
+            {
+              id: 'tab-1',
+              title: 'Sheet 1',
+              content: savedActive,
+              createdAt: Date.now(),
+            },
+          ]);
+        }
       }
 
       const savedHistory = localStorage.getItem('solvehub_canvas_history');
@@ -73,15 +131,68 @@ export default function HomePage() {
     setIsHydrated(true);
   }, []);
 
-  // 2. Persist active canvas to LocalStorage
+  // 2. Persist tabs array and activeTabId in localStorage ('solvehub_canvas_tabs_v1')
   useEffect(() => {
     if (!isHydrated) return;
     try {
-      localStorage.setItem('solvehub_active_canvas', canvasCode);
+      localStorage.setItem(
+        'solvehub_canvas_tabs_v1',
+        JSON.stringify({ tabs, activeTabId })
+      );
+      const currentTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
+      if (currentTab) {
+        localStorage.setItem('solvehub_active_canvas', currentTab.content);
+      }
     } catch {
       // Ignore
     }
-  }, [canvasCode, isHydrated]);
+  }, [tabs, activeTabId, isHydrated]);
+
+  // Tab management helpers
+  const handleNewTab = () => {
+    const newId = `tab-${Date.now()}`;
+    const newTabNumber = tabs.length + 1;
+    const newTab: CanvasTab = {
+      id: newId,
+      title: `Sheet ${newTabNumber}`,
+      content: '',
+      createdAt: Date.now(),
+    };
+    setTabs((prev) => [...prev, newTab]);
+    setActiveTabId(newId);
+  };
+
+  const handleCloseTab = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (tabs.length <= 1) return; // Guard preventing deleting the last tab
+
+    const targetIndex = tabs.findIndex((t) => t.id === id);
+    const updatedTabs = tabs.filter((t) => t.id !== id);
+    setTabs(updatedTabs);
+
+    if (activeTabId === id) {
+      const nextIndex = Math.max(0, targetIndex - 1);
+      const fallbackTab = updatedTabs[nextIndex] || updatedTabs[0];
+      if (fallbackTab) {
+        setActiveTabId(fallbackTab.id);
+      }
+    }
+  };
+
+  const startRenameTab = (tab: CanvasTab, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setEditingTabId(tab.id);
+    setTempTabTitle(tab.title);
+  };
+
+  const saveRenameTab = (id: string) => {
+    const finalTitle = tempTabTitle.trim() || 'Untitled Sheet';
+    setTabs((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, title: finalTitle } : t))
+    );
+    setEditingTabId(null);
+  };
+
 
   // Autofocus modal input when clear modal opens
   useEffect(() => {
@@ -477,7 +588,7 @@ export default function HomePage() {
             <span className="bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded text-xs font-mono">
               S
             </span>
-            <span className="font-bold tracking-wider text-sm text-white font-mono">SolveHub</span>
+            <span className="font-bold tracking-wider text-[22px] text-white font-mono">SolveHub</span>
             <span className="text-[10px] text-slate-500 font-mono">v1.0</span>
           </div>
 
@@ -629,6 +740,94 @@ export default function HomePage() {
                   </button>
                 </div>
               )}
+            </div>
+
+            {/* Multi-Tab Workspace Strip */}
+            <div className="flex items-center justify-between mb-3 shrink-0">
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-[calc(100%-140px)]">
+                {tabs.map((tab) => {
+                  const isActive = tab.id === activeTabId;
+                  const isEditing = editingTabId === tab.id;
+                  return (
+                    <div
+                      key={tab.id}
+                      onClick={() => setActiveTabId(tab.id)}
+                      onDoubleClick={() => startRenameTab(tab)}
+                      className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer border select-none ${
+                        isActive
+                          ? 'bg-slate-800 text-white border-emerald-500/50 shadow-sm'
+                          : 'bg-slate-900/40 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border-slate-800'
+                      }`}
+                    >
+                      {/* Active Tab Indicator */}
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                          isActive ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-transparent'
+                        }`}
+                      />
+
+                      {/* Title or Inline Edit Input */}
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={tempTabTitle}
+                          onChange={(e) => setTempTabTitle(e.target.value)}
+                          onBlur={() => saveRenameTab(tab.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') saveRenameTab(tab.id);
+                            if (e.key === 'Escape') setEditingTabId(null);
+                          }}
+                          className="w-24 bg-slate-950 border border-emerald-500 rounded px-1.5 py-0.5 text-xs text-white focus:outline-none"
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <span className="truncate max-w-[120px] font-medium" title={tab.title}>
+                          {tab.title}
+                        </span>
+                      )}
+
+                      {/* Pencil to rename */}
+                      {!isEditing && (
+                        <button
+                          type="button"
+                          onClick={(e) => startRenameTab(tab, e)}
+                          title="Rename Sheet"
+                          className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-emerald-400 transition text-[11px]"
+                        >
+                          ✎
+                        </button>
+                      )}
+
+                      {/* Close tab button (✕) with guard preventing deleting the last tab */}
+                      {tabs.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleCloseTab(tab.id, e)}
+                          title="Close Sheet"
+                          className="text-slate-500 hover:text-rose-400 opacity-60 hover:opacity-100 transition text-[11px] ml-0.5"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* + New Sheet Button */}
+                <button
+                  type="button"
+                  onClick={handleNewTab}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-emerald-400 border border-dashed border-slate-700 hover:border-emerald-500/50 transition text-xs font-mono shrink-0"
+                >
+                  <span className="text-emerald-400 font-bold">+</span>
+                  <span>New Sheet</span>
+                </button>
+              </div>
+
+              <div className="text-[11px] font-mono text-slate-500 shrink-0">
+                Sheet {tabs.findIndex((t) => t.id === activeTabId) + 1} of {tabs.length}
+              </div>
             </div>
 
             {/* Technical Dot-Grid Canvas Notepad */}
