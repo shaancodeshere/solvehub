@@ -12,7 +12,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 3,
         monthlySearches: '60K',
         cpc: '$0.09',
-        description: "IP Subnet Calculator tool.",
+        description: "An IP Subnet Calculator calculates network boundaries, broadcast addresses, usable host ranges, and CIDR subnet masks for IPv4 networking.",
         inputs: [
             { id: 'ipAddress', name: 'IP Address (IPv4)', type: 'text', defaultValue: '192.168.1.50', tooltip: 'IPv4 address (e.g. 192.168.1.1).' },
             { id: 'cidrPrefix', name: 'Subnet CIDR Prefix', type: 'dropdown', defaultValue: 24, options: [{ label: '/8 (255.0.0.0 - 16.7M hosts)', value: 8 }, { label: '/16 (255.255.0.0 - 65,534 hosts)', value: 16 }, { label: '/24 (255.255.255.0 - 254 hosts)', value: 24 }, { label: '/25 (255.255.255.128 - 126 hosts)', value: 25 }, { label: '/26 (255.255.255.192 - 62 hosts)', value: 26 }, { label: '/27 (255.255.255.224 - 30 hosts)', value: 27 }, { label: '/28 (255.255.255.240 - 14 hosts)', value: 28 }, { label: '/29 (255.255.255.248 - 6 hosts)', value: 29 }, { label: '/30 (255.255.255.252 - 2 hosts Point-to-Point)', value: 30 }], tooltip: 'Subnet prefix.' }
@@ -80,7 +80,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '210',
         cpc: 'N/A',
-        description: "Data Storage Converter tool.",
+        description: "A Data Storage Converter translates digital storage capacity across decimal (MB, GB, TB, PB) and binary IEC standard units (MiB, GiB, TiB).",
         inputs: [
             { id: 'storageValue', name: 'Storage Quantity', type: 'number', defaultValue: 1, min: 0.001, step: 1, tooltip: 'Amount of data.' },
             { id: 'unitFrom', name: 'Source Storage Unit', type: 'dropdown', defaultValue: 'TB', options: [{ label: 'Megabytes (MB - 10⁶)', value: 'MB' }, { label: 'Gigabytes (GB - 10⁹)', value: 'GB' }, { label: 'Terabytes (TB - 10¹²)', value: 'TB' }, { label: 'Petabytes (PB - 10¹⁵)', value: 'PB' }, { label: 'Gibibytes (GiB - 2³⁰)', value: 'GiB' }, { label: 'Tebibytes (TiB - 2⁴⁰)', value: 'TiB' }], tooltip: 'Unit to convert from.' }
@@ -128,7 +128,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 3,
         monthlySearches: '27K',
         cpc: '$0.70',
-        description: "Download Time Calculator tool.",
+        description: "A Download Time Calculator estimates file transfer and download durations based on total file size and actual network bandwidth speed.",
         inputs: [
             { id: 'fileSize', name: 'File / Game / Video Size', type: 'number', defaultValue: 60, min: 0.1, step: 5, tooltip: 'Size of file.' },
             { id: 'sizeUnit', name: 'File Size Unit', type: 'dropdown', defaultValue: 'GB', options: [{ label: 'Gigabytes (GB)', value: 'GB' }, { label: 'Megabytes (MB)', value: 'MB' }, { label: 'Terabytes (TB)', value: 'TB' }], tooltip: 'Unit.' },
@@ -189,7 +189,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '4K',
         cpc: '$0.02',
-        description: "RGB to Hex Calculator tool.",
+        description: "An RGB to Hex Calculator converts red, green, and blue (0-255) color channels into 6-digit hex color codes with HSL and CMYK equivalents.",
         inputs: [
             { id: 'red', name: 'Red Channel (R: 0-255)', type: 'number', defaultValue: 59, min: 0, max: 255, step: 1, tooltip: 'Red intensity.' },
             { id: 'green', name: 'Green Channel (G: 0-255)', type: 'number', defaultValue: 130, min: 0, max: 255, step: 1, tooltip: 'Green intensity.' },
@@ -248,7 +248,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '3K',
         cpc: '$0.02',
-        description: "Hex to RGB Calculator tool.",
+        description: "A Hex to RGB Calculator decodes CSS hexadecimal color strings into decimal RGB component channels and web color tokens.",
         inputs: [
             { id: 'hexInput', name: 'Hex Color Code', type: 'text', defaultValue: '#3B82F6', tooltip: '6-character or 3-character hex (e.g. #3B82F6 or #FFF).' }
         ],
@@ -308,7 +308,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 3,
         monthlySearches: '50K',
         cpc: '$1.38',
-        description: "Aspect Ratio Calculator tool.",
+        description: "An Aspect Ratio Calculator calculates display dimensions, pixel resolution scaling, and standard aspect ratio proportions (16:9, 4:3, 21:9).",
         inputs: [
             { id: 'originalWidth', name: 'Original Width (Pixels)', type: 'number', defaultValue: 1920, min: 1, step: 10, suffix: 'px', tooltip: 'Width dimension.' },
             { id: 'originalHeight', name: 'Original Height (Pixels)', type: 'number', defaultValue: 1080, min: 1, step: 10, suffix: 'px', tooltip: 'Height dimension.' },
@@ -358,7 +358,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: '880',
         cpc: 'N/A',
-        description: "Screen Resolution Calculator tool.",
+        description: "A Screen Resolution Calculator analyzes total pixel counts, aspect ratios, display standards (FHD, 4K, 8K), and pixel densities.",
         inputs: [
             { id: 'horizPixels', name: 'Horizontal Pixels', type: 'number', defaultValue: 3840, min: 100, step: 100, suffix: 'px', tooltip: 'Horizontal resolution.' },
             { id: 'vertPixels', name: 'Vertical Pixels', type: 'number', defaultValue: 2160, min: 100, step: 100, suffix: 'px', tooltip: 'Vertical resolution.' },
@@ -402,7 +402,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: '20',
         cpc: '$3.89',
-        description: "Server Uptime Calculator tool.",
+        description: "A Server Uptime Calculator calculates permitted downtime thresholds across high-availability SLA tiers from 99% to 99.999% (Five Nines).",
         inputs: [
             { id: 'slaPercentage', name: 'Target SLA Uptime (%)', type: 'dropdown', defaultValue: 99.9, options: [{ label: '99% ("Two Nines")', value: 99.0 }, { label: '99.5% Uptime', value: 99.5 }, { label: '99.9% ("Three Nines")', value: 99.9 }, { label: '99.95% ("High Availability")', value: 99.95 }, { label: '99.99% ("Four Nines")', value: 99.99 }, { label: '99.999% ("Five Nines - Mission Critical")', value: 99.999 }], tooltip: 'SLA guarantee.' }
         ],
@@ -451,7 +451,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Hash Calculator tool.",
+        description: "A Hash Generator & Calculator computes standard cryptographic message digests (SHA-256, MD5, SHA-1, Base64) for data verification.",
         inputs: [
             { id: 'algorithm', name: 'Cryptographic Hash Function', type: 'dropdown', defaultValue: 'sha256', options: [{ label: 'SHA-256 (256-bit Secure)', value: 'sha256' }, { label: 'SHA-512 (512-bit Secure)', value: 'sha512' }, { label: 'SHA-1 (160-bit Deprecated)', value: 'sha1' }, { label: 'MD5 (128-bit Broken / Insecure)', value: 'md5' }, { label: 'bcrypt / Argon2 (Adaptive Password Hash)', value: 'bcrypt' }], tooltip: 'Hash algorithm.' },
             { id: 'inputLengthChars', name: 'Input String Length (Characters)', type: 'number', defaultValue: 32, min: 1, max: 1000000, step: 8, tooltip: 'Length of input plaintext.' }
@@ -511,7 +511,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "API Response Time Calculator tool.",
+        description: "An API Response Time Calculator computes p50, p90, p95, and p99 latency percentiles and throughput metrics for web services and APIs.",
         inputs: [
             { id: 'dnsTimeMs', name: 'DNS Lookup Latency (ms)', type: 'number', defaultValue: 15, min: 0, step: 5, suffix: 'ms', tooltip: 'DNS resolution time.' },
             { id: 'tcpTlsTimeMs', name: 'TCP + TLS Handshake (ms)', type: 'number', defaultValue: 45, min: 0, step: 5, suffix: 'ms', tooltip: 'Connection setup.' },

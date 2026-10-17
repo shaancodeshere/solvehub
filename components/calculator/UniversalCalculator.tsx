@@ -207,22 +207,22 @@ export default function UniversalCalculator({ calculatorId, initialParams }: Pro
     };
 
     return (
-        <div className="max-w-3xl w-full mx-auto p-6 sm:p-8 bg-[#161b22] rounded-2xl shadow-2xl border border-slate-800 text-slate-100 font-mono">
+        <div className="max-w-3xl w-full mx-auto p-6 sm:p-8 bg-[var(--surface)] dark:bg-[#161b22] rounded-2xl shadow-2xl border border-[var(--border)] dark:border-slate-800 text-slate-800 dark:text-slate-100 font-mono transition-colors">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-wide">{calculator.name}</h1>
-                <p className="text-sm sm:text-base text-slate-400 mt-2 font-sans leading-relaxed">{calculator.description}</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-wide">{calculator.name}</h1>
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2 font-sans leading-relaxed">{calculator.description}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Form Inputs */}
                 <div className="space-y-5">
-                    <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+                    <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         Parameters
                     </h2>
                     {calculator.inputs.map((input) => (
                         <div key={input.id} className="space-y-1.5">
-                            <label className="block text-sm font-medium text-slate-300">
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 {input.name}
                             </label>
 
@@ -231,7 +231,7 @@ export default function UniversalCalculator({ calculatorId, initialParams }: Pro
                                 <select
                                     value={formValues[input.id] ?? input.defaultValue}
                                     onChange={(e) => handleInputChange(input.id, e.target.value)}
-                                    className="w-full rounded-xl border border-slate-700 bg-slate-900 py-2 px-3 text-sm text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 py-2 px-3 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                                 >
                                     {input.options?.map((opt) => (
                                         <option key={opt.value} value={opt.value}>
@@ -261,7 +261,7 @@ export default function UniversalCalculator({ calculatorId, initialParams }: Pro
                                                     : e.target.value
                                             )
                                         }
-                                        className={`w-full rounded-xl border border-slate-700 bg-slate-900 py-2 px-3 text-sm text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none ${input.prefix ? 'pl-8' : ''
+                                        className={`w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 py-2 px-3 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none ${input.prefix ? 'pl-8' : ''
                                             } ${input.suffix ? 'pr-12' : ''}`}
                                     />
                                     {input.suffix && (
@@ -276,22 +276,24 @@ export default function UniversalCalculator({ calculatorId, initialParams }: Pro
                 </div>
 
                 {/* Dynamic Output Receipt */}
-                <div className="bg-[#0e131b] p-6 sm:p-7 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                <div className="bg-[var(--surface-subtle)] dark:bg-[#0e131b] p-6 sm:p-7 rounded-2xl border border-[var(--border)] dark:border-slate-800 flex flex-col justify-between">
                     <div>
-                        <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+                        <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">
                             Calculation Output
                         </h2>
 
                         {/* Primary Metric Card */}
-                        <div className="p-5 bg-emerald-950/40 border border-emerald-500/40 rounded-xl mb-5">
-                            <span className="text-sm font-semibold text-emerald-400 uppercase tracking-wide block">
+                        <div className="p-5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/40 rounded-xl mb-5">
+                            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block mb-1.5">
                                 {result.primaryOutput.label}
                             </span>
-                            <div className="text-2xl sm:text-3xl font-mono font-bold text-white mt-1.5 break-all">
-                                {result.primaryOutput.prefix}
-                                {result.primaryOutput.value}
+                            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                                <span className="text-2xl sm:text-3xl font-mono font-bold text-slate-900 dark:text-white tracking-tight break-words">
+                                    {result.primaryOutput.prefix}
+                                    {result.primaryOutput.value}
+                                </span>
                                 {result.primaryOutput.suffix && (
-                                    <span className="text-sm sm:text-base font-normal text-emerald-300 ml-1.5">
+                                    <span className="text-sm sm:text-base font-sans font-medium text-emerald-700 dark:text-emerald-300">
                                         {result.primaryOutput.suffix}
                                     </span>
                                 )}
@@ -304,8 +306,8 @@ export default function UniversalCalculator({ calculatorId, initialParams }: Pro
                             onClick={handleSendToCanvas}
                             disabled={isSent || result.primaryOutput.label === 'Error'}
                             className={`w-full py-2.5 px-3.5 rounded-xl border text-sm font-mono font-medium transition flex items-center justify-center gap-2 mb-5 shadow-sm active:scale-[0.98] ${isSent
-                                ? 'bg-emerald-900/80 border-emerald-500 text-white'
-                                : 'bg-emerald-950/50 hover:bg-emerald-900/60 border-emerald-500/40 hover:border-emerald-500 text-emerald-300 hover:text-white'
+                                ? 'bg-emerald-600 dark:bg-emerald-900/80 border-emerald-500 text-white'
+                                : 'bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 border-emerald-500/40 hover:border-emerald-500 dark:text-emerald-300 dark:hover:text-white'
                                 }`}
                         >
                             <svg
@@ -325,10 +327,10 @@ export default function UniversalCalculator({ calculatorId, initialParams }: Pro
                                 {result.secondaryMetrics.map((metric, idx) => (
                                     <div
                                         key={idx}
-                                        className="flex justify-between items-center text-sm border-b border-slate-800/80 pb-2.5"
+                                        className="flex justify-between items-center text-sm border-b border-slate-200 dark:border-slate-800/80 pb-2.5 gap-4"
                                     >
-                                        <span className="text-slate-400">{metric.label}</span>
-                                        <span className="font-semibold text-slate-200">
+                                        <span className="text-slate-600 dark:text-slate-400 shrink-0 text-xs sm:text-sm">{metric.label}</span>
+                                        <span className="font-mono font-semibold text-slate-900 dark:text-slate-200 text-right break-words text-xs sm:text-sm">
                                             {metric.prefix}
                                             {metric.value}
                                             {metric.suffix ? ` ${metric.suffix}` : ''}

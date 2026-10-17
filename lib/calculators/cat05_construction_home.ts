@@ -1523,7 +1523,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
             const millimeters = (resultInches * 25.4).toFixed(1);
 
             return {
-                primaryOutput: { label: 'Result (Feet & Inches)', value: formattedResult, suffix: `${resultInches.toFixed(3)}"` },
+                primaryOutput: { label: 'Result (Feet & Inches)', value: formattedResult },
                 secondaryMetrics: [
                     { label: 'Total Inches (Decimal)', value: `${resultInches.toFixed(3)} inches` },
                     { label: 'Total Feet (Decimal)', value: `${(resultInches / 12).toFixed(4)} feet` },

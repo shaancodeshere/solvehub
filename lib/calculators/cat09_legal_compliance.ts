@@ -12,7 +12,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 3,
         monthlySearches: '5K',
         cpc: '$1.03',
-        description: "Alimony Calculator tool.",
+        description: "An Alimony Calculator estimates monthly spousal support obligations and duration based on income disparity, marriage length, and statutory guideline formulas.",
         inputs: [
             { id: 'payerMonthlyGross', name: 'Higher Earner Monthly Gross Income', type: 'number', defaultValue: 9500, min: 1000, step: 500, prefix: '$', tooltip: 'Payer monthly gross.' },
             { id: 'recipientMonthlyGross', name: 'Lower Earner Monthly Gross Income', type: 'number', defaultValue: 3200, min: 0, step: 250, prefix: '$', tooltip: 'Recipient monthly gross.' },
@@ -79,7 +79,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Child Support Calculator tool.",
+        description: "A Child Support Calculator computes statutory monthly child maintenance contributions using parent net income shares, number of dependents, and childcare expenses.",
         inputs: [
             { id: 'payerNetMonthly', name: 'Non-Custodial Parent Monthly Net Income', type: 'number', defaultValue: 5200, min: 500, step: 250, prefix: '$', tooltip: 'Net monthly take-home.' },
             { id: 'recipientNetMonthly', name: 'Custodial Parent Monthly Net Income', type: 'number', defaultValue: 3400, min: 0, step: 250, prefix: '$', tooltip: 'Net monthly take-home.' },
@@ -129,7 +129,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 3,
         monthlySearches: '5K',
         cpc: '$4.78',
-        description: "Legal Fee Calculator tool.",
+        description: "A Legal Fee Calculator estimates total attorney fees and out-of-pocket litigation costs across hourly billing, contingency agreements, and flat retainer structures.",
         inputs: [
             { id: 'feeStructure', name: 'Attorney Billing Arrangement', type: 'dropdown', defaultValue: 'hourly', options: [{ label: 'Hourly Billing Rate', value: 'hourly' }, { label: 'Contingency Fee (% of Settlement)', value: 'contingency' }, { label: 'Flat Fee / Retainer', value: 'flat' }], tooltip: 'Billing model.' },
             { id: 'hourlyRate', name: 'Attorney Hourly Rate ($/hr)', type: 'number', defaultValue: 375, min: 50, step: 25, prefix: '$', tooltip: 'Hourly fee.' },
@@ -184,7 +184,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '590',
         cpc: '$8.79  ★ HIGH CPC',
-        description: "Workers Compensation Calculator tool.",
+        description: "A Workers' Compensation Calculator estimates temporary disability benefits and wage replacement payments based on pre-injury average weekly earnings.",
         inputs: [
             { id: 'grossWeeklyWage', name: 'Pre-Injury Average Weekly Wage ($)', type: 'number', defaultValue: 1350, min: 100, step: 50, prefix: '$', tooltip: 'Gross weekly earnings.' },
             { id: 'weeksOffWork', name: 'Temporary Total Disability Weeks (TTD)', type: 'number', defaultValue: 16, min: 1, max: 104, step: 1, suffix: 'weeks', tooltip: 'Weeks unable to work.' },
@@ -231,7 +231,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '70',
         cpc: '$0.76',
-        description: "Employment Severance Calculator tool.",
+        description: "An Employment Severance Calculator estimates statutory and contractual severance pay, notice period compensation, and accrued benefits payout upon job termination.",
         inputs: [
             { id: 'annualSalary', name: 'Annual Base Salary ($)', type: 'number', defaultValue: 95000, min: 10000, step: 2500, prefix: '$', tooltip: 'Yearly salary.' },
             { id: 'yearsOfService', name: 'Years with Employer', type: 'number', defaultValue: 6, min: 0.5, max: 40, step: 0.5, suffix: 'yrs', tooltip: 'Tenure.' },
@@ -278,7 +278,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '3K',
         cpc: '$14.03  ★ HIGH CPC',
-        description: "Settlement Calculator tool.",
+        description: "A Personal Injury Settlement Calculator evaluates fair compensation values for economic damages, medical bills, lost wages, and pain & suffering multipliers.",
         inputs: [
             { id: 'medicalBills', name: 'Past & Future Medical Expenses ($)', type: 'number', defaultValue: 30000, min: 500, step: 2500, prefix: '$', tooltip: 'Total medical bills.' },
             { id: 'lostWages', name: 'Lost Wages & Income ($)', type: 'number', defaultValue: 9500, min: 0, step: 500, prefix: '$', tooltip: 'Lost earnings.' },
@@ -323,7 +323,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Court Fine Calculator tool.",
+        description: "A Court Fine Calculator estimates total legal penalties, statutory surcharges, administrative assessments, and restitution costs.",
         inputs: [
             { id: 'baseFine', name: 'Statutory Base Citation Fine ($)', type: 'number', defaultValue: 100, min: 10, step: 25, prefix: '$', tooltip: 'Base ticket fine.' },
             { id: 'penaltyAssessmentFactor', name: 'State Penalty Assessment Rate', type: 'dropdown', defaultValue: 2.6, options: [{ label: 'Standard State ($26 per $10 base - 260%)', value: 2.6 }, { label: 'High Assessment State (300%)', value: 3.0 }, { label: 'Low Assessment State (150%)', value: 1.5 }], tooltip: 'Mandatory surcharges.' },
@@ -362,7 +362,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Statute of Limitations Calculator tool.",
+        description: "A Statute of Limitations Calculator tracks legal filing deadlines and expiration dates across civil, personal injury, and contract claims.",
         inputs: [
             { id: 'yearsSinceIncident', name: 'Years Elapsed Since Incident / Breach', type: 'number', defaultValue: 1.5, min: 0.1, max: 20, step: 0.25, suffix: 'yrs', tooltip: 'Time since incident.' },
             { id: 'claimType', name: 'Legal Cause of Action', type: 'dropdown', defaultValue: 'personal_injury', options: [{ label: 'Personal Injury / Car Accident (2 Years)', value: 'personal_injury' }, { label: 'Written Contract Breach (4-6 Years)', value: 'written_contract' }, { label: 'Oral / Verbal Agreement (2 Years)', value: 'oral_contract' }, { label: 'Medical Malpractice (2.5 Years)', value: 'med_mal' }, { label: 'Property Damage (3 Years)', value: 'property_damage' }, { label: 'Defamation / Slander / Libel (1 Year)', value: 'defamation' }], tooltip: 'Cause of action.' }
@@ -410,7 +410,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Contract Value Calculator tool.",
+        description: "A Contract Value Calculator assesses Total Contract Value (TCV), Annual Contract Value (ACV), price escalations, and contingency scope reserves.",
         inputs: [
             { id: 'baseAnnualValue', name: 'Annual Contract Base Value ($)', type: 'number', defaultValue: 120000, min: 1000, step: 5000, prefix: '$', tooltip: 'Base yearly value.' },
             { id: 'contractTermYears', name: 'Contract Term (Years)', type: 'number', defaultValue: 3, min: 1, max: 10, step: 1, suffix: 'yrs', tooltip: 'Agreement length.' },
@@ -462,7 +462,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
         inputs: [
             { id: 'infringementTier', name: 'GDPR Infringement Classification', type: 'dropdown', defaultValue: 'tier2_severe', options: [{ label: 'Tier 2 Severe: Art 5, 6, 9 Data Breach / Consent / Rights (Up to €20M or 4% Turnover)', value: 'tier2_severe' }, { label: 'Tier 1 Standard: Art 8, 11, 25-39 Security / DPO / Records (Up to €10M or 2% Turnover)', value: 'tier1_standard' }], tooltip: 'Statutory infringement severity under Article 83.' },
             { id: 'globalTurnoverEUR', name: 'Annual Global Corporate Turnover (€ EUR)', type: 'number', defaultValue: 150000000, min: 100000, step: 5000000, prefix: '€', tooltip: 'Preceding financial year total global revenue.' },
-            { id: 'culpabilityLevel', name: 'Culpability & Mitigating Factors', type: 'dropdown', defaultValue: 'moderate', options: [{ label: 'High / Intentional Negligence (80% Exposure Factor)', value: 0.80 }, { label: 'Moderate Negligence / Cooperative (45% Exposure Factor)', value: 0.45 }, { label: 'Minor Technical Oversight / Self-Reported (20% Exposure Factor)', value: 0.20 }], tooltip: 'Mitigating circumstances factor.' }
+            { id: 'culpabilityLevel', name: 'Culpability & Mitigating Factors', type: 'dropdown', defaultValue: 0.45, options: [{ label: 'High / Intentional Negligence (80% Exposure Factor)', value: 0.80 }, { label: 'Moderate Negligence / Cooperative (45% Exposure Factor)', value: 0.45 }, { label: 'Minor Technical Oversight / Self-Reported (20% Exposure Factor)', value: 0.20 }], tooltip: 'Mitigating circumstances factor.' }
         ],
         naturalLanguageQueries: ["GDPR fine calculator maximum penalty", "Calculate GDPR Article 83 statutory fine percentage turnover", "EU data protection fine exposure calculator"],
         edgeCases: ["Turnover where percentage exceeds static €20M cap", "Zero turnover", "Non-profit or governmental exemptions"],

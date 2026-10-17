@@ -12,7 +12,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Air Quality Index Calculator tool.",
+        description: "An Air Quality Index (AQI) Calculator converts particulate matter (PM2.5, PM10) and ozone concentrations into standardized EPA Air Quality Index scores and health advisory tiers.",
         inputs: [
             { id: 'pollutantType', name: 'Air Pollutant Parameter', type: 'dropdown', defaultValue: 'pm25', options: [{ label: 'Fine Particulate Matter (PM2.5 - µg/m³)', value: 'pm25' }, { label: 'Coarse Particulate Matter (PM10 - µg/m³)', value: 'pm10' }, { label: 'Ozone (O3 - 8-hr ppb)', value: 'o3' }, { label: 'Carbon Monoxide (CO - 8-hr ppm)', value: 'co' }], tooltip: 'Pollutant type.' },
             { id: 'concentrationValue', name: 'Measured Concentration', type: 'number', defaultValue: 35.4, min: 0, step: 1, tooltip: 'Concentration reading.' }
@@ -70,7 +70,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '3K',
         cpc: '$12.56  ★ HIGH CPC',
-        description: "Water Footprint Calculator tool.",
+        description: "A Water Footprint Calculator assesses direct and indirect daily water consumption across dietary choices, household hygiene, and lifestyle habits.",
         inputs: [
             { id: 'dietChoice', name: 'Dietary Lifestyle', type: 'dropdown', defaultValue: 'omnivore', options: [{ label: 'Meat Heavy (Red meat daily - ~1,200 gal/day virtual water)', value: 'heavy_meat' }, { label: 'Average Omnivore (~850 gal/day)', value: 'omnivore' }, { label: 'Pescatarian (~650 gal/day)', value: 'pesc' }, { label: 'Vegetarian (~500 gal/day)', value: 'veg' }, { label: 'Vegan (~350 gal/day)', value: 'vegan' }], tooltip: 'Diet virtual water.' },
             { id: 'dailyShowerMins', name: 'Daily Shower Duration (Minutes)', type: 'number', defaultValue: 10, min: 2, max: 45, step: 1, suffix: 'min', tooltip: 'Shower length.' },
@@ -118,7 +118,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Tree Planting Impact Calculator tool.",
+        description: "A Tree Planting Impact Calculator estimates cumulative carbon sequestration, oxygen production, and stormwater runoff mitigation over a tree lifecycle.",
         inputs: [
             { id: 'treesCount', name: 'Number of Trees Planted', type: 'number', defaultValue: 25, min: 1, step: 5, tooltip: 'Number of saplings.' },
             { id: 'treeType', name: 'Tree Species Growth Profile', type: 'dropdown', defaultValue: 'hardwood', options: [{ label: 'Deciduous Hardwood (Oak/Maple - 48 lbs CO2/yr)', value: 'hardwood' }, { label: 'Evergreen Conifer (Pine/Spruce - 35 lbs CO2/yr)', value: 'conifer' }, { label: 'Fast-Growing Hybrid (Poplar/Willow - 60 lbs CO2/yr)', value: 'fast' }], tooltip: 'Species sequestration.' },
@@ -167,7 +167,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '12K',
         cpc: '$4.08',
-        description: "Ecological Footprint Calculator tool.",
+        description: "An Ecological Footprint Calculator computes personal resource consumption in global hectares (gha) and equivalent planets required to sustain your lifestyle.",
         inputs: [
             { id: 'housingType', name: 'Housing & Space Type', type: 'dropdown', defaultValue: 'suburban', options: [{ label: 'Small Apartment / Condo (Low resource footprint)', value: 'apt' }, { label: 'Medium Suburban Single Family Home', value: 'suburban' }, { label: 'Large Detached Home / Acreage', value: 'large' }], tooltip: 'Housing footprint.' },
             { id: 'commuteMilesWeekly', name: 'Weekly Driving Miles', type: 'number', defaultValue: 180, min: 0, step: 25, suffix: 'mi', tooltip: 'Commute distance.' },
@@ -218,7 +218,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Renewable Energy Savings Calculator tool.",
+        description: "A Renewable Energy Savings Calculator models annual electric utility bill reductions, payback horizons, and carbon offsets from clean energy installations.",
         inputs: [
             { id: 'currentMonthlyElectricBill', name: 'Average Monthly Electric Bill ($)', type: 'number', defaultValue: 175, min: 25, step: 25, prefix: '$', tooltip: 'Current utility bill.' },
             { id: 'renewableOffsetPct', name: 'Renewable Power Offset (%)', type: 'number', defaultValue: 90, min: 20, max: 120, step: 5, suffix: '%', tooltip: 'Target coverage.' },
@@ -266,7 +266,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: '320',
         cpc: '$4.24',
-        description: "Food Carbon Footprint Calculator tool.",
+        description: "A Food Carbon Footprint Calculator quantifies annual greenhouse gas emissions (kg CO2e) associated with dietary habits, red meat consumption, and grocery sourcing.",
         inputs: [
             { id: 'beefServingsWeek', name: 'Beef / Lamb Meals per Week', type: 'number', defaultValue: 3, min: 0, max: 21, step: 1, tooltip: 'Red meat meals (~6.5 kg CO2e each).' },
             { id: 'poultryPorkServingsWeek', name: 'Chicken / Pork / Fish Meals per Week', type: 'number', defaultValue: 5, min: 0, max: 21, step: 1, tooltip: 'Poultry meals (~1.8 kg CO2e each).' },
@@ -310,7 +310,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Recycling Savings Calculator tool.",
+        description: "A Recycling Savings Calculator computes diverted landfill volume, conserved kilowatt-hours of energy, and greenhouse gas emissions avoided from material recycling.",
         inputs: [
             { id: 'aluminumCansWeekly', name: 'Aluminum Beverage Cans / Week', type: 'number', defaultValue: 14, min: 0, step: 2, tooltip: 'Cans recycled.' },
             { id: 'plasticBottlesWeekly', name: 'Plastic Bottles (PET) / Week', type: 'number', defaultValue: 10, min: 0, step: 2, tooltip: 'Bottles recycled.' },
@@ -362,7 +362,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Electric Vehicle Savings Calculator tool.",
+        description: "An Electric Vehicle Savings Calculator compares fuel and maintenance expenses between electric vehicles (EV) and internal combustion engine (ICE) automobiles.",
         inputs: [
             { id: 'annualMiles', name: 'Annual Driving Miles', type: 'number', defaultValue: 13500, min: 1000, step: 500, suffix: 'mi', tooltip: 'Miles driven per year.' },
             { id: 'gasolinePrice', name: 'Gasoline Price ($/Gallon)', type: 'number', defaultValue: 3.65, min: 1.0, step: 0.1, prefix: '$', tooltip: 'Current gas price.' },
@@ -407,7 +407,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Solar Savings Calculator tool.",
+        description: "A Solar Savings Calculator computes rooftop solar photovoltaic energy generation, net metering credits, federal tax incentives, and payback timelines.",
         inputs: [
             { id: 'systemCapacityKW', name: 'Rooftop System Capacity (kW DC)', type: 'number', defaultValue: 8.5, min: 2, max: 40, step: 0.5, suffix: 'kW', tooltip: 'System size.' },
             { id: 'costPerWatt', name: 'Gross Installation Cost ($/Watt)', type: 'number', defaultValue: 2.85, min: 1.5, max: 5.0, step: 0.1, prefix: '$', tooltip: 'Cost per watt before tax credit.' },
@@ -460,7 +460,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Water Conservation Calculator tool.",
+        description: "A Water Conservation Calculator projects annual water savings and utility bill reductions from low-flow aerators, dual-flush toilets, and efficient irrigation.",
         inputs: [
             { id: 'householdSize', name: 'Number of Household Members', type: 'number', defaultValue: 3, min: 1, max: 10, step: 1, tooltip: 'People in home.' },
             { id: 'showerFixtureUpgrade', name: 'Low-Flow Showerhead Upgrade', type: 'dropdown', defaultValue: 'yes', options: [{ label: 'Yes (Upgrade 2.5 GPM to 1.75 GPM)', value: 'yes' }, { label: 'No Upgrade', value: 'no' }], tooltip: 'Shower retrofit.' },
@@ -510,7 +510,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Food Waste Calculator tool.",
+        description: "A Food Waste Calculator estimates the financial cost, wasted grocery expenses, and landfill methane emissions generated by uneaten household food.",
         inputs: [
             { id: 'weeklyGroceryBill', name: 'Weekly Grocery Spending ($)', type: 'number', defaultValue: 185, min: 20, step: 10, prefix: '$', tooltip: 'Weekly grocery cost.' },
             { id: 'estimatedWastePercent', name: 'Estimated Food Uneaten / Discarded (%)', type: 'dropdown', defaultValue: 20, options: [{ label: '10% (Low / Strict Meal Planning)', value: 10 }, { label: '20% (Moderate Household Waste)', value: 20 }, { label: '30% (US National Average)', value: 30 }, { label: '40% (High Waste / Expired Produce)', value: 40 }], tooltip: 'Discarded percentage.' }
@@ -549,7 +549,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Plastic Usage Calculator tool.",
+        description: "A Plastic Usage Calculator tracks annual single-use plastic consumption, ocean pollution footprint, and waste reduction benchmarks.",
         inputs: [
             { id: 'bottlesWeek', name: 'Plastic Beverage Bottles / Week', type: 'number', defaultValue: 6, min: 0, step: 1, tooltip: 'Single-use bottles.' },
             { id: 'bagsWeek', name: 'Plastic Shopping Bags / Week', type: 'number', defaultValue: 8, min: 0, step: 2, tooltip: 'Grocery bags.' },
@@ -592,7 +592,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Home Energy Audit Calculator tool.",
+        description: "A Home Energy Audit Calculator evaluates residential heating, cooling, insulation, and appliance energy efficiency opportunities to reduce monthly power bills.",
         inputs: [
             { id: 'homeSqFt', name: 'Home Conditioned Area (Sq Ft)', type: 'number', defaultValue: 2200, min: 400, step: 100, suffix: 'sq ft', tooltip: 'House square footage.' },
             { id: 'annualEnergyBill', name: 'Total Annual Energy Bills ($)', type: 'number', defaultValue: 3200, min: 500, step: 100, prefix: '$', tooltip: 'Combined electric + gas/oil.' },
@@ -636,7 +636,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Composting Calculator tool.",
+        description: "A Composting Calculator estimates finished organic compost yields, landfill waste diversion, and soil carbon enrichment from food and yard scraps.",
         inputs: [
             { id: 'kitchenScrapsLbsWeek', name: 'Kitchen Food Scraps (lbs / week)', type: 'number', defaultValue: 10, min: 1, step: 2, suffix: 'lbs', tooltip: 'Vegetables, coffee, fruit peels.' },
             { id: 'yardWasteLbsWeek', name: 'Yard & Garden Browns (lbs / week)', type: 'number', defaultValue: 15, min: 0, step: 5, suffix: 'lbs', tooltip: 'Dry leaves, twigs, cardboard.' }
@@ -675,10 +675,10 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Green Building Cost Calculator tool.",
+        description: "A Green Building Cost Calculator analyzes upfront capital premiums, LEED certification tiers, annual utility efficiency gains, and lifecycle payback.",
         inputs: [
             { id: 'buildingSqFt', name: 'Total Gross Building Area (Sq Ft)', type: 'number', defaultValue: 3000, min: 500, step: 250, suffix: 'sq ft', tooltip: 'Building area.' },
-            { id: 'greenTier', name: 'Target Certification Standard', type: 'dropdown', defaultValue: 'leed_silver', options: [{ label: 'LEED Certified / Energy Star (+1.5% Premium)', value: 0.015 }, { label: 'LEED Silver (+3.0% Premium)', value: 0.03 }, { label: 'LEED Gold (+5.0% Premium)', value: 0.05 }, { label: 'LEED Platinum / Net-Zero Ready (+8.0% Premium)', value: 0.08 }], tooltip: 'Green rating tier.' },
+            { id: 'greenTier', name: 'Target Certification Standard', type: 'dropdown', defaultValue: 0.03, options: [{ label: 'LEED Certified / Energy Star (+1.5% Premium)', value: 0.015 }, { label: 'LEED Silver (+3.0% Premium)', value: 0.03 }, { label: 'LEED Gold (+5.0% Premium)', value: 0.05 }, { label: 'LEED Platinum / Net-Zero Ready (+8.0% Premium)', value: 0.08 }], tooltip: 'Green rating tier.' },
             { id: 'baseCostPerSqFt', name: 'Standard Construction Baseline ($/sq ft)', type: 'number', defaultValue: 220, min: 100, step: 10, prefix: '$', tooltip: 'Baseline build cost.' }
         ],
         naturalLanguageQueries: [],

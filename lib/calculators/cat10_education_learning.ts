@@ -12,7 +12,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
         phase: 2,
         monthlySearches: '40K',
         cpc: '$4.13',
-        description: "Student Loan Repayment Calculator tool.",
+        description: "A Student Loan Repayment Calculator models monthly payments, total interest, payoff timelines, and savings from extra principal payments across federal and private loan plans.",
         inputs: [
             { id: 'loanBalance', name: 'Total Student Loan Balance ($)', type: 'number', defaultValue: 38000, min: 1000, step: 1000, prefix: '$', tooltip: 'Current loan principal balance.' },
             { id: 'interestRate', name: 'Annual Interest Rate (%)', type: 'number', defaultValue: 6.5, min: 0.1, max: 20, step: 0.1, suffix: '%', tooltip: 'Fixed interest rate.' },
@@ -71,7 +71,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Scholarship Savings Calculator tool.",
+        description: "A Scholarship Savings Calculator computes net college tuition savings and avoided student loan debt interest across multi-year grant awards.",
         inputs: [
             { id: 'annualTuition', name: 'Annual Tuition & Fees ($)', type: 'number', defaultValue: 28000, min: 1000, step: 1000, prefix: '$', tooltip: 'Tuition per year.' },
             { id: 'annualScholarship', name: 'Annual Scholarship / Grant Award ($)', type: 'number', defaultValue: 12500, min: 500, step: 500, prefix: '$', tooltip: 'Scholarship amount per year.' },
@@ -119,7 +119,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: '20',
         cpc: 'N/A',
-        description: "Tuition Inflation Calculator tool.",
+        description: "A Tuition Inflation Calculator projects future higher education costs accounting for historical college tuition inflation rates and target enrollment years.",
         inputs: [
             { id: 'currentAnnualCost', name: 'Current Annual College Cost ($)', type: 'number', defaultValue: 26000, min: 2000, step: 1000, prefix: '$', tooltip: 'Current tuition + room & board.' },
             { id: 'yearsUntilCollege', name: 'Years Until Child Attends College', type: 'number', defaultValue: 10, min: 1, max: 20, step: 1, suffix: 'yrs', tooltip: 'Years until enrollment.' },
@@ -169,7 +169,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: '20',
         cpc: '$2.55',
-        description: "Education ROI Calculator tool.",
+        description: "An Education ROI Calculator evaluates the financial return on college degrees, trade programs, or bootcamps based on tuition investment and career salary premiums.",
         inputs: [
             { id: 'totalDegreeCost', name: 'Total Degree Investment Cost ($)', type: 'number', defaultValue: 75000, min: 2000, step: 2500, prefix: '$', tooltip: 'Tuition + fees + materials.' },
             { id: 'expectedStartingSalary', name: 'Expected Starting Graduate Salary ($)', type: 'number', defaultValue: 68000, min: 20000, step: 2000, prefix: '$', tooltip: 'Entry salary.' },
@@ -225,7 +225,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: '10',
         cpc: 'N/A',
-        description: "Course Cost Calculator tool.",
+        description: "A Course Cost Calculator determines the true per-credit-hour expense, course material costs, and lab fees across semester schedules.",
         inputs: [
             { id: 'coursePrice', name: 'Course Tuition / Fee ($)', type: 'number', defaultValue: 1450, min: 10, step: 50, prefix: '$', tooltip: 'Course cost.' },
             { id: 'instructionHours', name: 'Total Instructional Hours', type: 'number', defaultValue: 40, min: 1, step: 5, suffix: 'hrs', tooltip: 'Class / video hours.' },
@@ -268,7 +268,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Learning Time Calculator tool.",
+        description: "A Learning Time Calculator estimates the study hours and calendar weeks required to achieve professional competency or certifications based on weekly study pace.",
         inputs: [
             { id: 'proficiencyTarget', name: 'Target Mastery Level', type: 'dropdown', defaultValue: 250, options: [{ label: 'Basic Familiarity / Conversational (50 Hours)', value: 50 }, { label: 'Intermediate Working Competence (250 Hours)', value: 250 }, { label: 'Professional Job-Ready Proficiency (600 Hours)', value: 600 }, { label: 'Senior Expert / Complete Mastery (2,000 Hours)', value: 2000 }], tooltip: 'Skill level target.' },
             { id: 'weeklyStudyHours', name: 'Weekly Dedicated Study Hours', type: 'number', defaultValue: 10, min: 1, max: 80, step: 1, suffix: 'hrs/wk', tooltip: 'Hours committed per week.' }
@@ -305,7 +305,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "Teacher Salary Calculator tool.",
+        description: "A Teacher Salary Calculator projects public and private educator compensation across salary schedule steps, educational credentials, and stipends.",
         inputs: [
             { id: 'baseEntrySalary', name: 'District Base Starting Salary ($)', type: 'number', defaultValue: 46000, min: 25000, step: 1000, prefix: '$', tooltip: 'Step 1 BA salary.' },
             { id: 'degreeLevel', name: 'Education Degree Lane', type: 'dropdown', defaultValue: 4500, options: [{ label: "Bachelor's Degree (BA / BS)", value: 0 }, { label: "Bachelor's + 15 / 30 Credits (+$2,500)", value: 2500 }, { label: "Master's Degree (MA / MS) (+$4,500)", value: 4500 }, { label: "Master's + 30 / Specialist (+$7,500)", value: 7500 }, { label: 'Doctorate / PhD / EdD (+$11,000)', value: 11000 }], tooltip: 'Salary schedule column.' },
@@ -351,7 +351,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: 'N/A',
         cpc: 'N/A',
-        description: "School Supply Cost Calculator tool.",
+        description: "A School Supply Cost Calculator estimates annual back-to-school expenses per child across classroom supplies, books, technology, and extracurricular fees.",
         inputs: [
             { id: 'numStudents', name: 'Number of Enrolled Children', type: 'number', defaultValue: 2, min: 1, max: 8, step: 1, tooltip: 'Number of kids.' },
             { id: 'gradeLevel', name: 'Primary Grade Level', type: 'dropdown', defaultValue: 'middle', options: [{ label: 'Elementary School (K-5)', value: 'elem' }, { label: 'Middle School (6-8)', value: 'middle' }, { label: 'High School (9-12)', value: 'high' }, { label: 'College / University', value: 'college' }], tooltip: 'Grade band.' },

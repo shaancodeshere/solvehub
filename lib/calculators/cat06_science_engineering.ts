@@ -242,7 +242,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
         description: "A Weight Calculator computes weight from mass and gravitational acceleration. It helps solve engineering, aerospace, and physics problems. The calculator supports Earth and custom planetary gravity.",
         inputs: [
             { id: 'massKg', name: 'Object Mass (kg)', type: 'number', defaultValue: 75, min: 0.01, step: 1, suffix: 'kg', tooltip: 'Invariable mass.' },
-            { id: 'celestialBody', name: 'Celestial Body / Gravity', type: 'dropdown', defaultValue: 9.807, options: [{ label: 'Earth (1.00g - 9.81 m/s²)', value: 9.80665 }, { label: 'Moon (0.166g - 1.62 m/s²)', value: 1.62 }, { label: 'Mars (0.379g - 3.72 m/s²)', value: 3.72 }, { label: 'Jupiter (2.53g - 24.79 m/s²)', value: 24.79 }, { label: 'Venus (0.904g - 8.87 m/s²)', value: 8.87 }, { label: 'Sun Surface (27.9g - 274 m/s²)', value: 274.0 }], tooltip: 'Gravitational field.' }
+            { id: 'celestialBody', name: 'Celestial Body / Gravity', type: 'dropdown', defaultValue: 9.80665, options: [{ label: 'Earth (1.00g - 9.81 m/s²)', value: 9.80665 }, { label: 'Moon (0.166g - 1.62 m/s²)', value: 1.62 }, { label: 'Mars (0.379g - 3.72 m/s²)', value: 3.72 }, { label: 'Jupiter (2.53g - 24.79 m/s²)', value: 24.79 }, { label: 'Venus (0.904g - 8.87 m/s²)', value: 8.87 }, { label: 'Sun Surface (27.9g - 274 m/s²)', value: 274.0 }], tooltip: 'Gravitational field.' }
         ],
         naturalLanguageQueries: ["Calculate my weight calculator", "What is my weight calculator?", "Help me solve weight calculator"],
         edgeCases: ["Negative mass Zero gravity Unrealistic gravity inputs"],
@@ -257,8 +257,9 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
             const gravityRatio = g / 9.80665;
 
             return {
-                primaryOutput: { label: 'Gravitational Weight Force', value: `${weightNewtons.toFixed(1)} N`, suffix: `${weightLbf.toFixed(1)} lbf` },
+                primaryOutput: { label: 'Gravitational Weight Force', value: `${weightNewtons.toFixed(1)} N` },
                 secondaryMetrics: [
+                    { label: 'Equivalent Weight (lbf)', value: `${weightLbf.toFixed(1)} lbf` },
                     { label: 'Apparent Scale Reading', value: `${apparentScaleKg.toFixed(1)} kg (${weightLbf.toFixed(1)} lbs)` },
                     { label: 'Earth Equivalent Weight', value: `${earthWeightLbf.toFixed(1)} lbs` },
                     { label: 'Local Gravitational Acceleration', value: `${g.toFixed(2)} m/s² (${gravityRatio.toFixed(3)}g)` },

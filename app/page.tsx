@@ -7,7 +7,9 @@ import { allCalculators } from '@/lib/calculators';
 import { executeCanvasScript, EvaluatedVariable, formatAmount } from '@/lib/canvasEngine';
 import CommandPalette from '@/components/CommandPalette';
 import TemplatesModal from '@/components/TemplatesModal';
+import ThemeToggle from '@/components/ThemeToggle';
 import { CANVAS_TEMPLATES, CanvasTemplate } from '@/lib/canvasTemplates';
+import { useSidebar } from '@/components/layout/AppShell';
 
 export interface CanvasTab {
   id: string;
@@ -74,6 +76,7 @@ function formatConvertedAmount(amount: number, targetCode: string): string {
 }
 
 export default function HomePage() {
+  const { isSidebarOpen, setIsSidebarOpen, isCommandPaletteOpen, setIsCommandPaletteOpen } = useSidebar();
   const [activeMode, setActiveMode] = useState<'canvas' | 'library'>('canvas');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
@@ -86,7 +89,6 @@ export default function HomePage() {
   const [displayCurrency, setDisplayCurrency] = useState<string>('USD');
   const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
   const [showTemplatesMenu, setShowTemplatesMenu] = useState(false);
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false);
 
   // Split bill input expansion state
@@ -306,36 +308,6 @@ export default function HomePage() {
     return () => {
       if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
     };
-  }, []);
-
-  // Global shortcut: '/' opens Command Palette when not focused in an input/textarea.
-  // Cmd + K (Mac) and Ctrl + K (Windows/Linux) retained as secondary fallback.
-  useEffect(() => {
-    const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      // 1. Secondary fallback: Cmd + K / Ctrl + K
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setIsCommandPaletteOpen((prev) => !prev);
-        return;
-      }
-
-      // 2. Primary shortcut: '/' (only when not actively typing in an input, textarea, or contentEditable)
-      if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
-        const target = e.target as HTMLElement | null;
-        const isEditingText =
-          target &&
-          (target.tagName === 'INPUT' ||
-            target.tagName === 'TEXTAREA' ||
-            target.isContentEditable);
-
-        if (!isEditingText) {
-          e.preventDefault();
-          setIsCommandPaletteOpen(true);
-        }
-      }
-    };
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, []);
 
   // Close currency, download, and templates menus when clicking outside
@@ -847,14 +819,14 @@ export default function HomePage() {
   const isHeroSplit = Boolean(canvasReceipt.splitResult);
 
   return (
-    <main className="h-screen w-screen bg-[#0d1117] text-slate-100 flex overflow-hidden font-sans relative">
+    <div className="flex-1 h-full w-full flex overflow-hidden font-sans relative">
       {/* ──────────────────────────────────────────────────────────
           CLEAR / SAVE MODAL DIALOG
          ────────────────────────────────────────────────────────── */}
       {showClearModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fadeIn">
           <div
-            className="w-full max-w-md bg-[#131822] border border-slate-700/80 rounded-2xl p-6 shadow-2xl relative space-y-5"
+            className="w-full max-w-md bg-[var(--surface)] dark:bg-[#131822] border border-[var(--border)] dark:border-slate-700/80 rounded-2xl p-6 shadow-2xl relative space-y-5"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -866,14 +838,14 @@ export default function HomePage() {
             }}
           >
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <div className="flex items-center gap-2 text-xs font-mono text-emerald-500 dark:text-emerald-400 mb-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
                 <span>SAVE SNAPSHOT</span>
               </div>
-              <h3 className="text-base font-semibold text-white font-mono">
+              <h3 className="text-base font-semibold text-slate-900 dark:text-white font-mono">
                 Save sheet before clearing?
               </h3>
-              <p className="text-xs text-slate-400 mt-1 font-mono">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
                 Tag this calculation so you can easily identify and restore it later.
               </p>
             </div>
@@ -885,7 +857,7 @@ export default function HomePage() {
                 value={clearSheetTag}
                 onChange={(e) => setClearSheetTag(e.target.value)}
                 placeholder="e.g., Pasta and drinks, Roundtrip ticket..."
-                className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition"
+                className="w-full bg-[var(--surface-subtle)] dark:bg-slate-950 border border-[var(--border)] dark:border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition"
               />
             </div>
 
@@ -895,9 +867,9 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleDiscardAndClear}
-                className="group flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 transition text-sm font-mono"
+                className="group flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--surface-subtle)] hover:bg-slate-200/80 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-[var(--border)] dark:border-slate-700 text-slate-700 dark:text-slate-300 transition text-sm font-mono"
               >
-                <kbd className="px-2 py-0.5 text-xs font-semibold bg-slate-800 border border-slate-600 rounded text-slate-400 group-hover:text-slate-200">
+                <kbd className="px-2 py-0.5 text-xs font-semibold bg-[var(--surface)] dark:bg-slate-800 border border-[var(--border)] dark:border-slate-600 rounded text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200">
                   esc
                 </kbd>
                 <span>Exit</span>
@@ -920,95 +892,28 @@ export default function HomePage() {
       )}
 
       {/* ──────────────────────────────────────────────────────────
-          SECTION A: Sidebar Navigation
-         ────────────────────────────────────────────────────────── */}
-      <aside className="w-60 min-w-[240px] border-r border-slate-800 p-5 flex flex-col justify-between shrink-0 select-none hidden md:flex">
-        <div>
-          <div className="flex items-center gap-2 mb-6">
-            <span className="bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded text-sm font-mono">
-              S
-            </span>
-            <span className="font-bold tracking-wider text-xl text-white font-mono">SolveHub</span>
-            <span className="text-xs text-slate-500 font-mono">v1.0</span>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <span className="text-slate-500 uppercase tracking-wider block mb-2.5 text-xs font-semibold font-mono">
-                Modes
-              </span>
-              <div className="space-y-1">
-                <button
-                  type="button"
-                  onClick={() => setActiveMode('canvas')}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium font-mono transition flex items-center justify-between ${activeMode === 'canvas'
-                    ? 'bg-slate-800 text-emerald-400 font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                    }`}
-                >
-                  <span>Canvas</span>
-                  {activeMode === 'canvas' && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveMode('library')}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium font-mono transition flex items-center justify-between ${activeMode === 'library'
-                    ? 'bg-slate-800 text-emerald-400 font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                    }`}
-                >
-                  <span>Library</span>
-                  <span className="text-xs bg-slate-900 text-slate-400 px-2 py-0.5 rounded-md border border-slate-700 font-mono">
-                    {allCalculators.length}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Global Command Palette Trigger */}
-            <div>
-              <span className="text-slate-500 uppercase tracking-wider block mb-2 text-xs font-semibold font-mono">
-                Command Palette
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsCommandPaletteOpen(true)}
-                className="w-full text-left px-3 py-2 rounded-lg text-xs font-mono bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 transition flex items-center justify-between group shadow-sm"
-                title="Search calculators and sheets (/ or Cmd + K)"
-              >
-                <span className="flex items-center gap-2">
-                  <svg className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <span>Quick Search</span>
-                </span>
-                <kbd className="px-2 py-0.5 text-xs font-mono bg-slate-950 border border-slate-700/80 rounded text-slate-400 group-hover:text-emerald-400 group-hover:border-emerald-500/40 inline-flex items-center shadow-sm">
-                  /
-                </kbd>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-xs text-slate-500 font-mono flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>Canonical Ledger Active</span>
-        </div>
-      </aside>
-
-      {/* ──────────────────────────────────────────────────────────
           CANVAS WORKSPACE & LIVE RECEIPT
          ────────────────────────────────────────────────────────── */}
-      {activeMode === 'canvas' && (
-        <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex overflow-hidden relative">
           {/* Section B: Natural Editor */}
-          <section className="flex-1 p-6 overflow-hidden border-r border-slate-800 flex flex-col">
+          <section className="flex-1 p-6 overflow-hidden border-r border-[var(--border)] bg-[var(--background)] flex flex-col transition-colors duration-200">
             {/* Clean Header */}
             <div className="flex items-center justify-between mb-3 shrink-0">
               <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
+                {!isSidebarOpen && (
+                  <button
+                    type="button"
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="p-1.5 mr-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-transparent hover:bg-[#e2e8f0] dark:hover:bg-slate-800 transition flex items-center justify-center border border-[var(--border)] dark:border-slate-700 shadow-sm"
+                    title="Toggle Sidebar (⌘B)"
+                    aria-label="Toggle Sidebar"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="18" height="18" x="3" y="3" rx="2" />
+                      <path d="M9 3v18" />
+                    </svg>
+                  </button>
+                )}
                 <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
                 <span>CANVAS • NATURAL LANGUAGE SOLVER</span>
               </div>
@@ -1016,14 +921,14 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setIsCommandPaletteOpen(true)}
-                  className="text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-md border border-slate-700 transition flex items-center gap-1.5 shadow-sm"
+                  className="text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-2.5 py-1 rounded-md border border-[var(--border)] dark:border-slate-700 transition flex items-center gap-1.5 shadow-sm"
                   title="Search 487 calculators or switch sheets (/ or Cmd + K)"
                 >
-                  <svg className="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-3 h-3 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <span>Search</span>
-                  <kbd className="px-2 py-0.5 text-xs font-mono bg-slate-950 border border-slate-700/80 rounded text-slate-400 inline-flex items-center shadow-sm">
+                  <kbd className="px-2 py-0.5 text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-950 border border-[var(--border)] dark:border-slate-700/80 rounded text-slate-600 dark:text-slate-400 inline-flex items-center shadow-sm">
                     /
                   </kbd>
                 </button>
@@ -1031,8 +936,8 @@ export default function HomePage() {
                   type="button"
                   onClick={() => setShowHistory(!showHistory)}
                   className={`text-xs font-mono px-2.5 py-1 rounded-md border transition flex items-center gap-1.5 ${showHistory
-                    ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                    ? 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/40 dark:border-emerald-500/50 text-emerald-600 dark:text-emerald-300'
+                    : 'bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-[var(--border)] dark:border-slate-700'
                     }`}
                 >
                   <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -1041,7 +946,7 @@ export default function HomePage() {
                   </svg>
                   <span>History</span>
                   {historyList.length > 0 && (
-                    <span className="text-xs bg-slate-900 text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-500/30">
+                    <span className="text-xs bg-emerald-100 dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-300 dark:border-emerald-500/30">
                       {historyList.length}
                     </span>
                   )}
@@ -1049,7 +954,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handleClearClick}
-                  className="text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2.5 py-1 rounded-md border border-slate-700 transition"
+                  className="text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-2.5 py-1 rounded-md border border-[var(--border)] dark:border-slate-700 transition"
                 >
                   Clear
                 </button>
@@ -1058,12 +963,12 @@ export default function HomePage() {
 
             {/* Quick Inserts Toolbar */}
             <div className="mb-3 flex flex-wrap items-center gap-1.5 text-xs font-mono shrink-0">
-              <span className="text-slate-500 text-xs uppercase tracking-wider font-semibold">Quick Inserts:</span>
+              <span className="text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">Quick Inserts:</span>
 
               <button
                 type="button"
                 onClick={() => appendSyntax('total')}
-                className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 transition text-xs font-mono"
+                className="px-2.5 py-1 rounded-md bg-[#e2e8f0] dark:bg-slate-800 hover:bg-[#d0d9e2] dark:hover:bg-slate-700 text-emerald-500 dark:text-emerald-400 border border-[#cbd5e1] dark:border-slate-700 transition text-xs font-mono"
               >
                 + total
               </button>
@@ -1071,7 +976,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => appendSyntax('discount 10%')}
-                className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 transition text-xs font-mono"
+                className="px-2.5 py-1 rounded-md bg-[#e2e8f0] dark:bg-slate-800 hover:bg-[#d0d9e2] dark:hover:bg-slate-700 text-amber-500 dark:text-amber-400 border border-[#cbd5e1] dark:border-slate-700 transition text-xs font-mono"
               >
                 + discount
               </button>
@@ -1079,7 +984,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => appendSyntax('tax 18%')}
-                className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 transition text-xs font-mono"
+                className="px-2.5 py-1 rounded-md bg-[#e2e8f0] dark:bg-slate-800 hover:bg-[#d0d9e2] dark:hover:bg-slate-700 text-cyan-500 dark:text-cyan-400 border border-[#cbd5e1] dark:border-slate-700 transition text-xs font-mono"
               >
                 + tax
               </button>
@@ -1089,20 +994,20 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setShowSplitInput(true)}
-                  className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700 transition text-xs font-mono"
+                  className="px-2.5 py-1 rounded-md bg-[#e2e8f0] dark:bg-slate-800 hover:bg-[#d0d9e2] dark:hover:bg-slate-700 text-purple-500 dark:text-purple-400 border border-[#cbd5e1] dark:border-slate-700 transition text-xs font-mono"
                 >
                   + split bill
                 </button>
               ) : (
-                <div className="flex items-center gap-1.5 bg-slate-800 px-2 py-0.5 rounded-md border border-purple-500/40">
-                  <span className="text-xs text-purple-300 font-mono">People:</span>
+                <div className="flex items-center gap-1.5 bg-[#e2e8f0] dark:bg-slate-800 px-2 py-0.5 rounded-md border border-[#cbd5e1] dark:border-purple-500/40">
+                  <span className="text-xs text-purple-600 dark:text-purple-400 font-mono">People:</span>
                   <input
                     type="number"
                     min={1}
                     max={99}
                     value={splitCount}
                     onChange={(e) => setSplitCount(parseInt(e.target.value, 10) || 1)}
-                    className="w-10 bg-slate-950 text-center text-xs text-white border border-slate-700 rounded px-1 py-0.5 focus:outline-none focus:border-purple-400 font-mono"
+                    className="w-10 bg-[#f3f6f9] dark:bg-slate-950 text-center text-xs text-slate-900 dark:text-white border border-[#cbd5e1] dark:border-slate-700 rounded px-1 py-0.5 focus:outline-none focus:border-purple-400 font-mono"
                     autoFocus
                   />
                   <button
@@ -1115,7 +1020,7 @@ export default function HomePage() {
                   <button
                     type="button"
                     onClick={() => setShowSplitInput(false)}
-                    className="text-slate-400 hover:text-white text-xs px-1"
+                    className="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white text-xs px-1"
                   >
                     ✕
                   </button>
@@ -1123,13 +1028,13 @@ export default function HomePage() {
               )}
 
               {/* Vertical divider line */}
-              <span className="text-slate-700 text-xs select-none">|</span>
+              <span className="text-slate-400 dark:text-slate-700 text-xs select-none">|</span>
 
               {/* Pre-Built Canvas Templates Button */}
               <button
                 type="button"
                 onClick={() => setIsTemplatesModalOpen(true)}
-                className="px-2.5 py-1 text-xs font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition flex items-center gap-1.5 shadow-sm"
+                className="px-2.5 py-1 text-xs font-mono rounded bg-[var(--surface-subtle)] hover:bg-[#d0d9e2] dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-700 transition flex items-center gap-1.5 shadow-sm"
                 title="Browse Calculation Recipe Templates"
               >
                 + templates
@@ -1149,8 +1054,8 @@ export default function HomePage() {
                       onDoubleClick={() => startRenameTab(tab)}
                       className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono transition-all cursor-pointer border select-none ${
                         isActive
-                          ? 'bg-slate-800 text-white border-emerald-500/50 shadow-sm'
-                          : 'bg-slate-900/40 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border-slate-800'
+                          ? 'bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-900 dark:text-white border-emerald-500/50 shadow-sm'
+                          : 'bg-slate-200/50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/50 border-[var(--border)] dark:border-slate-800'
                       }`}
                     >
                       {/* Active Tab Indicator */}
@@ -1212,9 +1117,9 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handleNewTab}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-emerald-400 border border-dashed border-slate-700 hover:border-emerald-500/50 transition text-xs sm:text-sm font-mono shrink-0"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] dark:bg-slate-900/60 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-dashed border-[var(--border)] dark:border-slate-700 hover:border-emerald-500/50 transition text-xs sm:text-sm font-mono shrink-0"
                 >
-                  <span className="text-emerald-400 font-bold">+</span>
+                  <span className="text-emerald-500 dark:text-emerald-400 font-bold">+</span>
                   <span>New Sheet</span>
                 </button>
               </div>
@@ -1226,9 +1131,9 @@ export default function HomePage() {
 
             {/* Technical Dot-Grid Canvas Notepad */}
             <div
-              className="relative flex-1 w-full rounded-xl border border-slate-800/80 overflow-hidden bg-[#0e131b] shadow-xl flex flex-col"
+              className="relative flex-1 w-full rounded-xl border border-[var(--border)] overflow-hidden bg-[var(--surface)] shadow-xl flex flex-col transition-colors duration-200"
               style={{
-                backgroundImage: 'radial-gradient(circle, rgba(56, 189, 248, 0.18) 1px, transparent 1px)',
+                backgroundImage: 'radial-gradient(circle, var(--canvas-dot) 1px, transparent 1px)',
                 backgroundSize: '16px 24px',
                 backgroundPosition: '16px 16px',
               }}
@@ -1237,7 +1142,7 @@ export default function HomePage() {
                 value={canvasCode}
                 onChange={(e) => setCanvasCode(e.target.value)}
                 placeholder="Start Calculating"
-                className="w-full flex-1 bg-transparent border-none text-xs font-mono leading-[24px] text-emerald-400 focus:outline-none placeholder-slate-600 resize-none selection:bg-emerald-500/20 p-4"
+                className="w-full flex-1 bg-transparent border-none text-xs font-mono leading-[24px] text-emerald-500 dark:text-emerald-400 focus:outline-none placeholder-slate-400 dark:placeholder-slate-600 resize-none selection:bg-emerald-500/20 p-4"
                 style={{
                   lineHeight: '24px',
                   fontSize: '12px',
@@ -1376,22 +1281,22 @@ export default function HomePage() {
           )}
 
           {/* Section C: Live Structured Receipt */}
-          <aside className="w-76 min-w-[290px] max-w-[315px] bg-[#161b22] p-3.5 sm:p-4 flex flex-col justify-between shrink-0 overflow-y-auto border-l border-slate-800">
+          <aside className="w-76 min-w-[290px] max-w-[315px] bg-[var(--surface)] p-3.5 sm:p-4 flex flex-col justify-between shrink-0 overflow-y-auto border-l border-[var(--border)] transition-colors duration-200">
             <div>
-              <div className="flex justify-between items-center mb-3.5 pb-2.5 border-b border-slate-800">
-                <span className="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider">
+              <div className="flex justify-between items-center mb-3.5 pb-2.5 border-b border-[var(--border)]">
+                <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider">
                   Live Receipt
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700 uppercase font-semibold">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-[var(--border)] dark:border-slate-700 uppercase font-semibold">
                   {canvasReceipt.variables.length} Items
                 </span>
               </div>
 
               {/* Top Hero Output Display */}
               {calculatorOutput?.primaryOutput ? (
-                <div className="mb-4 py-2.5 px-3.5 rounded-xl border bg-emerald-950/40 border-emerald-500/40 flex flex-col justify-center gap-1 relative shadow-md">
+                <div className="mb-4 py-2.5 px-3.5 rounded-xl border bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40 flex flex-col justify-center gap-1 relative shadow-md">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider block text-emerald-400 font-semibold truncate">
+                    <span className="text-[10px] font-mono uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 font-semibold truncate">
                       {calculatorOutput.primaryOutput.label}
                     </span>
 
@@ -1400,7 +1305,7 @@ export default function HomePage() {
                       <button
                         type="button"
                         onClick={() => setShowCurrencyMenu((prev) => !prev)}
-                        className="flex items-center gap-1 py-0.5 px-2 rounded-full bg-slate-900/90 hover:bg-slate-800 text-[11px] font-mono text-emerald-400 border border-slate-700/80 hover:border-emerald-500/50 transition cursor-pointer shadow-sm active:scale-95"
+                        className="flex items-center gap-1 py-0.5 px-2 rounded-full bg-[var(--surface-subtle)] dark:bg-slate-900/90 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-[11px] font-mono text-emerald-600 dark:text-emerald-400 border border-[var(--border)] dark:border-slate-700/80 hover:border-emerald-500/50 transition cursor-pointer shadow-sm active:scale-95"
                         title="Toggle currency conversion"
                       >
                         <span className="font-semibold">{displayCurrency}</span>
@@ -1408,7 +1313,7 @@ export default function HomePage() {
                       </button>
 
                       {showCurrencyMenu && (
-                        <div className="absolute right-0 top-full mt-1.5 w-36 bg-[#0e131b] border border-slate-700 rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
+                        <div className="absolute right-0 top-full mt-1.5 w-36 bg-[var(--surface)] dark:bg-[#0e131b] border border-[var(--border)] dark:border-slate-700 rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
                           {Object.entries(BENCHMARK_RATES).map(([code, info]) => (
                             <button
                               key={code}
@@ -1417,14 +1322,14 @@ export default function HomePage() {
                                 setDisplayCurrency(code);
                                 setShowCurrencyMenu(false);
                               }}
-                              className={`w-full text-left px-3 py-1.5 flex items-center justify-between text-xs hover:bg-slate-800/80 transition ${
+                              className={`w-full text-left px-3 py-1.5 flex items-center justify-between text-xs hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/80 transition ${
                                 displayCurrency === code
-                                  ? 'text-emerald-400 font-semibold bg-emerald-950/40'
-                                  : 'text-slate-300'
+                                  ? 'text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-950/40'
+                                  : 'text-slate-700 dark:text-slate-300'
                               }`}
                             >
                               <span>{info.label}</span>
-                              {displayCurrency === code && <span className="text-emerald-400 text-xs">✓</span>}
+                              {displayCurrency === code && <span className="text-emerald-600 dark:text-emerald-400 text-xs">✓</span>}
                             </button>
                           ))}
                         </div>
@@ -1432,7 +1337,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight break-all text-white">
+                  <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight break-all text-slate-900 dark:text-white">
                     {calculatorOutput.primaryOutput.prefix || ''}
                     {calculatorOutput.primaryOutput.value}
                     {calculatorOutput.primaryOutput.suffix || ''}
@@ -1448,13 +1353,13 @@ export default function HomePage() {
               ) : canvasReceipt.lastResult && !canvasReceipt.lastResult.isError ? (
                 <div
                   className={`mb-4 py-2.5 px-3.5 rounded-xl border transition-colors flex flex-col justify-center gap-1 relative shadow-md ${isHeroSplit
-                    ? 'bg-purple-950/40 border-purple-500/40'
-                    : 'bg-emerald-950/40 border-emerald-500/40'
+                    ? 'bg-purple-500/10 dark:bg-purple-950/40 border-purple-500/30 dark:border-purple-500/40'
+                    : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40'
                     }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span
-                      className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate ${isHeroSplit ? 'text-purple-300' : 'text-emerald-400'
+                      className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate ${isHeroSplit ? 'text-purple-700 dark:text-purple-300' : 'text-emerald-700 dark:text-emerald-400'
                         }`}
                     >
                       {canvasReceipt.lastResult.name}
@@ -1465,7 +1370,7 @@ export default function HomePage() {
                       <button
                         type="button"
                         onClick={() => setShowCurrencyMenu((prev) => !prev)}
-                        className="flex items-center gap-1 py-0.5 px-2 rounded-full bg-slate-900/90 hover:bg-slate-800 text-[11px] font-mono text-emerald-400 border border-slate-700/80 hover:border-emerald-500/50 transition cursor-pointer shadow-sm active:scale-95"
+                        className="flex items-center gap-1 py-0.5 px-2 rounded-full bg-[var(--surface-subtle)] dark:bg-slate-900/90 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-[11px] font-mono text-emerald-600 dark:text-emerald-400 border border-[var(--border)] dark:border-slate-700/80 hover:border-emerald-500/50 transition cursor-pointer shadow-sm active:scale-95"
                         title="Toggle currency conversion"
                       >
                         <span className="font-semibold">{displayCurrency}</span>
@@ -1473,7 +1378,7 @@ export default function HomePage() {
                       </button>
 
                       {showCurrencyMenu && (
-                        <div className="absolute right-0 top-full mt-1.5 w-36 bg-[#0e131b] border border-slate-700 rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
+                        <div className="absolute right-0 top-full mt-1.5 w-36 bg-[var(--surface)] dark:bg-[#0e131b] border border-[var(--border)] dark:border-slate-700 rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
                           {Object.entries(BENCHMARK_RATES).map(([code, info]) => (
                             <button
                               key={code}
@@ -1482,14 +1387,14 @@ export default function HomePage() {
                                 setDisplayCurrency(code);
                                 setShowCurrencyMenu(false);
                               }}
-                              className={`w-full text-left px-3 py-1.5 flex items-center justify-between text-xs hover:bg-slate-800/80 transition ${
+                              className={`w-full text-left px-3 py-1.5 flex items-center justify-between text-xs hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/80 transition ${
                                 displayCurrency === code
-                                  ? 'text-emerald-400 font-semibold bg-emerald-950/40'
-                                  : 'text-slate-300'
+                                  ? 'text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40'
+                                  : 'text-slate-700 dark:text-slate-300'
                               }`}
                             >
                               <span>{info.label}</span>
-                              {displayCurrency === code && <span className="text-emerald-400 text-xs">✓</span>}
+                              {displayCurrency === code && <span className="text-emerald-600 dark:text-emerald-400 text-xs">✓</span>}
                             </button>
                           ))}
                         </div>
@@ -1498,7 +1403,7 @@ export default function HomePage() {
                   </div>
 
                   <div
-                    className={`text-xl sm:text-2xl font-bold font-mono tracking-tight break-all ${isHeroSplit ? 'text-purple-200' : 'text-white'
+                    className={`text-xl sm:text-2xl font-bold font-mono tracking-tight break-all ${isHeroSplit ? 'text-purple-700 dark:text-purple-200' : 'text-slate-900 dark:text-white'
                       }`}
                   >
                     {canvasReceipt.lastResult.formattedValue}
@@ -1538,16 +1443,16 @@ export default function HomePage() {
                       <div
                         key={v.id}
                         className={`py-1.5 px-2.5 rounded-lg border transition flex flex-col gap-0.5 ${v.isError
-                          ? 'bg-rose-950/20 border-rose-800/60 text-rose-300'
+                          ? 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'
                           : isSummary
-                            ? 'bg-emerald-950/40 border-emerald-500/50 font-semibold'
+                            ? 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/40 dark:border-emerald-500/50 font-semibold'
                             : isModifier
-                              ? 'bg-purple-950/30 border-purple-500/40 text-purple-200'
+                              ? 'bg-purple-500/10 dark:bg-purple-950/30 border-purple-500/30 dark:border-purple-500/40 text-purple-700 dark:text-purple-200'
                               : isDeduction
-                                ? 'bg-amber-950/20 border-amber-500/30'
+                                ? 'bg-amber-500/10 dark:bg-amber-950/20 border-amber-500/30'
                                 : isTax
-                                  ? 'bg-sky-950/20 border-sky-500/30'
-                                  : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
+                                  ? 'bg-cyan-500/10 dark:bg-cyan-950/20 border-cyan-500/30'
+                                  : 'bg-[var(--surface-subtle)] dark:bg-slate-900/60 border-[var(--border)] dark:border-slate-800/80 text-slate-700 dark:text-slate-300'
                           }`}
                       >
                         <div className="flex justify-between items-center">
@@ -1555,14 +1460,14 @@ export default function HomePage() {
                             <span
                               className={`text-xs font-mono font-medium truncate ${
                                 isDeduction
-                                  ? 'text-amber-400'
+                                  ? 'text-amber-500 dark:text-amber-400'
                                   : isTax
-                                    ? 'text-sky-400'
+                                    ? 'text-cyan-500 dark:text-cyan-400'
                                     : isSummary
-                                      ? 'text-emerald-400 font-bold'
+                                      ? 'text-emerald-500 dark:text-emerald-400 font-bold'
                                       : isModifier
-                                        ? 'text-purple-300'
-                                        : 'text-slate-300'
+                                        ? 'text-purple-500 dark:text-purple-300'
+                                        : 'text-slate-700 dark:text-slate-300'
                               }`}
                             >
                               {v.name}
@@ -1589,15 +1494,15 @@ export default function HomePage() {
                             )}
                           </div>
                           <span
-                            className={`font-mono ${isSummary ? 'text-sm font-bold text-emerald-400' : 'text-xs font-medium'} ${isDeduction
-                              ? 'text-amber-400'
+                            className={`font-mono ${isSummary ? 'text-sm font-bold text-emerald-600 dark:text-emerald-400' : 'text-xs font-medium'} ${isDeduction
+                              ? 'text-amber-600 dark:text-amber-400'
                               : isTax
-                                ? 'text-sky-400'
+                                ? 'text-cyan-600 dark:text-cyan-400'
                                 : isSummary
                                   ? ''
                                   : isModifier
-                                    ? 'text-purple-300'
-                                    : 'text-white'
+                                    ? 'text-purple-600 dark:text-purple-300'
+                                    : 'text-slate-900 dark:text-white'
                               }`}
                           >
                             {v.formattedValue}
@@ -1708,7 +1613,7 @@ export default function HomePage() {
             </div>
 
             {/* Bottom Action Footer */}
-            <div className="pt-3.5 border-t border-slate-800/80 space-y-2.5">
+            <div className="pt-3.5 border-t border-[var(--border)] dark:border-slate-800/80 space-y-2.5">
               <div className="flex items-center gap-1.5">
                 {/* Copy Receipt Button with Reactive State */}
                 <button
@@ -1718,7 +1623,7 @@ export default function HomePage() {
                   className={`flex-initial shrink-0 py-2 px-2 rounded-lg font-mono text-[11px] font-medium border transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] ${
                     isCopied
                       ? 'bg-emerald-950/80 border-emerald-500/80 text-emerald-300'
-                      : 'bg-slate-900/90 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-900/90 disabled:hover:border-slate-700'
+                      : 'bg-[var(--surface-subtle)] hover:bg-slate-200/80 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-white border-[var(--border)] dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--surface-subtle)] disabled:hover:border-[var(--border)]'
                   }`}
                   title="Copy formatted markdown receipt to clipboard"
                 >
@@ -1730,7 +1635,7 @@ export default function HomePage() {
                   ) : (
                     <>
                       <svg
-                        className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0"
+                        className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -1753,11 +1658,11 @@ export default function HomePage() {
                     type="button"
                     onClick={() => handleDownloadReceipt(downloadFormat)}
                     disabled={canvasReceipt.variables.length === 0 && !calculatorOutput}
-                    className="flex-1 min-w-0 py-2 px-2 rounded-l-lg bg-slate-900/90 hover:bg-slate-800 text-white font-mono text-[11px] font-medium border border-r-0 border-slate-700 hover:border-slate-600 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-900/90 disabled:hover:border-slate-700"
+                    className="flex-1 min-w-0 py-2 px-2 rounded-l-lg bg-[var(--surface-subtle)] hover:bg-slate-200/80 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-white font-mono text-[11px] font-medium border border-r-0 border-[var(--border)] dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--surface-subtle)] disabled:hover:border-[var(--border)]"
                     title={`Download ${downloadFormat.toUpperCase()} Receipt`}
                   >
                     <svg
-                      className="w-3.5 h-3.5 text-slate-400 group-hover:text-white shrink-0"
+                      className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -1776,14 +1681,14 @@ export default function HomePage() {
                     type="button"
                     onClick={() => setShowDownloadMenu((prev) => !prev)}
                     disabled={canvasReceipt.variables.length === 0 && !calculatorOutput}
-                    className="px-1.5 py-2 rounded-r-lg bg-slate-900/90 hover:bg-slate-800 text-slate-400 hover:text-white font-mono text-[11px] font-medium border border-slate-700 hover:border-slate-600 transition flex items-center justify-center shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-900/90 disabled:hover:border-slate-700 shrink-0"
+                    className="px-1.5 py-2 rounded-r-lg bg-[var(--surface-subtle)] hover:bg-slate-200/80 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-mono text-[11px] font-medium border border-[var(--border)] dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 transition flex items-center justify-center shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--surface-subtle)] disabled:hover:border-[var(--border)] shrink-0"
                     title="Choose download format (.txt or .csv)"
                   >
                     <span className="text-[10px]">▾</span>
                   </button>
 
                   {showDownloadMenu && (
-                    <div className="absolute right-0 bottom-full mb-1.5 w-44 bg-[#0e131b] border border-slate-700 rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
+                    <div className="absolute right-0 bottom-full mb-1.5 w-44 bg-[var(--surface)] dark:bg-[#0e131b] border border-[var(--border)] dark:border-slate-700 rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
                       <button
                         type="button"
                         onClick={() => {
@@ -1791,15 +1696,15 @@ export default function HomePage() {
                           setShowDownloadMenu(false);
                           handleDownloadReceipt('txt');
                         }}
-                        className={`w-full text-left px-2.5 py-1.5 flex items-center justify-between text-xs hover:bg-slate-800/80 transition ${
-                          downloadFormat === 'txt' ? 'text-emerald-400 font-semibold bg-emerald-950/40' : 'text-slate-300'
+                        className={`w-full text-left px-2.5 py-1.5 flex items-center justify-between text-xs hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/80 transition ${
+                          downloadFormat === 'txt' ? 'text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-950/40' : 'text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         <div className="flex flex-col">
                           <span className="font-bold text-xs">Text (.txt)</span>
                           <span className="text-[10px] text-slate-500">ASCII Thermal Slip</span>
                         </div>
-                        {downloadFormat === 'txt' && <span className="text-emerald-400 text-xs">✓</span>}
+                        {downloadFormat === 'txt' && <span className="text-emerald-600 dark:text-emerald-400 text-xs">✓</span>}
                       </button>
 
                       <button
@@ -1809,15 +1714,15 @@ export default function HomePage() {
                           setShowDownloadMenu(false);
                           handleDownloadReceipt('csv');
                         }}
-                        className={`w-full text-left px-2.5 py-1.5 flex items-center justify-between text-xs hover:bg-slate-800/80 transition ${
-                          downloadFormat === 'csv' ? 'text-emerald-400 font-semibold bg-emerald-950/40' : 'text-slate-300'
+                        className={`w-full text-left px-2.5 py-1.5 flex items-center justify-between text-xs hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/80 transition ${
+                          downloadFormat === 'csv' ? 'text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-950/40' : 'text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         <div className="flex flex-col">
                           <span className="font-bold text-xs">CSV (.csv)</span>
                           <span className="text-[10px] text-slate-500">Spreadsheet Table</span>
                         </div>
-                        {downloadFormat === 'csv' && <span className="text-emerald-400 text-xs">✓</span>}
+                        {downloadFormat === 'csv' && <span className="text-emerald-600 dark:text-emerald-400 text-xs">✓</span>}
                       </button>
                     </div>
                   )}
@@ -1830,81 +1735,6 @@ export default function HomePage() {
             </div>
           </aside>
         </div>
-      )}
-
-      {/* ──────────────────────────────────────────────────────────
-          LIBRARY VIEW
-         ────────────────────────────────────────────────────────── */}
-      {activeMode === 'library' && (
-        <section className="flex-1 p-8 overflow-y-auto">
-          <header className="mb-6">
-            <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-              <span>LIBRARY • {allCalculators.length} CALCULATORS</span>
-            </div>
-            <h1 className="text-2xl font-bold text-white tracking-wide uppercase font-mono">
-              Calculator Library
-            </h1>
-          </header>
-
-          <div className="mb-8 space-y-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search calculators across all categories..."
-              className="w-full max-w-3xl bg-[#161b22] border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono transition"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {masterCategories.map((category) => {
-              const count = allCalculators.filter((c) => c.category === category.slug).length;
-
-              return (
-                <Link
-                  key={category.id}
-                  href={`/library/${category.slug}`}
-                  className="group p-6 bg-[#161b22] border border-slate-800 rounded-2xl hover:border-emerald-500/50 hover:bg-[#1c2128] transition flex flex-col justify-between shadow-sm"
-                >
-                  <div>
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-center text-emerald-400 group-hover:text-white group-hover:border-emerald-500/50 group-hover:bg-emerald-950/30 transition">
-                        <svg
-                          className="w-5 h-5 stroke-current"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.75"
-                          dangerouslySetInnerHTML={{ __html: category.iconSvg }}
-                        />
-                      </div>
-                      <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 border border-slate-700">
-                        {category.groupCode}
-                      </span>
-                    </div>
-
-                    <h2 className="text-base font-semibold text-white group-hover:text-emerald-400 transition">
-                      {category.name}
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
-                      {category.description}
-                    </p>
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-slate-800/80 flex justify-between items-center text-sm font-mono">
-                    <span className="text-slate-400">
-                      {count} {count === 1 ? 'Calculator' : 'Calculators'}
-                    </span>
-                    <span className="text-emerald-400 group-hover:translate-x-1 transition-transform">
-                      Explore Category →
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
 
       {/* Global Cmd + K Command Palette */}
       <CommandPalette
@@ -1929,6 +1759,6 @@ export default function HomePage() {
         onInsertActive={handleInsertTemplateActive}
         onOpenNewSheet={handleOpenTemplateInNewSheet}
       />
-    </main>
+    </div>
   );
 }

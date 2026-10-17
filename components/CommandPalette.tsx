@@ -243,14 +243,14 @@ export default function CommandPalette({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl bg-[#161b22] border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden font-mono flex flex-col max-h-[75vh] animate-in fade-in zoom-in-95 duration-150"
+        className="w-full max-w-2xl bg-[var(--surface)] dark:bg-[#161b22] border border-[var(--border)] dark:border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden font-mono flex flex-col max-h-[75vh] animate-in fade-in zoom-in-95 duration-150 transition-colors"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
         {/* Search Header */}
-        <div className="flex items-center px-4 border-b border-slate-800 gap-3 bg-slate-900/60">
+        <div className="flex items-center px-4 border-b border-[var(--border)] dark:border-slate-800 gap-3 bg-[var(--surface-subtle)] dark:bg-slate-900/60">
           <svg
-            className="w-4 h-4 text-emerald-400 shrink-0"
+            className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -268,9 +268,9 @@ export default function CommandPalette({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search 487 calculators or switch sheets..."
-            className="w-full bg-transparent text-sm sm:text-base text-white placeholder-slate-500 py-3.5 focus:outline-none font-mono tracking-tight"
+            className="w-full bg-transparent text-sm sm:text-base text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 py-3.5 focus:outline-none font-mono tracking-tight"
           />
-          <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-slate-900 border border-slate-700/80 rounded text-slate-400 shrink-0">
+          <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-[var(--surface-subtle)] dark:bg-slate-900 border border-[var(--border)] dark:border-slate-700/80 rounded text-slate-500 dark:text-slate-400 shrink-0">
             ESC
           </kbd>
         </div>
@@ -281,7 +281,7 @@ export default function CommandPalette({
           className="flex-1 overflow-y-auto p-2 space-y-1 focus:outline-none"
         >
           {filteredItems.length === 0 ? (
-            <div className="py-12 text-center text-slate-500 text-xs font-mono">
+            <div className="py-12 text-center text-slate-400 dark:text-slate-500 text-xs font-mono">
               No calculators or sheets found matching &quot;{query}&quot;.
             </div>
           ) : (
@@ -329,26 +329,26 @@ export default function CommandPalette({
                     onMouseEnter={() => setSelectedIndex(idx)}
                     className={`px-3.5 py-2.5 rounded-xl cursor-pointer transition flex items-center justify-between gap-3 text-xs ${
                       isSelected
-                        ? 'bg-emerald-950/50 border border-emerald-500/50 text-white shadow-sm'
-                        : 'hover:bg-slate-800/60 text-slate-300 border border-transparent'
+                        ? 'bg-emerald-500/10 dark:bg-emerald-950/50 border border-emerald-500/30 dark:border-emerald-500/50 text-slate-900 dark:text-white shadow-sm'
+                        : 'hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 border border-transparent'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       {/* Icon */}
                       {item.type === 'tab' ? (
-                        <span className="w-6 h-6 rounded-lg bg-purple-950/60 border border-purple-500/40 text-purple-300 flex items-center justify-center shrink-0">
+                        <span className="w-6 h-6 rounded-lg bg-purple-500/10 dark:bg-purple-950/60 border border-purple-500/30 dark:border-purple-500/40 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0">
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         </span>
                       ) : item.type === 'template' ? (
-                        <span className="w-6 h-6 rounded-lg bg-amber-950/60 border border-amber-500/40 text-amber-300 flex items-center justify-center shrink-0">
+                        <span className="w-6 h-6 rounded-lg bg-amber-500/10 dark:bg-amber-950/60 border border-amber-500/30 dark:border-amber-500/40 text-amber-600 dark:text-amber-300 flex items-center justify-center shrink-0">
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
                           </svg>
                         </span>
                       ) : (
-                        <span className="w-6 h-6 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0">
+                        <span className="w-6 h-6 rounded-lg bg-emerald-500/10 dark:bg-emerald-950/60 border border-emerald-500/30 dark:border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                           </svg>
@@ -357,26 +357,26 @@ export default function CommandPalette({
 
                       <div className="min-w-0 flex flex-col">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold truncate text-slate-100">
+                          <span className="font-semibold truncate text-slate-900 dark:text-slate-100">
                             {item.title}
                           </span>
                           {item.type === 'tab' && item.isActive && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-900/50 text-purple-300 border border-purple-500/40 font-mono">
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/40 font-mono">
                               Active
                             </span>
                           )}
                           {item.type === 'template' && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-950/60 text-amber-300 border border-amber-500/30 font-mono">
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30 font-mono">
                               {item.badge}
                             </span>
                           )}
                           {item.type === 'calculator' && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700/80 shrink-0 font-mono">
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80 shrink-0 font-mono">
                               {item.categoryName}
                             </span>
                           )}
                         </div>
-                        <span className="text-[11px] text-slate-400 truncate mt-0.5 font-sans">
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-sans">
                           {item.type === 'calculator'
                             ? item.description
                             : item.subtitle}
@@ -386,7 +386,7 @@ export default function CommandPalette({
 
                     <div className="shrink-0 flex items-center gap-2">
                       {isSelected && (
-                        <span className="text-[11px] text-emerald-400 font-mono font-medium hidden sm:inline">
+                        <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono font-medium hidden sm:inline">
                           {item.type === 'tab'
                             ? 'Switch ↵'
                             : item.type === 'template'
@@ -394,7 +394,7 @@ export default function CommandPalette({
                               : 'Open ↵'}
                         </span>
                       )}
-                      <span className="text-slate-600">→</span>
+                      <span className="text-slate-400 dark:text-slate-600">→</span>
                     </div>
                   </div>
                 </React.Fragment>
@@ -404,19 +404,19 @@ export default function CommandPalette({
         </div>
 
         {/* Footer Shortcut Bar */}
-        <div className="px-4 py-2 bg-slate-900/80 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+        <div className="px-4 py-2 bg-[var(--surface-subtle)] dark:bg-slate-900/80 border-t border-[var(--border)] dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
           <div className="flex items-center gap-3">
             <span>
-              <kbd className="text-slate-400">↑↓</kbd> Navigate
+              <kbd className="text-slate-700 dark:text-slate-400">↑↓</kbd> Navigate
             </span>
             <span>
-              <kbd className="text-slate-400">↵</kbd> Select
+              <kbd className="text-slate-700 dark:text-slate-400">↵</kbd> Select
             </span>
             <span>
-              <kbd className="text-slate-400">ESC</kbd> Close
+              <kbd className="text-slate-700 dark:text-slate-400">ESC</kbd> Close
             </span>
           </div>
-          <span className="text-emerald-400/80 font-medium">
+          <span className="text-emerald-600 dark:text-emerald-400/80 font-medium">
             SolveHub Ecosystem
           </span>
         </div>

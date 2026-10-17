@@ -1,28 +1,50 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --background: #eef2f6;
+    --surface: #f3f6f9;
+    --surface-subtle: #e2e8f0;
+    --border: #cbd5e1;
+    --foreground: #0f172a;
+    --muted: #475569;
+    --accent: #10b981;
+    --canvas-dot: rgba(71, 85, 105, 0.24);
+    color-scheme: light;
+  }
+
+  .dark {
+    --background: #0b0f17;
+    --surface: #121824;
+    --surface-subtle: #1a2234;
+    --border: #1f293d;
+    --foreground: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #10b981;
+    --canvas-dot: rgba(56, 189, 248, 0.18);
+    color-scheme: dark;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-border: var(--border);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 @layer base {
@@ -30,4 +52,3 @@ body {
     font-size: 16px;
   }
 }
-

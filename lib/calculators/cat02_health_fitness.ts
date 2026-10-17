@@ -1076,7 +1076,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
         description: "A Protein Calculator estimates recommended daily protein intake based on body weight, fitness goals, and activity level. It helps support muscle maintenance, growth, and recovery. The calculator supports evidence-based protein intake ranges.",
         inputs: [
             { id: 'bodyWeightKg', name: 'Body Weight (kg)', type: 'number', defaultValue: 75, min: 30, max: 250, step: 0.5, suffix: 'kg', tooltip: 'Weight in kg.' },
-            { id: 'activityGoal', name: 'Training Intensity / Goal', type: 'dropdown', defaultValue: 'strength', options: [{ label: 'Sedentary Adult (0.8 g/kg RDA)', value: 0.8 }, { label: 'Endurance Athlete (1.4 g/kg)', value: 1.4 }, { label: 'Hypertrophy / Muscle Building (1.8 g/kg)', value: 1.8 }, { label: 'Aggressive Fat Loss / Bodybuilder (2.2 g/kg)', value: 2.2 }], tooltip: 'Protein multiplier.' }
+            { id: 'activityGoal', name: 'Training Intensity / Goal', type: 'dropdown', defaultValue: 1.8, options: [{ label: 'Sedentary Adult (0.8 g/kg RDA)', value: 0.8 }, { label: 'Endurance Athlete (1.4 g/kg)', value: 1.4 }, { label: 'Hypertrophy / Muscle Building (1.8 g/kg)', value: 1.8 }, { label: 'Aggressive Fat Loss / Bodybuilder (2.2 g/kg)', value: 2.2 }], tooltip: 'Protein multiplier.' }
         ],
         naturalLanguageQueries: ["Calculate my protein", "What is my protein?", "Help me work out protein"],
         edgeCases: ["Kidney disease considerations Extremely high body weights Elderly protein needs"],
@@ -1300,7 +1300,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
         description: "A Calorie Surplus Calculator estimates additional calories needed to support weight gain or muscle growth. It helps users build structured bulking plans. The calculator adjusts calorie intake above maintenance.",
         inputs: [
             { id: 'tdeeCalories', name: 'Maintenance TDEE Calories', type: 'number', defaultValue: 2500, min: 1200, max: 6000, step: 50, suffix: 'kcal', tooltip: 'Maintenance calories.' },
-            { id: 'surplusType', name: 'Bulking Goal', type: 'dropdown', defaultValue: 300, options: [{ label: 'Lean Bulk / Slow Gain (+250 kcal/day)', value: 250 }, { label: 'Standard Muscle Hypertrophy (+350 kcal/day)', value: 350 }, { label: 'Aggressive Bulking (+500 kcal/day)', value: 500 }], tooltip: 'Surplus size.' }
+            { id: 'surplusType', name: 'Bulking Goal', type: 'dropdown', defaultValue: 350, options: [{ label: 'Lean Bulk / Slow Gain (+250 kcal/day)', value: 250 }, { label: 'Standard Muscle Hypertrophy (+350 kcal/day)', value: 350 }, { label: 'Aggressive Bulking (+500 kcal/day)', value: 500 }], tooltip: 'Surplus size.' }
         ],
         naturalLanguageQueries: ["How many calories do I need per day to lose weight?", "Daily calorie needs for 30 year old female 130 lbs moderately active", "What is my TDEE?"],
         edgeCases: ["Excessive surplus targets Obesity considerations Inactive users attempting aggressive bulk"],

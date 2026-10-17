@@ -12,7 +12,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
         phase: 2,
         monthlySearches: '50K',
         cpc: 'N/A',
-        description: "Coin Flip Simulator tool.",
+        description: "A Coin Flip Simulator computes binomial outcome probabilities, streak odds, and expected heads/tails distributions across multiple flips.",
         inputs: [
             { id: 'numCoins', name: 'Number of Flips (n)', type: 'number', defaultValue: 10, min: 1, max: 1000, step: 1, tooltip: 'Number of coin flips.' },
             { id: 'targetHeads', name: 'Target Heads Count (k)', type: 'number', defaultValue: 5, min: 0, max: 1000, step: 1, tooltip: 'Desired number of heads.' },
@@ -80,7 +80,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '4K',
         cpc: 'N/A',
-        description: "Dice Probability Calculator tool.",
+        description: "A Dice Probability Calculator models exact, minimum, and maximum roll sum probabilities across standard tabletop and RPG polyhedral dice (d4 through d20).",
         inputs: [
             { id: 'numDice', name: 'Number of Dice', type: 'dropdown', defaultValue: 2, options: [{ label: '1 Die', value: 1 }, { label: '2 Dice (Standard 2d6)', value: 2 }, { label: '3 Dice (3d6 / RPG)', value: 3 }, { label: '4 Dice (4d6)', value: 4 }, { label: '5 Dice (Yahtzee)', value: 5 }, { label: '6 Dice', value: 6 }], tooltip: 'Dice count.' },
             { id: 'dieSides', name: 'Sides per Die', type: 'dropdown', defaultValue: 6, options: [{ label: 'd4 (4-Sided)', value: 4 }, { label: 'd6 (Standard 6-Sided)', value: 6 }, { label: 'd8 (8-Sided)', value: 8 }, { label: 'd10 (10-Sided)', value: 10 }, { label: 'd12 (12-Sided)', value: 12 }, { label: 'd20 (20-Sided D&D)', value: 20 }, { label: 'd100 (Percentile)', value: 100 }], tooltip: 'Number of faces.' },
@@ -157,7 +157,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: '170',
         cpc: 'N/A',
-        description: "Card Draw Probability Calculator tool.",
+        description: "A Card Draw Probability Calculator computes hypergeometric drawing odds, hand combinations, and suit probabilities from a standard 52-card deck.",
         inputs: [
             { id: 'deckSize', name: 'Total Cards in Deck (N)', type: 'number', defaultValue: 52, min: 10, max: 200, step: 1, tooltip: '52 for standard deck, 60 for MTG, 40 for Yu-Gi-Oh.' },
             { id: 'targetCardsInDeck', name: 'Target Copies in Deck (K)', type: 'number', defaultValue: 4, min: 1, max: 50, step: 1, tooltip: 'E.g., 4 Aces in standard deck.' },
@@ -227,7 +227,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
         phase: 3,
         monthlySearches: '12K',
         cpc: '$0.61',
-        description: "Bingo Number Generator tool.",
+        description: "A Bingo Number Generator & Probability Engine tracks called numbers across classic 75-ball (B-I-N-G-O) cards and computes pattern completion odds.",
         inputs: [
             { id: 'bingoFormat', name: 'Bingo Style / Game Format', type: 'dropdown', defaultValue: '75_ball', options: [{ label: '75-Ball (US Standard B-I-N-G-O)', value: '75_ball' }, { label: '90-Ball (UK / Australian Housie)', value: '90_ball' }, { label: '80-Ball (Shutter Board)', value: '80_ball' }], tooltip: 'Game rules.' },
             { id: 'drawsCompleted', name: 'Current Balls Already Called', type: 'number', defaultValue: 15, min: 0, max: 89, step: 1, tooltip: 'Called count.' },
@@ -285,7 +285,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
         phase: 5,
         monthlySearches: '210',
         cpc: '$1.09',
-        description: "Poker Hand Probability Calculator tool.",
+        description: "A Poker Hand Probability Calculator determines the mathematical odds, combinatorics, and frequencies of drawing pairs, straights, flushes, and full houses in 5-card poker.",
         inputs: [
             { id: 'pokerVariant', name: 'Poker Variant', type: 'dropdown', defaultValue: 'holdem', options: [{ label: "Texas Hold'em (7 Cards Total)", value: 'holdem' }, { label: '5-Card Draw / Video Poker (5 Cards)', value: 'five_card' }, { label: 'Omaha (4 Hole Cards)', value: 'omaha' }], tooltip: 'Game variant.' },
             { id: 'gameStreet', name: 'Game Street / Situation', type: 'dropdown', defaultValue: 'flop_to_river', options: [{ label: 'Flop to River (2 Cards to Come)', value: 'flop_to_river' }, { label: 'Turn to River (1 Card to Come)', value: 'turn_to_river' }, { label: 'Pre-Flop (5 Cards to Come)', value: 'preflop' }], tooltip: 'Current street.' },
@@ -344,7 +344,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '4K',
         cpc: '$5.01  ★ HIGH CPC',
-        description: "Sports Bet Calculator tool.",
+        description: "A Sports Bet & Parlay Calculator computes potential payouts, profit margins, implied win probabilities, and multi-leg parlay odds across American, Decimal, and Fractional formats.",
         inputs: [
             { id: 'wagerAmount', name: 'Bet Stake / Wager Amount ($)', type: 'number', defaultValue: 100, min: 1, step: 10, prefix: '$', tooltip: 'Money wagered.' },
             { id: 'oddsFormat', name: 'Sportsbook Odds Format', type: 'dropdown', defaultValue: 'american', options: [{ label: 'American Odds (+150 or -110)', value: 'american' }, { label: 'Decimal Odds (e.g. 2.50)', value: 'decimal' }, { label: 'Fractional Odds (e.g. 3/2)', value: 'fractional' }], tooltip: 'Odds format.' },
@@ -404,7 +404,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '2K',
         cpc: '$2.38',
-        description: "Lottery Odds Calculator tool.",
+        description: "A Lottery Odds Calculator computes exact combinatoric probabilities, jackpot odds, and expected value per ticket for major draw lottery formats.",
         inputs: [
             { id: 'lotteryPreset', name: 'Lottery Game Preset', type: 'dropdown', defaultValue: 'powerball', options: [{ label: 'US Powerball (5/69 + 1/26)', value: 'powerball' }, { label: 'Mega Millions (5/70 + 1/25)', value: 'megamillions' }, { label: 'EuroMillions (5/50 + 2/12)', value: 'euromillions' }, { label: 'Classic Lotto (6/49)', value: 'classic_649' }], tooltip: 'Lottery rules.' },
             { id: 'ticketsPurchased', name: 'Number of Tickets / Lines Bought', type: 'number', defaultValue: 5, min: 1, max: 1000, step: 1, tooltip: 'Tickets played.' },
@@ -462,7 +462,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
         phase: 4,
         monthlySearches: '4K',
         cpc: '$10.92  ★ HIGH CPC',
-        description: "Fantasy Points Calculator tool.",
+        description: "A Fantasy Points Calculator tallies projected player and team fantasy scores across standard, Half-PPR, and Full-PPR league scoring rules.",
         inputs: [
             { id: 'scoringFormat', name: 'Fantasy Football Scoring Format', type: 'dropdown', defaultValue: 'full_ppr', options: [{ label: 'Full PPR (1.0 Pt / Reception)', value: 'full_ppr' }, { label: 'Half PPR (0.5 Pt / Reception)', value: 'half_ppr' }, { label: 'Standard / Non-PPR (0 Pt / Reception)', value: 'standard' }], tooltip: 'Scoring format.' },
             { id: 'passYards', name: 'Passing Yards', type: 'number', defaultValue: 280, min: 0, step: 20, tooltip: '1 pt per 25 yds.' },

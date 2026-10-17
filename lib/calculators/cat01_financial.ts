@@ -4089,14 +4089,20 @@ export const financialCalculators: CalculatorDefinition[] = [
             const netProceeds = p - fees;
             const n = term * 12;
 
-            // Solve for APR using net proceeds
-            let r = rate / 100 / 12;
-            for (let i = 0; i < 50; i++) {
-                const f = (netProceeds * (r * Math.pow(1 + r, n))) / (Math.pow(1 + r, n) - 1) - monthlyPmt;
-                const df = (netProceeds * (Math.pow(1 + r, n) * (1 + r * n) - Math.pow(1 + r, 2 * n))) / Math.pow(Math.pow(1 + r, n) - 1, 2);
-                r = r - (f / (df || 1));
+            // Solve for APR using net proceeds via robust bisection
+            let low = 0.00001;
+            let high = 1.0;
+            for (let i = 0; i < 40; i++) {
+                const mid = (low + high) / 2;
+                const pv = (monthlyPmt * (1 - Math.pow(1 + mid, -n))) / mid;
+                if (pv > netProceeds) {
+                    low = mid;
+                } else {
+                    high = mid;
+                }
             }
-            const apr = Math.max(rate, r * 12 * 100);
+            const solvedRate = ((low + high) / 2) * 12 * 100;
+            const apr = fees > 0 ? Math.max(rate, solvedRate) : rate;
 
             return {
                 primaryOutput: { label: 'True Annual Percentage Rate (APR)', value: `${apr.toFixed(3)}%` },
