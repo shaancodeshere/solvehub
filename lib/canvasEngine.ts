@@ -471,6 +471,12 @@ export function evaluateLine(
             type: 'deduction',
             currency: sessionCurrency,
             note,
+            calculatorSlug: 'discount-calculator',
+            calculatorCategory: 'finance-business',
+            initialParams: {
+                discountPct: val,
+                originalPrice: 100,
+            },
         };
     }
 
@@ -485,12 +491,32 @@ export function evaluateLine(
         const flatMatch = clean.match(/\d+(?:\.\d+)?/);
         const val = pctMatch ? parseFloat(pctMatch[1]) : (flatMatch ? parseFloat(flatMatch[0]) : 0);
 
-        const isVat = /\b(?:vat|sales\s*tax)\b/i.test(lower);
+        const isTip = /\b(?:tip|gratuity)\b/i.test(lower);
+        const isVat = !isTip && /\b(?:vat|sales\s*tax)\b/i.test(lower);
+
+        let calcSlug: string | undefined = undefined;
+        let initParams: Record<string, any> | undefined = undefined;
+
+        if (isTip) {
+            calcSlug = 'tip-calculator';
+            initParams = {
+                tipPercentage: val,
+                billAmount: 100,
+            };
+        } else if (isVat) {
+            calcSlug = 'vat-calculator';
+            initParams = {
+                amount: 500,
+                vatRate: val,
+                mode: 'add_vat',
+                rate: val,
+            };
+        }
 
         return {
             id: `tax-${lineNumber}`,
             lineNumber,
-            name: pctMatch ? `Tax (${pctMatch[1]}%)` : 'Tax',
+            name: pctMatch ? (isTip ? `Tip (${pctMatch[1]}%)` : `Tax (${pctMatch[1]}%)`) : (isTip ? 'Tip' : 'Tax'),
             expression: rawTrimmed,
             value: val,
             formattedValue: '',
@@ -498,16 +524,11 @@ export function evaluateLine(
             type: 'addition',
             currency: sessionCurrency,
             note,
-            ...(isVat
+            ...(calcSlug
                 ? {
-                    calculatorSlug: 'vat-calculator',
+                    calculatorSlug: calcSlug,
                     calculatorCategory: 'finance-business',
-                    initialParams: {
-                        amount: 500,
-                        vatRate: val,
-                        mode: 'add_vat',
-                        rate: val,
-                    },
+                    initialParams: initParams,
                 }
                 : {}),
         };
