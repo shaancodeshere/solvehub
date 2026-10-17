@@ -6,6 +6,7 @@ import { masterCategories } from '@/lib/categories';
 import { allCalculators } from '@/lib/calculators';
 import { executeCanvasScript, EvaluatedVariable, formatAmount } from '@/lib/canvasEngine';
 import CommandPalette from '@/components/CommandPalette';
+import TemplatesModal from '@/components/TemplatesModal';
 import { CANVAS_TEMPLATES, CanvasTemplate } from '@/lib/canvasTemplates';
 
 export interface CanvasTab {
@@ -86,6 +87,7 @@ export default function HomePage() {
   const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
   const [showTemplatesMenu, setShowTemplatesMenu] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false);
 
   // Split bill input expansion state
   const [showSplitInput, setShowSplitInput] = useState(false);
@@ -306,12 +308,30 @@ export default function HomePage() {
     };
   }, []);
 
-  // Global shortcut: Cmd + K (Mac) and Ctrl + K (Windows/Linux) opens Command Palette
+  // Global shortcut: '/' opens Command Palette when not focused in an input/textarea.
+  // Cmd + K (Mac) and Ctrl + K (Windows/Linux) retained as secondary fallback.
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // 1. Secondary fallback: Cmd + K / Ctrl + K
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setIsCommandPaletteOpen((prev) => !prev);
+        return;
+      }
+
+      // 2. Primary shortcut: '/' (only when not actively typing in an input, textarea, or contentEditable)
+      if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const target = e.target as HTMLElement | null;
+        const isEditingText =
+          target &&
+          (target.tagName === 'INPUT' ||
+            target.tagName === 'TEXTAREA' ||
+            target.isContentEditable);
+
+        if (!isEditingText) {
+          e.preventDefault();
+          setIsCommandPaletteOpen(true);
+        }
       }
     };
     window.addEventListener('keydown', handleGlobalKeyDown);
@@ -489,9 +509,28 @@ export default function HomePage() {
     setCanvasCode(template.content);
     if (activeTab && /^Sheet \d+$/.test(activeTab.title)) {
       setTabs((prev) =>
-        prev.map((t) => (t.id === activeTab.id ? { ...t, title: template.name } : t))
+        prev.map((t) => (t.id === activeTab.id ? { ...t, title: template.name.split('&')[0].trim().slice(0, 20) } : t))
       );
     }
+    setShowTemplatesMenu(false);
+  };
+
+  const handleInsertTemplateActive = (template: CanvasTemplate) => {
+    handleSelectTemplate(template);
+    setIsTemplatesModalOpen(false);
+  };
+
+  const handleOpenTemplateInNewSheet = (template: CanvasTemplate) => {
+    const newId = `tab-${Date.now()}`;
+    const newTab: CanvasTab = {
+      id: newId,
+      title: template.name.split('&')[0].trim().slice(0, 20),
+      content: template.content,
+      createdAt: Date.now(),
+    };
+    setTabs((prev) => [...prev, newTab]);
+    setActiveTabId(newId);
+    setIsTemplatesModalOpen(false);
     setShowTemplatesMenu(false);
   };
 
@@ -938,7 +977,7 @@ export default function HomePage() {
                 type="button"
                 onClick={() => setIsCommandPaletteOpen(true)}
                 className="w-full text-left px-3 py-2 rounded-lg text-xs font-mono bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 transition flex items-center justify-between group shadow-sm"
-                title="Search calculators and sheets (Cmd + K)"
+                title="Search calculators and sheets (/ or Cmd + K)"
               >
                 <span className="flex items-center gap-2">
                   <svg className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -946,8 +985,8 @@ export default function HomePage() {
                   </svg>
                   <span>Quick Search</span>
                 </span>
-                <kbd className="px-1.5 py-0.5 text-[10px] bg-slate-950 border border-slate-700/80 rounded text-slate-400 group-hover:text-emerald-400 group-hover:border-emerald-500/40">
-                  ⌘K
+                <kbd className="px-2 py-0.5 text-xs font-mono bg-slate-950 border border-slate-700/80 rounded text-slate-400 group-hover:text-emerald-400 group-hover:border-emerald-500/40 inline-flex items-center shadow-sm">
+                  /
                 </kbd>
               </button>
             </div>
@@ -978,13 +1017,15 @@ export default function HomePage() {
                   type="button"
                   onClick={() => setIsCommandPaletteOpen(true)}
                   className="text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-md border border-slate-700 transition flex items-center gap-1.5 shadow-sm"
-                  title="Search 487 calculators or switch sheets (Cmd + K)"
+                  title="Search 487 calculators or switch sheets (/ or Cmd + K)"
                 >
                   <svg className="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <span>Search</span>
-                  <kbd className="text-[10px] bg-slate-900 border border-slate-700 px-1 py-0.2 rounded text-slate-400">⌘K</kbd>
+                  <kbd className="px-2 py-0.5 text-xs font-mono bg-slate-950 border border-slate-700/80 rounded text-slate-400 inline-flex items-center shadow-sm">
+                    /
+                  </kbd>
                 </button>
                 <button
                   type="button"
@@ -994,7 +1035,11 @@ export default function HomePage() {
                     : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
                     }`}
                 >
-                  <span>⏱ History</span>
+                  <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  <span>History</span>
                   {historyList.length > 0 && (
                     <span className="text-xs bg-slate-900 text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-500/30">
                       {historyList.length}
@@ -1014,47 +1059,6 @@ export default function HomePage() {
             {/* Quick Inserts Toolbar */}
             <div className="mb-3 flex flex-wrap items-center gap-1.5 text-xs font-mono shrink-0">
               <span className="text-slate-500 text-xs uppercase tracking-wider font-semibold">Quick Inserts:</span>
-
-              {/* Pre-Built Canvas Templates */}
-              <div className="relative" onClick={(e) => e.stopPropagation()}>
-                <button
-                  type="button"
-                  onClick={() => setShowTemplatesMenu((prev) => !prev)}
-                  className="px-2.5 py-1 text-xs font-mono rounded bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 flex items-center gap-1 transition shadow-sm"
-                  title="Load pre-built canvas starter templates"
-                >
-                  <span>Templates</span>
-                  <span className="text-[10px] text-slate-400">▾</span>
-                </button>
-
-                {showTemplatesMenu && (
-                  <div className="absolute left-0 top-full mt-1.5 w-64 bg-[#0e131b] border border-slate-700 rounded-xl shadow-2xl py-1.5 z-40 font-mono text-xs">
-                    <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-slate-500 font-semibold border-b border-slate-800 mb-1">
-                      Canvas Starter Templates
-                    </div>
-                    {CANVAS_TEMPLATES.map((tpl) => (
-                      <button
-                        key={tpl.id}
-                        type="button"
-                        onClick={() => handleSelectTemplate(tpl)}
-                        className="w-full text-left px-3 py-2 hover:bg-slate-800/80 transition flex flex-col gap-0.5 group"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-semibold text-white group-hover:text-emerald-400 text-xs">
-                            {tpl.name}
-                          </span>
-                          <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">
-                            {tpl.badge}
-                          </span>
-                        </div>
-                        <span className="text-[11px] text-slate-400 font-sans line-clamp-1">
-                          {tpl.description}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
 
               <button
                 type="button"
@@ -1117,6 +1121,19 @@ export default function HomePage() {
                   </button>
                 </div>
               )}
+
+              {/* Vertical divider line */}
+              <span className="text-slate-700 text-xs select-none">|</span>
+
+              {/* Pre-Built Canvas Templates Button */}
+              <button
+                type="button"
+                onClick={() => setIsTemplatesModalOpen(true)}
+                className="px-2.5 py-1 text-xs font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition flex items-center gap-1.5 shadow-sm"
+                title="Browse Calculation Recipe Templates"
+              >
+                + templates
+              </button>
             </div>
 
             {/* Multi-Tab Workspace Strip */}
@@ -1563,8 +1580,8 @@ export default function HomePage() {
                                         .join('&')
                                     : ''
                                 }`}
-                                title="Open full calculator"
-                                aria-label="Open full calculator"
+                                title="Open Full Calculator"
+                                aria-label="Open Full Calculator"
                                 className="inline-flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/60 px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-emerald-500/30 hover:border-emerald-500/60"
                               >
                                 ↗
@@ -1903,6 +1920,14 @@ export default function HomePage() {
           handleSelectTemplate(tpl);
           setIsCommandPaletteOpen(false);
         }}
+      />
+
+      {/* Contextual Calculation Templates Modal */}
+      <TemplatesModal
+        isOpen={isTemplatesModalOpen}
+        onClose={() => setIsTemplatesModalOpen(false)}
+        onInsertActive={handleInsertTemplateActive}
+        onOpenNewSheet={handleOpenTemplateInNewSheet}
       />
     </main>
   );

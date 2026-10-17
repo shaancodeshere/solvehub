@@ -118,13 +118,21 @@ export default function UniversalCalculator({ calculatorId, initialParams }: Pro
                                 queryData.mortgageTermYears;
                         } else if (input.id === 'depositAmount' || input.id === 'downPaymentDollars') {
                             matchedVal = queryData.deposit ?? queryData.downPayment ?? queryData.downPaymentDollars ?? queryData.depositAmount;
+                        } else if (input.id === 'discountPct') {
+                            matchedVal = queryData.discountPct ?? queryData.discount ?? queryData.pct ?? queryData.rate;
+                        } else if (input.id === 'originalPrice') {
+                            matchedVal = queryData.originalPrice ?? queryData.price ?? queryData.amount ?? queryData.subtotal;
+                        } else if (input.id === 'tipPercentage') {
+                            matchedVal = queryData.tipPercentage ?? queryData.tip ?? queryData.gratuity ?? queryData.rate;
+                        } else if (input.id === 'billAmount') {
+                            matchedVal = queryData.billAmount ?? queryData.bill ?? queryData.amount ?? queryData.subtotal;
                         } else if (input.id === 'repaymentType' || input.id === 'mode' || input.id === 'paymentSchedule') {
                             matchedVal = queryData[input.id] ?? queryData.mode ?? queryData.type;
                         }
                     }
 
                     if (matchedVal !== undefined && matchedVal !== null && matchedVal !== '') {
-                        if (input.type === 'number') {
+                        if (input.type === 'number' || input.type === 'currency' || input.type === 'percentage') {
                             const num = Number(matchedVal);
                             if (!isNaN(num)) next[input.id] = num;
                         } else if (input.type === 'dropdown') {
