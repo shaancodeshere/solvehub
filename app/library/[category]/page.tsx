@@ -176,7 +176,7 @@ export default function CategoryListingPage() {
 
                     {/* Bucket Quick Filter Pills */}
                     <div className="flex flex-wrap items-center gap-2 pt-1 text-xs font-mono">
-                        <span className="text-slate-500 text-[10px] uppercase tracking-wider shrink-0 mr-1">
+                        <span className="text-slate-400 text-xs uppercase tracking-wider shrink-0 mr-1 font-semibold">
                             Bucket Filter:
                         </span>
                         {BUCKET_PILLS.map((pill) => {
@@ -195,23 +195,23 @@ export default function CategoryListingPage() {
                                     }`}
                                 >
                                     <span>{pill.label}</span>
-                                    <span
-                                        className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                                            isActive
-                                                ? 'bg-slate-950/20 text-slate-950'
-                                                : 'bg-slate-800 text-emerald-400 border border-emerald-500/20'
-                                        }`}
-                                    >
-                                        {count}
-                                    </span>
-                                </button>
+                                     <span
+                                         className={`text-xs px-2 py-0.5 rounded-full font-mono font-medium ${
+                                             isActive
+                                                 ? 'bg-slate-950/20 text-slate-950'
+                                                 : 'bg-slate-800 text-emerald-400 border border-emerald-500/20'
+                                         }`}
+                                     >
+                                         {count}
+                                     </span>
+                                 </button>
                             );
                         })}
                     </div>
                 </div>
 
                 {/* Results Count Summary */}
-                <div className="flex items-center justify-between text-xs font-mono text-slate-400 pt-2 border-t border-slate-800/80">
+                <div className="flex items-center justify-between text-sm font-mono text-slate-400 pt-3 border-t border-slate-800/80">
                     <div>
                         Showing <span className="text-white font-bold">{filteredCalculators.length}</span> of{' '}
                         <span className="text-slate-300">{allCategoryCalculators.length}</span> calculators in this category
@@ -235,7 +235,7 @@ export default function CategoryListingPage() {
 
                 {/* Calculator Cards Grid */}
                 {filteredCalculators.length === 0 ? (
-                    <div className="p-8 text-center bg-[#161b22] border border-slate-800 rounded-xl space-y-3">
+                    <div className="p-8 text-center bg-[#161b22] border border-slate-800 rounded-2xl space-y-3">
                         <p className="text-slate-400 text-sm">
                             No calculators matched your keyword or bucket filter in this category.
                         </p>
@@ -245,26 +245,26 @@ export default function CategoryListingPage() {
                                 setQuery('');
                                 setSelectedBucket('all');
                             }}
-                            className="px-3.5 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-mono hover:bg-emerald-900 transition"
+                            className="px-4 py-2 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-sm font-mono hover:bg-emerald-900 transition"
                         >
                             Reset Filters
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         {filteredCalculators.map((calc: CalculatorDefinition) => (
                             <Link
                                 key={calc.id}
                                 href={`/${calc.category}/${calc.id}`}
-                                className="group p-5 bg-[#161b22] border border-slate-800 rounded-xl hover:border-emerald-500/50 hover:bg-[#1c2128] transition flex flex-col justify-between"
+                                className="group p-6 bg-[#161b22] border border-slate-800 rounded-2xl hover:border-emerald-500/50 hover:bg-[#1c2128] transition flex flex-col justify-between shadow-sm"
                             >
                                 <div>
-                                    <div className="flex justify-between items-start mb-2">
-                                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                                    <div className="flex justify-between items-start mb-3 gap-2">
+                                        <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
                                             {calc.bucket}
                                         </span>
                                         {calc.cpc && (
-                                            <span className="text-[10px] font-mono text-emerald-400">
+                                            <span className="text-xs font-mono text-emerald-400 font-semibold shrink-0">
                                                 CPC {calc.cpc}
                                             </span>
                                         )}
@@ -272,12 +272,12 @@ export default function CategoryListingPage() {
                                     <h2 className="text-base font-semibold text-white group-hover:text-emerald-400 transition font-sans">
                                         {calc.name}
                                     </h2>
-                                    <p className="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                                    <p className="text-xs sm:text-sm text-slate-400 mt-2 line-clamp-2 leading-relaxed">
                                         {calc.description}
                                     </p>
                                 </div>
 
-                                <div className="mt-4 pt-3 border-t border-slate-800/80 flex justify-between items-center text-xs text-emerald-400 font-mono">
+                                <div className="mt-5 pt-3.5 border-t border-slate-800/80 flex justify-between items-center text-sm text-emerald-400 font-mono font-medium">
                                     <span>Launch Tool</span>
                                     <span className="group-hover:translate-x-1 transition-transform">→</span>
                                 </div>

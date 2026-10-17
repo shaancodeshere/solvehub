@@ -57,7 +57,7 @@ export default function CuratedToolView({ tool, onBack }: CuratedToolViewProps) 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">
                     {tool.inputs?.map((param) => (
                         <div key={param.key} className="flex flex-col gap-1.5">
-                            <label className="text-[11px] font-mono uppercase text-neutral-400">
+                            <label className="text-xs font-mono uppercase text-neutral-400">
                                 {param.label} {param.prefix ? `(${param.prefix})` : param.suffix ? `(${param.suffix})` : ''}
                             </label>
                             <input

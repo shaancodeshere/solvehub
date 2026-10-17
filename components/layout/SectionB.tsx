@@ -50,7 +50,7 @@ export default function SectionB() {
                             {rawScratchpad.length > 0 && (
                                 <button
                                     onClick={handleClearScratchpad}
-                                    className="text-[11px] text-neutral-500 hover:text-rose-400 transition"
+                                    className="text-xs text-neutral-400 hover:text-rose-400 transition"
                                 >
                                     Clear Buffer
                                 </button>
@@ -60,7 +60,7 @@ export default function SectionB() {
                             value={rawScratchpad}
                             onChange={(e) => setRawScratchpad(e.target.value)}
                             placeholder="Type your calculations here... (e.g., price 200)"
-                            className="w-full h-64 p-4 rounded-lg bg-neutral-950/70 border border-neutral-800 text-sm text-neutral-200 font-mono focus:outline-none focus:border-emerald-500/50 resize-none leading-relaxed transition"
+                            className="w-full h-64 p-4 rounded-lg bg-neutral-950/70 border border-neutral-800 text-sm sm:text-base text-neutral-200 font-mono focus:outline-none focus:border-emerald-500/50 resize-none leading-relaxed transition"
                             spellCheck={false}
                         />
                         <p className="text-xs text-neutral-500 italic">
@@ -73,7 +73,7 @@ export default function SectionB() {
             </div>
 
             {/* Workspace Status Footer */}
-            <footer className="h-8 border-t border-neutral-800 px-6 flex items-center justify-between text-[11px] font-mono text-neutral-500 bg-neutral-950/60 shrink-0 select-none">
+            <footer className="h-8 border-t border-neutral-800 px-6 flex items-center justify-between text-xs font-mono text-neutral-500 bg-neutral-950/60 shrink-0 select-none">
                 <span>Ready</span>
                 <span>UTF-8 • Client Execution Engine</span>
             </footer>

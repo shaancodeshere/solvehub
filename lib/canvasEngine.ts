@@ -11,6 +11,9 @@ export interface EvaluatedVariable {
     note?: string;
     currency?: string;
     isFlat?: boolean;
+    calculatorSlug?: string;
+    calculatorCategory?: string;
+    initialParams?: Record<string, any>;
 }
 
 export interface CanvasExecutionResult {
@@ -235,6 +238,16 @@ export function evaluateLine(
                 type: 'base',
                 note: note || `Invested: ${formatAmount(Math.round(totalInvested), curr)} | Est. Gain: +${formatAmount(Math.round(wealthGain), curr)}`,
                 currency: curr,
+                calculatorSlug: 'sip-calculator',
+                calculatorCategory: 'finance-business',
+                initialParams: {
+                    monthlyInvestment: p,
+                    expectedReturnRate: r,
+                    investmentPeriodYears: y,
+                    principal: p,
+                    rate: r,
+                    tenure: y,
+                },
             };
         }
     }
@@ -293,6 +306,16 @@ export function evaluateLine(
                 type: 'base',
                 note: note || `Total Repaid: ${formatAmount(Math.round(totalPayment), curr)} | Interest: ${formatAmount(Math.round(totalInterest), curr)}`,
                 currency: curr,
+                calculatorSlug: 'emi-calculator',
+                calculatorCategory: 'finance-business',
+                initialParams: {
+                    loanAmount: p,
+                    interestRate: r,
+                    tenureYears: y,
+                    principal: p,
+                    rate: r,
+                    tenure: y,
+                },
             };
         }
     }
@@ -361,6 +384,31 @@ export function evaluateLine(
                 type: 'base',
                 note: note || `Total Repaid: ${formatAmount(Math.round(totalPayment), curr)} | Interest: ${formatAmount(Math.round(totalInterest), curr)}`,
                 currency: curr,
+                calculatorSlug: isCad ? 'canadian-mortgage-calculator' : 'mortgage-calculator-uk',
+                calculatorCategory: 'finance-business',
+                initialParams: isCad
+                    ? {
+                        homePrice: p,
+                        downPaymentDollars: 0,
+                        mortgageRate: r,
+                        amortizationYears: y,
+                        paymentSchedule: 'monthly',
+                        principal: p,
+                        price: p,
+                        rate: r,
+                        tenure: y,
+                    }
+                    : {
+                        propertyPrice: p,
+                        depositAmount: 0,
+                        interestRate: r,
+                        mortgageTermYears: y,
+                        repaymentType: 'repayment',
+                        principal: p,
+                        price: p,
+                        rate: r,
+                        tenure: y,
+                    },
             };
         }
     }
@@ -437,6 +485,8 @@ export function evaluateLine(
         const flatMatch = clean.match(/\d+(?:\.\d+)?/);
         const val = pctMatch ? parseFloat(pctMatch[1]) : (flatMatch ? parseFloat(flatMatch[0]) : 0);
 
+        const isVat = /\b(?:vat|sales\s*tax)\b/i.test(lower);
+
         return {
             id: `tax-${lineNumber}`,
             lineNumber,
@@ -448,6 +498,18 @@ export function evaluateLine(
             type: 'addition',
             currency: sessionCurrency,
             note,
+            ...(isVat
+                ? {
+                    calculatorSlug: 'vat-calculator',
+                    calculatorCategory: 'finance-business',
+                    initialParams: {
+                        amount: 500,
+                        vatRate: val,
+                        mode: 'add_vat',
+                        rate: val,
+                    },
+                }
+                : {}),
         };
     }
 
@@ -614,6 +676,14 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
                     type: 'base',
                     note: note,
                     currency: curr,
+                    calculatorSlug: 'vat-calculator',
+                    calculatorCategory: 'finance-business',
+                    initialParams: {
+                        amount: grossVal,
+                        vatRate: vatRate,
+                        mode: 'remove_vat',
+                        rate: vatRate,
+                    },
                 });
 
                 taxItems.push({
@@ -627,6 +697,14 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
                     type: 'addition',
                     currency: curr,
                     isFlat: true,
+                    calculatorSlug: 'vat-calculator',
+                    calculatorCategory: 'finance-business',
+                    initialParams: {
+                        amount: grossVal,
+                        vatRate: vatRate,
+                        mode: 'remove_vat',
+                        rate: vatRate,
+                    },
                 });
                 continue;
             }
@@ -655,6 +733,14 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
                     type: 'base',
                     note: note,
                     currency: curr,
+                    calculatorSlug: 'vat-calculator',
+                    calculatorCategory: 'finance-business',
+                    initialParams: {
+                        amount: baseVal,
+                        vatRate: vatRate,
+                        mode: 'add_vat',
+                        rate: vatRate,
+                    },
                 });
 
                 taxItems.push({
@@ -668,6 +754,14 @@ export function executeCanvasScript(rawText: string): CanvasExecutionResult {
                     type: 'addition',
                     currency: curr,
                     isFlat: true,
+                    calculatorSlug: 'vat-calculator',
+                    calculatorCategory: 'finance-business',
+                    initialParams: {
+                        amount: baseVal,
+                        vatRate: vatRate,
+                        mode: 'add_vat',
+                        rate: vatRate,
+                    },
                 });
                 continue;
             }

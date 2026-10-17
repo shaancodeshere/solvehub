@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { allCalculators, getCalculatorById } from '@/lib/calculators';
@@ -47,8 +48,8 @@ export default async function CalculatorPage({ params }: PageProps) {
 
     return (
         <main className="min-h-screen bg-slate-900 text-white py-12 px-4 sm:px-6">
-            <div className="max-w-4xl mx-auto mb-6">
-                <nav className="flex items-center gap-2 text-xs font-mono text-slate-400">
+            <div className="max-w-3xl w-full mx-auto mb-6">
+                <nav className="flex items-center gap-2 text-sm font-mono text-slate-400">
                     <Link href="/" className="hover:text-emerald-400 transition">
                         Home
                     </Link>
@@ -63,7 +64,9 @@ export default async function CalculatorPage({ params }: PageProps) {
                     <span className="text-emerald-400 font-semibold truncate">{calculator.name}</span>
                 </nav>
             </div>
-            <UniversalCalculator calculatorId={calculator.id} />
+            <Suspense fallback={<div className="max-w-3xl mx-auto p-6 bg-[#161b22] border border-slate-800 rounded-2xl text-slate-400 font-mono">Loading calculator...</div>}>
+                <UniversalCalculator calculatorId={calculator.id} />
+            </Suspense>
         </main>
     );
 }

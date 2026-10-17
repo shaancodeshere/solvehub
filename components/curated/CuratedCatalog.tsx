@@ -29,24 +29,24 @@ export default function CuratedCatalog() {
                     <div
                         key={tool.id}
                         onClick={() => setSelectedToolId(tool.id)}
-                        className="p-4 rounded-lg bg-neutral-950 border border-neutral-800/80 hover:border-emerald-500/40 cursor-pointer transition flex flex-col justify-between group"
+                        className="p-5 rounded-xl bg-neutral-950 border border-neutral-800/80 hover:border-emerald-500/40 cursor-pointer transition flex flex-col justify-between group"
                     >
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2.5">
                             <div className="flex items-center justify-between">
-                                <span className="text-xl">{tool.icon}</span>
-                                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-400">
+                                <span className="text-2xl">{tool.icon}</span>
+                                <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400">
                                     {tool.category}
                                 </span>
                             </div>
-                            <h3 className="text-xs font-semibold text-neutral-200 group-hover:text-emerald-400 transition">
+                            <h3 className="text-sm font-semibold text-neutral-200 group-hover:text-emerald-400 transition">
                                 {tool.title}
                             </h3>
-                            <p className="text-[11px] text-neutral-500 leading-relaxed">
+                            <p className="text-xs text-neutral-400 leading-relaxed">
                                 {tool.description}
                             </p>
                         </div>
 
-                        <div className="mt-4 pt-3 border-t border-neutral-900 text-[10px] font-mono text-emerald-400/80 flex items-center justify-between">
+                        <div className="mt-4 pt-3 border-t border-neutral-900 text-xs font-mono text-emerald-400/80 flex items-center justify-between">
                             <span>Open Tool</span>
                             <span>→</span>
                         </div>

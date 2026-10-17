@@ -133,7 +133,7 @@ export default function LibraryPage() {
                             <span className="block text-lg font-bold font-mono text-emerald-400">
                                 {allCalculators.length}
                             </span>
-                            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                            <span className="text-xs font-mono text-slate-400 uppercase tracking-wider font-semibold">
                                 Total Tools
                             </span>
                         </div>
@@ -168,7 +168,7 @@ export default function LibraryPage() {
 
                     {/* Category Filter Chips (Horizontal Scroll) */}
                     <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar text-xs font-mono">
-                        <span className="text-slate-500 text-[10px] uppercase tracking-wider shrink-0 mr-1">
+                        <span className="text-slate-400 text-xs uppercase tracking-wider shrink-0 mr-1 font-semibold">
                             Category:
                         </span>
                         <button
@@ -202,8 +202,8 @@ export default function LibraryPage() {
                     </div>
 
                     {/* Bucket Quick Filter Pills */}
-                    <div className="flex flex-wrap items-center gap-2 pt-1 text-xs font-mono">
-                        <span className="text-slate-500 text-[10px] uppercase tracking-wider shrink-0 mr-1">
+                    <div className="flex flex-wrap items-center gap-2.5 pt-1 text-sm font-mono">
+                        <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider shrink-0 mr-1">
                             Bucket Filter:
                         </span>
                         {BUCKET_PILLS.map((pill) => {
@@ -215,7 +215,7 @@ export default function LibraryPage() {
                                     key={pill.id}
                                     type="button"
                                     onClick={() => setSelectedBucket(pill.id)}
-                                    className={`px-3 py-1.5 rounded-full border transition flex items-center gap-2 ${
+                                    className={`px-3.5 py-2 rounded-full border transition flex items-center gap-2 text-sm ${
                                         isActive
                                             ? 'bg-emerald-500 text-slate-950 font-bold border-emerald-400 shadow-sm'
                                             : 'bg-slate-900/90 border-slate-700/80 text-slate-300 hover:text-white hover:border-slate-600'
@@ -223,7 +223,7 @@ export default function LibraryPage() {
                                 >
                                     <span>{pill.label}</span>
                                     <span
-                                        className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                                        className={`text-xs px-2 py-0.5 rounded-full font-mono font-medium ${
                                             isActive
                                                 ? 'bg-slate-950/20 text-slate-950'
                                                 : 'bg-slate-800 text-emerald-400 border border-emerald-500/20'
@@ -238,7 +238,7 @@ export default function LibraryPage() {
                 </div>
 
                 {/* Results Counter / Active Filter Bar */}
-                <div className="flex items-center justify-between text-xs font-mono text-slate-400 pt-2 border-t border-slate-800/80">
+                <div className="flex items-center justify-between text-sm font-mono text-slate-400 pt-3 border-t border-slate-800/80">
                     <div>
                         Showing <span className="text-white font-bold">{filteredCalculators.length}</span> of{' '}
                         <span className="text-slate-300">{allCalculators.length}</span> calculators
@@ -271,7 +271,7 @@ export default function LibraryPage() {
                     <div className="p-12 text-center bg-[#161b22] border border-slate-800 rounded-2xl space-y-3">
                         <div className="text-3xl">🔍</div>
                         <h3 className="text-base font-semibold text-white font-mono">No calculators found</h3>
-                        <p className="text-xs text-slate-400 max-w-md mx-auto">
+                        <p className="text-sm text-slate-400 max-w-md mx-auto">
                             No tools matched your current search query or filter combination. Try adjusting your
                             keywords or clearing the bucket filter.
                         </p>
@@ -282,13 +282,13 @@ export default function LibraryPage() {
                                 setSelectedCategory('all');
                                 setSelectedBucket('all');
                             }}
-                            className="mt-2 px-4 py-2 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-mono hover:bg-emerald-900 transition"
+                            className="mt-2 px-4 py-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-sm font-mono hover:bg-emerald-900 transition"
                         >
                             Clear All Filters
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         {filteredCalculators.map((calc: CalculatorDefinition) => {
                             const catDef = categoryMap.get(calc.category);
 
@@ -296,28 +296,28 @@ export default function LibraryPage() {
                                 <Link
                                     key={calc.id}
                                     href={`/${calc.category}/${calc.id}`}
-                                    className="group p-5 bg-[#161b22] border border-slate-800 rounded-xl hover:border-emerald-500/50 hover:bg-[#1c2128] transition flex flex-col justify-between shadow-sm"
+                                    className="group p-6 bg-[#161b22] border border-slate-800 rounded-2xl hover:border-emerald-500/50 hover:bg-[#1c2128] transition flex flex-col justify-between shadow-sm"
                                 >
                                     <div>
                                         {/* Meta Header */}
-                                        <div className="flex justify-between items-start mb-2.5 gap-2">
-                                            <div className="flex items-center gap-1.5 flex-wrap">
-                                                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-emerald-400 border border-slate-700/80">
+                                        <div className="flex justify-between items-start mb-3 gap-2">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-lg bg-slate-800 text-emerald-400 border border-slate-700/80">
                                                     {catDef?.groupCode || 'CAT'}
                                                 </span>
-                                                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">
+                                                <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 border border-slate-800">
                                                     {calc.bucket}
                                                 </span>
                                             </div>
                                             {calc.cpc && (
-                                                <span className="text-[10px] font-mono text-emerald-400 font-semibold shrink-0">
+                                                <span className="text-xs font-mono text-emerald-400 font-semibold shrink-0">
                                                     CPC {calc.cpc}
                                                 </span>
                                             )}
                                         </div>
 
                                         {/* Category Label */}
-                                        <span className="text-[10px] font-mono text-slate-500 block mb-1">
+                                        <span className="text-xs font-mono text-slate-500 block mb-1">
                                             {catDef?.name || calc.category}
                                         </span>
 
@@ -327,13 +327,13 @@ export default function LibraryPage() {
                                         </h2>
 
                                         {/* Description */}
-                                        <p className="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-slate-400 mt-2 line-clamp-2 leading-relaxed">
                                             {calc.description}
                                         </p>
                                     </div>
 
                                     {/* Action Footer */}
-                                    <div className="mt-4 pt-3 border-t border-slate-800/80 flex justify-between items-center text-xs text-emerald-400 font-mono">
+                                    <div className="mt-5 pt-3.5 border-t border-slate-800/80 flex justify-between items-center text-sm text-emerald-400 font-mono font-medium">
                                         <span>Launch Tool</span>
                                         <span className="group-hover:translate-x-1 transition-transform">→</span>
                                     </div>
