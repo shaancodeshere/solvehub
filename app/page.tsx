@@ -108,7 +108,7 @@ export default function HomePage() {
   const [tabs, setTabs] = useState<CanvasTab[]>([
     {
       id: 'tab-1',
-      title: 'Sheet 1',
+      title: 'Untitled Sheet',
       content: DEFAULT_CANVAS_TEXT,
       createdAt: 1,
     },
@@ -136,6 +136,8 @@ export default function HomePage() {
   }, [tabs, activeTabId]);
 
   const canvasCode = activeTab ? activeTab.content : '';
+  const canvasText = canvasCode;
+  const hasCanvasContent = canvasText.trim().length > 0;
 
   const setCanvasCode = (updater: string | ((prev: string) => string)) => {
     setTabs((prevTabs) => {
@@ -170,7 +172,7 @@ export default function HomePage() {
           setTabs([
             {
               id: 'tab-1',
-              title: 'Sheet 1',
+              title: 'Untitled Sheet',
               content: savedActive,
               createdAt: Date.now(),
             },
@@ -210,17 +212,60 @@ export default function HomePage() {
   }, [tabs, activeTabId, isHydrated]);
 
   // Tab management helpers
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const [hasTabOverflow, setHasTabOverflow] = useState(false);
+
+  const checkTabOverflow = () => {
+    if (tabsContainerRef.current) {
+      const { scrollWidth, clientWidth } = tabsContainerRef.current;
+      setHasTabOverflow(scrollWidth > clientWidth + 4);
+    }
+  };
+
+  useEffect(() => {
+    checkTabOverflow();
+    const handleResize = () => checkTabOverflow();
+    window.addEventListener('resize', handleResize);
+    const el = tabsContainerRef.current;
+    if (!el) return () => window.removeEventListener('resize', handleResize);
+
+    const resizeObserver = new ResizeObserver(() => {
+      checkTabOverflow();
+    });
+    resizeObserver.observe(el);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
+    };
+  }, [tabs]);
+
+  const handleScrollTabsNext = () => {
+    if (tabsContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsContainerRef.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 10) {
+        tabsContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        tabsContainerRef.current.scrollBy({ left: 160, behavior: 'smooth' });
+      }
+    }
+  };
+
   const handleNewTab = () => {
     const newId = `tab-${Date.now()}`;
-    const newTabNumber = tabs.length + 1;
     const newTab: CanvasTab = {
       id: newId,
-      title: `Sheet ${newTabNumber}`,
+      title: 'Untitled Sheet',
       content: '',
       createdAt: Date.now(),
     };
     setTabs((prev) => [...prev, newTab]);
     setActiveTabId(newId);
+    setTimeout(() => {
+      if (tabsContainerRef.current) {
+        tabsContainerRef.current.scrollTo({ left: tabsContainerRef.current.scrollWidth, behavior: 'smooth' });
+      }
+    }, 50);
   };
 
   const handleCloseTab = (id: string, e: React.MouseEvent) => {
@@ -479,7 +524,7 @@ export default function HomePage() {
 
   const handleSelectTemplate = (template: CanvasTemplate) => {
     setCanvasCode(template.content);
-    if (activeTab && /^Sheet \d+$/.test(activeTab.title)) {
+    if (activeTab && (/^Untitled Sheet( \d+)?$/.test(activeTab.title) || /^Sheet \d+$/.test(activeTab.title))) {
       setTabs((prev) =>
         prev.map((t) => (t.id === activeTab.id ? { ...t, title: template.name.split('&')[0].trim().slice(0, 20) } : t))
       );
@@ -920,30 +965,12 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setIsCommandPaletteOpen(true)}
-                  className="text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-2.5 py-1 rounded-md border border-[var(--border)] dark:border-slate-700 transition flex items-center gap-1.5 shadow-sm"
-                  title="Search 487 calculators or switch sheets (/ or Cmd + K)"
-                >
-                  <svg className="w-3 h-3 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <span>Search</span>
-                  <kbd className="px-2 py-0.5 text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-950 border border-[var(--border)] dark:border-slate-700/80 rounded text-slate-600 dark:text-slate-400 inline-flex items-center shadow-sm">
-                    /
-                  </kbd>
-                </button>
-                <button
-                  type="button"
                   onClick={() => setShowHistory(!showHistory)}
                   className={`text-xs font-mono px-2.5 py-1 rounded-md border transition flex items-center gap-1.5 ${showHistory
                     ? 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/40 dark:border-emerald-500/50 text-emerald-600 dark:text-emerald-300'
                     : 'bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-[var(--border)] dark:border-slate-700'
                     }`}
                 >
-                  <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
                   <span>History</span>
                   {historyList.length > 0 && (
                     <span className="text-xs bg-emerald-100 dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-300 dark:border-emerald-500/30">
@@ -953,8 +980,12 @@ export default function HomePage() {
                 </button>
                 <button
                   type="button"
+                  disabled={!hasCanvasContent}
                   onClick={handleClearClick}
-                  className="text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-2.5 py-1 rounded-md border border-[var(--border)] dark:border-slate-700 transition"
+                  className={`text-xs font-mono px-2.5 py-1 rounded-md border transition ${hasCanvasContent
+                    ? 'cursor-pointer active:scale-95 bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-[var(--border)] dark:border-slate-700'
+                    : 'cursor-not-allowed opacity-40 bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-[var(--border)] dark:border-slate-800'
+                    }`}
                 >
                   Clear
                 </button>
@@ -1042,85 +1073,93 @@ export default function HomePage() {
             </div>
 
             {/* Multi-Tab Workspace Strip */}
-            <div className="flex items-center justify-between mb-3 shrink-0">
-              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-[calc(100%-140px)]">
-                {tabs.map((tab) => {
-                  const isActive = tab.id === activeTabId;
-                  const isEditing = editingTabId === tab.id;
-                  return (
-                    <div
-                      key={tab.id}
-                      onClick={() => setActiveTabId(tab.id)}
-                      onDoubleClick={() => startRenameTab(tab)}
-                      className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono transition-all cursor-pointer border select-none ${
-                        isActive
-                          ? 'bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-900 dark:text-white border-emerald-500/50 shadow-sm'
-                          : 'bg-slate-200/50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/50 border-[var(--border)] dark:border-slate-800'
-                      }`}
-                    >
-                      {/* Active Tab Indicator */}
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                          isActive ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-transparent'
+            <div className="flex items-center justify-between gap-3 mb-3 shrink-0">
+              <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden">
+                {/* Scrollable Tab List */}
+                <div
+                  ref={tabsContainerRef}
+                  className="overflow-x-auto scrollbar-none flex items-center gap-1.5 min-w-0 py-0.5 scroll-smooth"
+                >
+                  {tabs.map((tab) => {
+                    const isActive = tab.id === activeTabId;
+                    const isEditing = editingTabId === tab.id;
+                    return (
+                      <div
+                        key={tab.id}
+                        onClick={() => setActiveTabId(tab.id)}
+                        onDoubleClick={() => startRenameTab(tab)}
+                        className={`group flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium transition-all cursor-pointer border select-none shrink-0 ${
+                          isActive
+                            ? 'bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-900 dark:text-white border-emerald-500/50 shadow-sm'
+                            : 'bg-slate-200/50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/50 border-[var(--border)] dark:border-slate-800'
                         }`}
-                      />
-
-                      {/* Title or Inline Edit Input */}
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={tempTabTitle}
-                          onChange={(e) => setTempTabTitle(e.target.value)}
-                          onBlur={() => saveRenameTab(tab.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') saveRenameTab(tab.id);
-                            if (e.key === 'Escape') setEditingTabId(null);
-                          }}
-                          className="w-24 bg-slate-950 border border-emerald-500 rounded px-1.5 py-0.5 text-xs text-white focus:outline-none"
-                          autoFocus
-                          onClick={(e) => e.stopPropagation()}
+                      >
+                        {/* Active Tab Indicator */}
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full transition-colors shrink-0 ${
+                            isActive ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-transparent'
+                          }`}
                         />
-                      ) : (
-                        <span className="truncate max-w-[120px] font-medium" title={tab.title}>
-                          {tab.title}
-                        </span>
-                      )}
 
-                      {/* Pencil to rename */}
-                      {!isEditing && (
-                        <button
-                          type="button"
-                          onClick={(e) => startRenameTab(tab, e)}
-                          title="Rename Sheet"
-                          className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-emerald-400 transition text-xs"
-                        >
-                          ✎
-                        </button>
-                      )}
+                        {/* Title or Inline Edit Input */}
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={tempTabTitle}
+                            onChange={(e) => setTempTabTitle(e.target.value)}
+                            onBlur={() => saveRenameTab(tab.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') saveRenameTab(tab.id);
+                              if (e.key === 'Escape') setEditingTabId(null);
+                            }}
+                            className="w-24 bg-slate-950 border border-emerald-500 rounded px-1.5 py-0.5 text-[11px] font-mono text-white focus:outline-none"
+                            autoFocus
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <span className="whitespace-nowrap" title={tab.title}>
+                            {tab.title}
+                          </span>
+                        )}
 
-                      {/* Close tab button (✕) with guard preventing deleting the last tab */}
-                      {tabs.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={(e) => handleCloseTab(tab.id, e)}
-                          title="Close Sheet"
-                          className="text-slate-500 hover:text-rose-400 opacity-60 hover:opacity-100 transition text-xs ml-0.5"
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
+                        {/* Close tab button (✕) with guard preventing deleting the last tab */}
+                        {tabs.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleCloseTab(tab.id, e)}
+                            title="Close Sheet"
+                            className="text-slate-500 hover:text-rose-400 opacity-60 hover:opacity-100 transition text-[11px] ml-0.5 shrink-0"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Overflow Navigation Arrow (Rendered when multiple tabs exceed strip width) */}
+                {hasTabOverflow && (
+                  <button
+                    type="button"
+                    onClick={handleScrollTabsNext}
+                    title="Scroll to next sheet"
+                    className="w-5 h-5 p-1 flex items-center justify-center rounded-md bg-[var(--surface-subtle)] dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-700 transition shadow-sm shrink-0"
+                  >
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </button>
+                )}
 
                 {/* + New Sheet Button */}
                 <button
                   type="button"
                   onClick={handleNewTab}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] dark:bg-slate-900/60 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-dashed border-[var(--border)] dark:border-slate-700 hover:border-emerald-500/50 transition text-xs sm:text-sm font-mono shrink-0"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--surface-subtle)] dark:bg-slate-900/60 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-dashed border-[var(--border)] dark:border-slate-700 hover:border-emerald-500/50 transition text-[11px] font-mono shrink-0"
                 >
                   <span className="text-emerald-500 dark:text-emerald-400 font-bold">+</span>
-                  <span>New Sheet</span>
+                  <span className="whitespace-nowrap">New Sheet</span>
                 </button>
               </div>
 
