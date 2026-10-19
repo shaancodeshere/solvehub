@@ -61,9 +61,9 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Outcome Probability', value: `${probPct.toFixed(2)}%`, suffix: oddsRatio < 1000000 ? `1 in ${oddsRatio.toFixed(1)} Odds` : 'Extremely Rare' },
                 secondaryMetrics: [
-                    { label: 'Theoretical Probability (Decimal)', value: probability.toFixed(6) },
-                    { label: 'Expected Number of Heads (E[X])', value: `${expectedHeads.toFixed(1)} Heads` },
-                    { label: 'Binomial Standard Deviation (σ)', value: `±${stdDev.toFixed(2)} Heads` },
+                    { label: 'Theoretical Probability', value: probability.toFixed(6) },
+                    { label: 'Expected Heads (E[X])', value: `${expectedHeads.toFixed(1)} Heads` },
+                    { label: 'Binomial Std Deviation (σ)', value: `±${stdDev.toFixed(2)} Heads` },
                     { label: 'Fair Coin Benchmark (50/50)', value: p === 0.5 ? 'Fair Coin (Balanced 50/50)' : 'Biased Probability Model' }
                 ]
             };
@@ -210,7 +210,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Exact Decimal Probability', value: probability.toFixed(6) },
                     { label: 'Total Possible Starting Hands', value: `${Math.round(totalCombos).toLocaleString()} Hands` },
-                    { label: 'Chance of 0 Target Cards (Blanking)', value: `${(hyperProb(0) * 100).toFixed(2)}%` },
+                    { label: 'Chance of 0 Targets (Blank)', value: `${(hyperProb(0) * 100).toFixed(2)}%` },
                     { label: 'Expected Value in Hand', value: `${((n * K) / N).toFixed(2)} Copies` }
                 ]
             };
@@ -266,8 +266,8 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Remaining Uncalled Balls', value: `${remainingBalls} Balls`, suffix: `${((validCalled / totalBalls) * 100).toFixed(0)}% Game Elapsed` },
                 secondaryMetrics: [
-                    { label: 'Chance of Specific Needed Number on Next Call', value: `${singleBallChanceNext.toFixed(2)}% (1 in ${remainingBalls})` },
-                    { label: 'Chance of Target Column on Next Call', value: format === '75_ball' ? `${colChanceNext.toFixed(1)}%` : 'N/A (Non 75-Ball)' },
+                    { label: 'Chance of Number on Next Call', value: `${singleBallChanceNext.toFixed(2)}% (1 in ${remainingBalls})` },
+                    { label: 'Chance of Column on Next Call', value: format === '75_ball' ? `${colChanceNext.toFixed(1)}%` : 'N/A (Non 75-Ball)' },
                     { label: 'Sample Next Deterministic Call', value: sampleCallName },
                     { label: 'Game Progress Status', value: `${validCalled} of ${totalBalls} balls drawn` }
                 ]
@@ -444,9 +444,9 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Jackpot Winning Odds', value: `1 in ${Math.round(ticketOddsRatio).toLocaleString()}`, suffix: `${probPct.toFixed(8)}% Chance` },
                 secondaryMetrics: [
                     { label: 'Total Ticket Outlay', value: `$${totalCost.toLocaleString()} (${tickets} Tickets)` },
-                    { label: 'Odds of Matching 5 White Balls ($1M+)', value: `1 in ${Math.round(match5Odds / tickets).toLocaleString()}` },
-                    { label: 'Odds of Matching 4 Balls ($500+)', value: `1 in ${Math.round(match4Odds / tickets).toLocaleString()}` },
-                    { label: 'Years Playing Weekly for 50% Stat Probability', value: `~${Math.round(yearsToGuaranteeWeekly * 0.693).toLocaleString()} Years` }
+                    { label: 'Odds: 5 White Balls ($1M+)', value: `1 in ${Math.round(match5Odds / tickets).toLocaleString()}` },
+                    { label: 'Odds: 4 Balls ($500+)', value: `1 in ${Math.round(match4Odds / tickets).toLocaleString()}` },
+                    { label: 'Years Weekly for 50% Odds', value: `~${Math.round(yearsToGuaranteeWeekly * 0.693).toLocaleString()} Years` }
                 ]
             };
         }
@@ -498,7 +498,7 @@ export const gamesRecreationCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Total Fantasy Points', value: `${totalPoints.toFixed(2)} Pts`, suffix: `${format.toUpperCase()} Scoring` },
                 secondaryMetrics: [
                     { label: 'Passing Production Points', value: `${passPts.toFixed(1)} Pts (${passYds} yds, ${passTD} TDs)` },
-                    { label: 'Rushing & Receiving Yardage/TD Points', value: `${rushRecPts.toFixed(1)} Pts (${rushRecYds} yds, ${rushRecTD} TDs)` },
+                    { label: 'Rushing & Receiving Points', value: `${rushRecPts.toFixed(1)} Pts (${rushRecYds} yds, ${rushRecTD} TDs)` },
                     { label: 'PPR Reception Bonus Points', value: `+${recPts.toFixed(1)} Pts (${rec} catches @ ${pprWeight} pt/rec)` },
                     { label: 'Turnover Deductions', value: `${penaltyPts.toFixed(1)} Pts (${to} turnovers)` }
                 ]

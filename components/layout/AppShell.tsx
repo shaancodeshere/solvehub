@@ -4,6 +4,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { usePathname } from 'next/navigation';
 import AppSidebar from './AppSidebar';
 import CommandPalette from '@/components/CommandPalette';
+import ShortcutsModal from '@/components/ShortcutsModal';
 
 interface SidebarContextType {
   isSidebarOpen: boolean;
@@ -11,6 +12,8 @@ interface SidebarContextType {
   toggleSidebar: () => void;
   isCommandPaletteOpen: boolean;
   setIsCommandPaletteOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isShortcutsModalOpen: boolean;
+  setIsShortcutsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SidebarContext = createContext<SidebarContextType>({
@@ -19,6 +22,8 @@ const SidebarContext = createContext<SidebarContextType>({
   toggleSidebar: () => {},
   isCommandPaletteOpen: false,
   setIsCommandPaletteOpen: () => {},
+  isShortcutsModalOpen: false,
+  setIsShortcutsModalOpen: () => {},
 });
 
 export const useSidebar = () => useContext(SidebarContext);
@@ -28,6 +33,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
 
   // 1. Hydrate sidebar state from localStorage ('solvehub_sidebar_open')
   useEffect(() => {
@@ -52,7 +58,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, [isSidebarOpen, isHydrated]);
 
-  // 3. Global keyboard shortcuts: Cmd + B / Ctrl + B (sidebar) & '/' or Cmd+K (command palette)
+  // 3. Global keyboard shortcuts: Cmd + B / Ctrl + B (sidebar) & '/' (command palette)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Cmd + B / Ctrl + B: Toggle sidebar
@@ -62,8 +68,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Cmd + K / Ctrl + K: Toggle command palette
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      // Cmd + K / Ctrl + K on non-root pages: Toggle command palette
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k' && pathname !== '/') {
         e.preventDefault();
         setIsCommandPaletteOpen((prev) => !prev);
         return;
@@ -87,7 +93,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [pathname]);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
@@ -102,6 +108,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         toggleSidebar,
         isCommandPaletteOpen,
         setIsCommandPaletteOpen,
+        isShortcutsModalOpen,
+        setIsShortcutsModalOpen,
       }}
     >
       <div className="flex h-screen w-screen overflow-hidden bg-[var(--background)] text-[var(--foreground)]">
@@ -117,6 +125,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           onClose={() => setIsCommandPaletteOpen(false)}
         />
       )}
+
+      <ShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
+      />
     </SidebarContext.Provider>
   );
 }

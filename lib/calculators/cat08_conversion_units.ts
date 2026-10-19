@@ -64,8 +64,25 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Incompatible unit types", "Negative values in temperature vs length"],
         calculate: (inputs) => {
             const val = Number(inputs.inputValue) ?? 100;
-            const from = String(inputs.sourceUnit || 'm');
-            const to = String(inputs.targetUnit || 'ft');
+            const normalizeConvUnit = (u: string) => {
+                const s = String(u || '').trim().toLowerCase();
+                if (s === 'm' || s.startsWith('meter')) return 'm';
+                if (s === 'ft' || s.startsWith('foot') || s.startsWith('feet')) return 'ft';
+                if (s === 'in' || s.startsWith('inch')) return 'in';
+                if (s === 'km' || s.startsWith('kilometer')) return 'km';
+                if (s === 'mi' || s.startsWith('mile')) return 'mi';
+                if (s === 'kg' || s.startsWith('kilogram')) return 'kg';
+                if (s === 'lb' || s.startsWith('pound')) return 'lb';
+                if (s === 'c' || s.startsWith('celsius')) return 'c';
+                if (s === 'f' || s.startsWith('fahrenheit')) return 'f';
+                if (s === 'l' || s.startsWith('liter')) return 'l';
+                if (s === 'gal' || s.startsWith('gallon')) return 'gal';
+                if (s === 'kmh' || s.includes('km/h')) return 'kmh';
+                if (s === 'mph') return 'mph';
+                return s;
+            };
+            const from = normalizeConvUnit(inputs.sourceUnit || 'm');
+            const to = normalizeConvUnit(inputs.targetUnit || 'ft');
 
             // Categorize units
             const lengthUnits = ['m', 'ft', 'in', 'km', 'mi'];
@@ -88,58 +105,63 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             };
 
             let converted = 0;
-            let secondary: { label: string; value: string }[] = [];
+            let secondary: { id?: string; label: string; value: string }[] = [];
 
             if (lengthUnits.includes(from)) {
                 const targetKey = lengthUnits.includes(to) ? to : 'ft';
                 const meters = val * (toMeters[from] || 1);
                 converted = meters / (toMeters[targetKey] || 1);
-                secondary = [
-                    { label: 'Meters (m)', value: `${meters.toLocaleString(undefined, { maximumFractionDigits: 4 })} m` },
-                    { label: 'Feet (ft)', value: `${(meters / 0.3048).toLocaleString(undefined, { maximumFractionDigits: 4 })} ft` },
-                    { label: 'Inches (in)', value: `${(meters / 0.0254).toLocaleString(undefined, { maximumFractionDigits: 2 })} in` },
-                    { label: 'Kilometers (km)', value: `${(meters / 1000).toLocaleString(undefined, { maximumFractionDigits: 4 })} km` },
-                    { label: 'Miles (mi)', value: `${(meters / 1609.344).toLocaleString(undefined, { maximumFractionDigits: 4 })} mi` }
+                const all = [
+                    { id: 'm', label: 'Meters (m)', value: `${meters.toLocaleString(undefined, { maximumFractionDigits: 4 })} m` },
+                    { id: 'ft', label: 'Feet (ft)', value: `${(meters / 0.3048).toLocaleString(undefined, { maximumFractionDigits: 4 })} ft` },
+                    { id: 'in', label: 'Inches (in)', value: `${(meters / 0.0254).toLocaleString(undefined, { maximumFractionDigits: 2 })} in` },
+                    { id: 'km', label: 'Kilometers (km)', value: `${(meters / 1000).toLocaleString(undefined, { maximumFractionDigits: 4 })} km` },
+                    { id: 'mi', label: 'Miles (mi)', value: `${(meters / 1609.344).toLocaleString(undefined, { maximumFractionDigits: 4 })} mi` }
                 ];
+                secondary = all.filter(item => item.id !== from && item.id !== targetKey);
             } else if (weightUnits.includes(from)) {
                 const targetKey = weightUnits.includes(to) ? to : (from === 'kg' ? 'lb' : 'kg');
                 const kg = val * (toKg[from] || 1);
                 converted = kg / (toKg[targetKey] || 1);
-                secondary = [
-                    { label: 'Kilograms (kg)', value: `${kg.toLocaleString(undefined, { maximumFractionDigits: 4 })} kg` },
-                    { label: 'Pounds (lbs)', value: `${(kg / 0.45359237).toLocaleString(undefined, { maximumFractionDigits: 4 })} lbs` },
-                    { label: 'Ounces (oz)', value: `${(kg * 35.274).toLocaleString(undefined, { maximumFractionDigits: 2 })} oz` },
-                    { label: 'Grams (g)', value: `${(kg * 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} g` }
+                const all = [
+                    { id: 'kg', label: 'Kilograms (kg)', value: `${kg.toLocaleString(undefined, { maximumFractionDigits: 4 })} kg` },
+                    { id: 'lb', label: 'Pounds (lbs)', value: `${(kg / 0.45359237).toLocaleString(undefined, { maximumFractionDigits: 4 })} lbs` },
+                    { id: 'oz', label: 'Ounces (oz)', value: `${(kg * 35.274).toLocaleString(undefined, { maximumFractionDigits: 2 })} oz` },
+                    { id: 'g', label: 'Grams (g)', value: `${(kg * 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} g` }
                 ];
+                secondary = all.filter(item => item.id !== from && item.id !== targetKey);
             } else if (tempUnits.includes(from)) {
                 const targetKey = tempUnits.includes(to) ? to : (from === 'c' ? 'f' : 'c');
                 let c = val;
                 if (from === 'f') c = (val - 32) * 5 / 9;
                 converted = targetKey === 'c' ? c : (c * 9 / 5) + 32;
-                secondary = [
-                    { label: 'Celsius (°C)', value: `${c.toFixed(2)} °C` },
-                    { label: 'Fahrenheit (°F)', value: `${((c * 9 / 5) + 32).toFixed(2)} °F` },
-                    { label: 'Kelvin (K)', value: `${(c + 273.15).toFixed(2)} K` }
+                const all = [
+                    { id: 'c', label: 'Celsius (°C)', value: `${c.toFixed(2)} °C` },
+                    { id: 'f', label: 'Fahrenheit (°F)', value: `${((c * 9 / 5) + 32).toFixed(2)} °F` },
+                    { id: 'k', label: 'Kelvin (K)', value: `${(c + 273.15).toFixed(2)} K` }
                 ];
+                secondary = all.filter(item => item.id !== from && item.id !== targetKey);
             } else if (volUnits.includes(from)) {
                 const targetKey = volUnits.includes(to) ? to : (from === 'l' ? 'gal' : 'l');
                 const l = val * (toLiters[from] || 1);
                 converted = l / (toLiters[targetKey] || 1);
-                secondary = [
-                    { label: 'Liters (L)', value: `${l.toLocaleString(undefined, { maximumFractionDigits: 4 })} L` },
-                    { label: 'US Gallons (gal)', value: `${(l / 3.785411784).toLocaleString(undefined, { maximumFractionDigits: 4 })} gal` },
-                    { label: 'Fluid Ounces (fl oz)', value: `${(l * 33.814).toLocaleString(undefined, { maximumFractionDigits: 2 })} fl oz` }
+                const all = [
+                    { id: 'l', label: 'Liters (L)', value: `${l.toLocaleString(undefined, { maximumFractionDigits: 4 })} L` },
+                    { id: 'gal', label: 'US Gallons (gal)', value: `${(l / 3.785411784).toLocaleString(undefined, { maximumFractionDigits: 4 })} gal` },
+                    { id: 'floz', label: 'Fluid Ounces (fl oz)', value: `${(l * 33.814).toLocaleString(undefined, { maximumFractionDigits: 2 })} fl oz` }
                 ];
+                secondary = all.filter(item => item.id !== from && item.id !== targetKey);
             } else {
                 const targetKey = speedUnits.includes(to) ? to : (from === 'kmh' ? 'mph' : 'kmh');
                 const kmh = val * (toKmh[from] || 1);
                 converted = kmh / (toKmh[targetKey] || 1);
-                secondary = [
-                    { label: 'Kilometers per Hour (km/h)', value: `${kmh.toFixed(2)} km/h` },
-                    { label: 'Miles per Hour (MPH)', value: `${(kmh / 1.609344).toFixed(2)} mph` },
-                    { label: 'Meters per Second (m/s)', value: `${(kmh / 3.6).toFixed(2)} m/s` },
-                    { label: 'Knots (knots)', value: `${(kmh / 1.852).toFixed(2)} knots` }
+                const all = [
+                    { id: 'kmh', label: 'Kilometers per Hour (km/h)', value: `${kmh.toFixed(2)} km/h` },
+                    { id: 'mph', label: 'Miles per Hour (MPH)', value: `${(kmh / 1.609344).toFixed(2)} mph` },
+                    { id: 'mps', label: 'Meters per Second (m/s)', value: `${(kmh / 3.6).toFixed(2)} m/s` },
+                    { id: 'knots', label: 'Knots (knots)', value: `${(kmh / 1.852).toFixed(2)} knots` }
                 ];
+                secondary = all.filter(item => item.id !== from && item.id !== targetKey);
             }
 
             const targetLabel = unitLabels[to] || to;
@@ -148,7 +170,8 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
                     label: 'Converted Value',
                     value: `${converted.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${targetLabel}`
                 },
-                secondaryMetrics: secondary
+                secondaryMetrics: secondary,
+                secondaryOutputs: secondary
             };
         }
     },
@@ -222,8 +245,16 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Absolute zero lower bound", "High temperature boiling points"],
         calculate: (inputs) => {
             const val = Number(inputs.tempVal) ?? 100;
-            const from = String(inputs.sourceUnit || 'C');
-            const to = String(inputs.targetUnit || 'F');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'c' || s === 'celsius' || s === 'centigrade') return 'C';
+                if (s === 'f' || s === 'fahrenheit') return 'F';
+                if (s === 'k' || s === 'kelvin') return 'K';
+                if (s === 'r' || s === 'rankine') return 'R';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'C');
+            const to = normalize(inputs.targetUnit, 'F');
 
             let c = val;
             if (from === 'F') c = (val - 32) * 5 / 9;
@@ -240,14 +271,21 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             else if (to === 'K') { result = k; targetLabel = 'K'; }
             else if (to === 'R') { result = r; targetLabel = '°R'; }
 
+            const allEquivalents = [
+                { id: 'C', label: 'Celsius (°C)', value: `${c.toFixed(2)} °C` },
+                { id: 'F', label: 'Fahrenheit (°F)', value: `${f.toFixed(2)} °F` },
+                { id: 'K', label: 'Kelvin (K)', value: `${k.toFixed(2)} K` },
+                { id: 'R', label: 'Rankine (°R)', value: `${r.toFixed(2)} °R` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: { label: 'Converted Temperature', value: `${result.toFixed(2)} ${targetLabel}` },
-                secondaryMetrics: [
-                    { label: 'Celsius (°C)', value: `${c.toFixed(2)} °C` },
-                    { label: 'Fahrenheit (°F)', value: `${f.toFixed(2)} °F` },
-                    { label: 'Kelvin (K)', value: `${k.toFixed(2)} K` },
-                    { label: 'Rankine (°R)', value: `${r.toFixed(2)} °R` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -307,8 +345,21 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Very small millimeter dimensions", "Astronomical distance overflow"],
         calculate: (inputs) => {
             const val = Number(inputs.lengthVal) || 10;
-            const from = String(inputs.sourceUnit || 'm');
-            const to = String(inputs.targetUnit || 'ft');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'm' || s === 'meter' || s === 'meters') return 'm';
+                if (s === 'ft' || s === 'foot' || s === 'feet') return 'ft';
+                if (s === 'in' || s === 'inch' || s === 'inches') return 'in';
+                if (s === 'km' || s === 'kilometer' || s === 'kilometers') return 'km';
+                if (s === 'mi' || s === 'mile' || s === 'miles') return 'mi';
+                if (s === 'yd' || s === 'yard' || s === 'yards') return 'yd';
+                if (s === 'cm' || s === 'centimeter' || s === 'centimeters') return 'cm';
+                if (s === 'mm' || s === 'millimeter' || s === 'millimeters') return 'mm';
+                if (s === 'nm' || s === 'nmi' || s === 'nautical mile' || s === 'nautical miles') return 'nm';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'm');
+            const to = normalize(inputs.targetUnit, 'ft');
 
             const toMeters: Record<string, number> = {
                 m: 1,
@@ -331,20 +382,29 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const targetMeters = toMeters[to] || 0.3048;
             const result = meters / targetMeters;
 
+            const allEquivalents = [
+                { id: 'm', label: 'Meters (m)', value: `${meters.toLocaleString(undefined, { maximumFractionDigits: 4 })} m` },
+                { id: 'ft', label: 'Feet (ft)', value: `${(meters / 0.3048).toLocaleString(undefined, { maximumFractionDigits: 4 })} ft` },
+                { id: 'in', label: 'Inches (in)', value: `${(meters / 0.0254).toLocaleString(undefined, { maximumFractionDigits: 2 })} in` },
+                { id: 'yd', label: 'Yards (yd)', value: `${(meters / 0.9144).toLocaleString(undefined, { maximumFractionDigits: 3 })} yd` },
+                { id: 'km', label: 'Kilometers (km)', value: `${(meters / 1000).toLocaleString(undefined, { maximumFractionDigits: 4 })} km` },
+                { id: 'mi', label: 'Statute Miles (mi)', value: `${(meters / 1609.344).toLocaleString(undefined, { maximumFractionDigits: 4 })} mi` },
+                { id: 'cm', label: 'Centimeters (cm)', value: `${(meters * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })} cm` },
+                { id: 'mm', label: 'Millimeters (mm)', value: `${(meters * 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} mm` },
+                { id: 'nm', label: 'Nautical Miles (NM)', value: `${(meters / 1852).toLocaleString(undefined, { maximumFractionDigits: 4 })} NM` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Length',
                     value: `${result.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Meters (m)', value: `${meters.toLocaleString(undefined, { maximumFractionDigits: 4 })} m` },
-                    { label: 'Feet (ft)', value: `${(meters / 0.3048).toLocaleString(undefined, { maximumFractionDigits: 4 })} ft` },
-                    { label: 'Inches (in)', value: `${(meters / 0.0254).toLocaleString(undefined, { maximumFractionDigits: 2 })} in` },
-                    { label: 'Yards (yd)', value: `${(meters / 0.9144).toLocaleString(undefined, { maximumFractionDigits: 3 })} yd` },
-                    { label: 'Kilometers (km)', value: `${(meters / 1000).toLocaleString(undefined, { maximumFractionDigits: 4 })} km` },
-                    { label: 'Statute Miles (mi)', value: `${(meters / 1609.344).toLocaleString(undefined, { maximumFractionDigits: 4 })} mi` },
-                    { label: 'Centimeters (cm)', value: `${(meters * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })} cm` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -398,8 +458,18 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Stone/pound remainder splitting", "Microgram precision"],
         calculate: (inputs) => {
             const val = Number(inputs.weightVal) || 175;
-            const from = String(inputs.sourceUnit || 'lb');
-            const to = String(inputs.targetUnit || 'kg');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'lb' || s === 'lbs' || s === 'pound' || s === 'pounds') return 'lb';
+                if (s === 'kg' || s === 'kilogram' || s === 'kilograms' || s === 'kilo') return 'kg';
+                if (s === 'g' || s === 'gram' || s === 'grams') return 'g';
+                if (s === 'oz' || s === 'ounce' || s === 'ounces') return 'oz';
+                if (s === 't' || s === 'ton' || s === 'tons' || s === 'tonne' || s === 'tonnes') return 't';
+                if (s === 'st' || s === 'stone' || s === 'stones') return 'st';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'lb');
+            const to = normalize(inputs.targetUnit, 'kg');
 
             const toKg: Record<string, number> = {
                 kg: 1,
@@ -421,19 +491,26 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const stones = Math.floor(lbs / 14);
             const remLbs = lbs % 14;
 
+            const allEquivalents = [
+                { id: 'kg', label: 'Kilograms (kg)', value: `${kg.toLocaleString(undefined, { maximumFractionDigits: 3 })} kg` },
+                { id: 'lb', label: 'Pounds (lbs)', value: `${lbs.toLocaleString(undefined, { maximumFractionDigits: 2 })} lbs` },
+                { id: 'st', label: 'Stone & Pounds (UK)', value: `${stones} st ${remLbs.toFixed(1)} lbs` },
+                { id: 'g', label: 'Grams (g)', value: `${Math.round(kg * 1000).toLocaleString()} g` },
+                { id: 'oz', label: 'Ounces (oz)', value: `${(kg / 0.028349523).toLocaleString(undefined, { maximumFractionDigits: 1 })} oz` },
+                { id: 't', label: 'Metric Tons (t)', value: `${(kg / 1000).toFixed(4)} t` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Weight',
                     value: `${result.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Kilograms (kg)', value: `${kg.toLocaleString(undefined, { maximumFractionDigits: 3 })} kg` },
-                    { label: 'Pounds (lbs)', value: `${lbs.toLocaleString(undefined, { maximumFractionDigits: 2 })} lbs` },
-                    { label: 'Stone & Pounds (UK)', value: `${stones} st ${remLbs.toFixed(1)} lbs` },
-                    { label: 'Grams (g)', value: `${Math.round(kg * 1000).toLocaleString()} g` },
-                    { label: 'Ounces (oz)', value: `${(kg / 0.028349523).toLocaleString(undefined, { maximumFractionDigits: 1 })} oz` },
-                    { label: 'Metric Tons (t)', value: `${(kg / 1000).toFixed(4)} t` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -491,8 +568,20 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["US vs UK gallon discrepancy", "Very small milliliter fractions"],
         calculate: (inputs) => {
             const val = Number(inputs.volumeVal) || 1;
-            const from = String(inputs.sourceUnit || 'gal_us');
-            const to = String(inputs.targetUnit || 'l');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'gal_us' || s === 'gallon' || s === 'gallons' || s === 'gal' || s === 'us gallon' || s === 'us gallons') return 'gal_us';
+                if (s === 'l' || s === 'liter' || s === 'liters' || s === 'litre' || s === 'litres') return 'l';
+                if (s === 'ml' || s === 'milliliter' || s === 'milliliters') return 'ml';
+                if (s === 'floz' || s === 'fl oz' || s === 'fluid ounce' || s === 'fluid ounces') return 'floz';
+                if (s === 'cups' || s === 'cup') return 'cups';
+                if (s === 'gal_uk' || s === 'uk gallon' || s === 'imperial gallon') return 'gal_uk';
+                if (s === 'm3' || s === 'cubic meter' || s === 'cubic meters') return 'm3';
+                if (s === 'ft3' || s === 'cubic foot' || s === 'cubic feet') return 'ft3';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'gal_us');
+            const to = normalize(inputs.targetUnit, 'l');
 
             const toLiters: Record<string, number> = {
                 l: 1,
@@ -514,19 +603,28 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const targetLiters = toLiters[to] || 1;
             const result = liters / targetLiters;
 
+            const allEquivalents = [
+                { id: 'l', label: 'Liters (L)', value: `${liters.toLocaleString(undefined, { maximumFractionDigits: 4 })} L` },
+                { id: 'gal_us', label: 'US Gallons (gal)', value: `${(liters / 3.785411784).toLocaleString(undefined, { maximumFractionDigits: 4 })} gal` },
+                { id: 'ml', label: 'Milliliters (mL)', value: `${(liters * 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} mL` },
+                { id: 'floz', label: 'Fluid Ounces (fl oz)', value: `${(liters / 0.02957353).toLocaleString(undefined, { maximumFractionDigits: 2 })} fl oz` },
+                { id: 'cups', label: 'US Cups', value: `${(liters / 0.236588236).toLocaleString(undefined, { maximumFractionDigits: 2 })} cups` },
+                { id: 'gal_uk', label: 'Imperial Gallons (UK)', value: `${(liters / 4.54609).toLocaleString(undefined, { maximumFractionDigits: 4 })} gal (UK)` },
+                { id: 'ft3', label: 'Cubic Feet (ft³)', value: `${(liters / 28.316846592).toLocaleString(undefined, { maximumFractionDigits: 4 })} ft³` },
+                { id: 'm3', label: 'Cubic Meters (m³)', value: `${(liters / 1000).toLocaleString(undefined, { maximumFractionDigits: 6 })} m³` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Volume',
                     value: `${result.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Liters (L)', value: `${liters.toLocaleString(undefined, { maximumFractionDigits: 4 })} L` },
-                    { label: 'US Gallons (gal)', value: `${(liters / 3.785411784).toLocaleString(undefined, { maximumFractionDigits: 4 })} gal` },
-                    { label: 'Fluid Ounces (fl oz)', value: `${(liters / 0.02957353).toLocaleString(undefined, { maximumFractionDigits: 2 })} fl oz` },
-                    { label: 'US Cups', value: `${(liters / 0.236588236).toLocaleString(undefined, { maximumFractionDigits: 2 })} cups` },
-                    { label: 'Imperial Gallons (UK)', value: `${(liters / 4.54609).toLocaleString(undefined, { maximumFractionDigits: 4 })} gal (UK)` },
-                    { label: 'Cubic Feet (ft³)', value: `${(liters / 28.316846592).toLocaleString(undefined, { maximumFractionDigits: 4 })} ft³` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -582,8 +680,19 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Acre vs hectare scaling", "Small room surface area"],
         calculate: (inputs) => {
             const val = Number(inputs.areaVal) || 1;
-            const from = String(inputs.sourceUnit || 'acres');
-            const to = String(inputs.targetUnit || 'sq_ft');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'acres' || s === 'acre' || s === 'ac') return 'acres';
+                if (s === 'sq_ft' || s === 'sq ft' || s === 'sqft' || s === 'square feet' || s === 'square foot') return 'sq_ft';
+                if (s === 'sq_m' || s === 'sq m' || s === 'sqm' || s === 'square meters' || s === 'square meter' || s === 'm2') return 'sq_m';
+                if (s === 'hectares' || s === 'hectare' || s === 'ha') return 'hectares';
+                if (s === 'sq_mi' || s === 'sq mi' || s === 'sqmi' || s === 'square miles' || s === 'square mile') return 'sq_mi';
+                if (s === 'sq_km' || s === 'sq km' || s === 'sqkm' || s === 'square kilometers' || s === 'square kilometer' || s === 'km2') return 'sq_km';
+                if (s === 'sq_yd' || s === 'sq yd' || s === 'sqyd' || s === 'square yards' || s === 'square yard') return 'sq_yd';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'acres');
+            const to = normalize(inputs.targetUnit, 'sq_ft');
 
             const toSqM: Record<string, number> = {
                 sq_m: 1,
@@ -604,19 +713,27 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const targetSqM = toSqM[to] || 0.09290304;
             const result = sqM / targetSqM;
 
+            const allEquivalents = [
+                { id: 'sq_ft', label: 'Square Feet (sq ft)', value: `${(sqM / 0.09290304).toLocaleString(undefined, { maximumFractionDigits: 2 })} sq ft` },
+                { id: 'acres', label: 'Acres (ac)', value: `${(sqM / 4046.8564224).toLocaleString(undefined, { maximumFractionDigits: 4 })} ac` },
+                { id: 'sq_m', label: 'Square Meters (m²)', value: `${sqM.toLocaleString(undefined, { maximumFractionDigits: 2 })} m²` },
+                { id: 'hectares', label: 'Hectares (ha)', value: `${(sqM / 10000).toLocaleString(undefined, { maximumFractionDigits: 4 })} ha` },
+                { id: 'sq_yd', label: 'Square Yards (sq yd)', value: `${(sqM / 0.836127).toLocaleString(undefined, { maximumFractionDigits: 2 })} sq yd` },
+                { id: 'sq_km', label: 'Square Kilometers (km²)', value: `${(sqM / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 })} km²` },
+                { id: 'sq_mi', label: 'Square Miles (sq mi)', value: `${(sqM / 2589988.110336).toLocaleString(undefined, { maximumFractionDigits: 6 })} sq mi` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Area',
                     value: `${result.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Square Feet (sq ft)', value: `${(sqM / 0.09290304).toLocaleString(undefined, { maximumFractionDigits: 2 })} sq ft` },
-                    { label: 'Acres (ac)', value: `${(sqM / 4046.8564224).toLocaleString(undefined, { maximumFractionDigits: 4 })} ac` },
-                    { label: 'Square Meters (m²)', value: `${sqM.toLocaleString(undefined, { maximumFractionDigits: 2 })} m²` },
-                    { label: 'Hectares (ha)', value: `${(sqM / 10000).toLocaleString(undefined, { maximumFractionDigits: 4 })} ha` },
-                    { label: 'Square Yards (sq yd)', value: `${(sqM / 0.836127).toLocaleString(undefined, { maximumFractionDigits: 2 })} sq yd` },
-                    { label: 'Square Miles (sq mi)', value: `${(sqM / 2589988.110336).toLocaleString(undefined, { maximumFractionDigits: 6 })} sq mi` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -668,8 +785,17 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Supersonic Mach speed threshold", "Zero velocity"],
         calculate: (inputs) => {
             const val = Number(inputs.speedVal) || 65;
-            const from = String(inputs.sourceUnit || 'mph');
-            const to = String(inputs.targetUnit || 'kmh');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'mph' || s === 'miles per hour') return 'mph';
+                if (s === 'kmh' || s === 'km/h' || s === 'kilometers per hour') return 'kmh';
+                if (s === 'mps' || s === 'm/s' || s === 'meters per second') return 'mps';
+                if (s === 'knots' || s === 'knot' || s === 'kt') return 'knots';
+                if (s === 'ftps' || s === 'ft/s' || s === 'fps' || s === 'feet per second') return 'ftps';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'mph');
+            const to = normalize(inputs.targetUnit, 'kmh');
 
             const toKmh: Record<string, number> = {
                 kmh: 1,
@@ -688,19 +814,26 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const result = kmh / targetKmh;
             const mps = kmh / 3.6;
 
+            const allEquivalents = [
+                { id: 'kmh', label: 'Kilometers per Hour (km/h)', value: `${kmh.toFixed(2)} km/h` },
+                { id: 'mph', label: 'Miles per Hour (MPH)', value: `${(kmh / 1.609344).toFixed(2)} MPH` },
+                { id: 'mps', label: 'Meters per Second (m/s)', value: `${mps.toFixed(2)} m/s` },
+                { id: 'knots', label: 'Knots (NM/h)', value: `${(kmh / 1.852).toFixed(2)} knots` },
+                { id: 'ftps', label: 'Feet per Second (ft/s)', value: `${(kmh / 1.09728).toFixed(2)} ft/s` },
+                { id: 'mach', label: 'Mach (Sea Level Std)', value: `Mach ${(mps / 340.29).toFixed(3)}` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Speed',
                     value: `${result.toFixed(2)} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Kilometers per Hour (km/h)', value: `${kmh.toFixed(2)} km/h` },
-                    { label: 'Miles per Hour (MPH)', value: `${(kmh / 1.609344).toFixed(2)} MPH` },
-                    { label: 'Meters per Second (m/s)', value: `${mps.toFixed(2)} m/s` },
-                    { label: 'Knots (NM/h)', value: `${(kmh / 1.852).toFixed(2)} knots` },
-                    { label: 'Feet per Second (ft/s)', value: `${(kmh / 1.09728).toFixed(2)} ft/s` },
-                    { label: 'Mach (Sea Level Std)', value: `Mach ${(mps / 340.29).toFixed(3)}` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -754,8 +887,18 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Atmospheric standard baseline", "Tire gauge pressure vs absolute"],
         calculate: (inputs) => {
             const val = Number(inputs.pressureVal) || 32;
-            const from = String(inputs.sourceUnit || 'psi');
-            const to = String(inputs.targetUnit || 'bar');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'psi') return 'psi';
+                if (s === 'bar') return 'bar';
+                if (s === 'kpa' || s === 'kilopascal' || s === 'kilopascals') return 'kpa';
+                if (s === 'atm' || s === 'atmosphere' || s === 'atmospheres') return 'atm';
+                if (s === 'pa' || s === 'pascal' || s === 'pascals') return 'pa';
+                if (s === 'mmhg' || s === 'torr') return 'mmhg';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'psi');
+            const to = normalize(inputs.targetUnit, 'bar');
 
             const toPa: Record<string, number> = {
                 pa: 1,
@@ -774,18 +917,26 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const targetPa = toPa[to] || 100000;
             const result = pa / targetPa;
 
+            const allEquivalents = [
+                { id: 'bar', label: 'Bar', value: `${(pa / 100000).toFixed(4)} bar` },
+                { id: 'psi', label: 'Pounds per Sq Inch (PSI)', value: `${(pa / 6894.75729).toFixed(2)} PSI` },
+                { id: 'kpa', label: 'Kilopascals (kPa)', value: `${(pa / 1000).toFixed(2)} kPa` },
+                { id: 'atm', label: 'Standard Atmospheres (atm)', value: `${(pa / 101325).toFixed(4)} atm` },
+                { id: 'pa', label: 'Pascals (Pa)', value: `${Math.round(pa).toLocaleString()} Pa` },
+                { id: 'mmhg', label: 'Millimeters of Mercury (mmHg)', value: `${(pa / 133.322368).toFixed(1)} mmHg` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Pressure',
                     value: `${result.toFixed(4)} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Bar', value: `${(pa / 100000).toFixed(4)} bar` },
-                    { label: 'Pounds per Sq Inch (PSI)', value: `${(pa / 6894.75729).toFixed(2)} PSI` },
-                    { label: 'Kilopascals (kPa)', value: `${(pa / 1000).toFixed(2)} kPa` },
-                    { label: 'Standard Atmospheres (atm)', value: `${(pa / 101325).toFixed(4)} atm` },
-                    { label: 'Millimeters of Mercury (mmHg)', value: `${(pa / 133.322368).toFixed(1)} mmHg` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -839,8 +990,18 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Dietary kcal vs thermodynamic gram calorie", "Large kilowatt scale"],
         calculate: (inputs) => {
             const val = Number(inputs.energyVal) || 1000;
-            const from = String(inputs.sourceUnit || 'kwh');
-            const to = String(inputs.targetUnit || 'btu');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'kwh' || s === 'kilowatt-hour' || s === 'kilowatt hours') return 'kwh';
+                if (s === 'btu') return 'btu';
+                if (s === 'j' || s === 'joule' || s === 'joules') return 'j';
+                if (s === 'kj' || s === 'kilojoule' || s === 'kilojoules') return 'kj';
+                if (s === 'kcal' || s === 'calorie' || s === 'calories') return 'kcal';
+                if (s === 'ftlbf' || s === 'ft-lbf' || s === 'foot-pound' || s === 'foot-pounds') return 'ftlbf';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'kwh');
+            const to = normalize(inputs.targetUnit, 'btu');
 
             const toJoules: Record<string, number> = {
                 j: 1,
@@ -859,18 +1020,26 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const targetJoules = toJoules[to] || 1055.05585;
             const result = joules / targetJoules;
 
+            const allEquivalents = [
+                { id: 'kwh', label: 'Kilowatt-Hours (kWh)', value: `${(joules / 3600000).toLocaleString(undefined, { maximumFractionDigits: 4 })} kWh` },
+                { id: 'btu', label: 'British Thermal Units (BTU)', value: `${Math.round(joules / 1055.05585).toLocaleString()} BTU` },
+                { id: 'j', label: 'Joules (J)', value: `${Math.round(joules).toLocaleString()} J` },
+                { id: 'kj', label: 'Kilojoules (kJ)', value: `${(joules / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} kJ` },
+                { id: 'kcal', label: 'Dietary Calories (kcal)', value: `${(joules / 4184).toLocaleString(undefined, { maximumFractionDigits: 1 })} kcal` },
+                { id: 'ftlbf', label: 'Foot-Pounds (ft-lbf)', value: `${Math.round(joules / 1.355817948).toLocaleString()} ft-lbf` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Energy',
                     value: `${result.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Kilowatt-Hours (kWh)', value: `${(joules / 3600000).toLocaleString(undefined, { maximumFractionDigits: 4 })} kWh` },
-                    { label: 'British Thermal Units (BTU)', value: `${Math.round(joules / 1055.05585).toLocaleString()} BTU` },
-                    { label: 'Kilojoules (kJ)', value: `${(joules / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} kJ` },
-                    { label: 'Dietary Calories (kcal)', value: `${(joules / 4184).toLocaleString(undefined, { maximumFractionDigits: 1 })} kcal` },
-                    { label: 'Foot-Pounds (ft-lbf)', value: `${Math.round(joules / 1.355817948).toLocaleString()} ft-lbf` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -922,8 +1091,17 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Mechanical vs metric horsepower PS", "Electrical kW vs thermal kW"],
         calculate: (inputs) => {
             const val = Number(inputs.powerVal) || 100;
-            const from = String(inputs.sourceUnit || 'hp');
-            const to = String(inputs.targetUnit || 'kw');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'hp' || s === 'horsepower') return 'hp';
+                if (s === 'kw' || s === 'kilowatt' || s === 'kilowatts') return 'kw';
+                if (s === 'w' || s === 'watt' || s === 'watts') return 'w';
+                if (s === 'ps') return 'ps';
+                if (s === 'btu_hr' || s === 'btu/hr' || s === 'btu/h') return 'btu_hr';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'hp');
+            const to = normalize(inputs.targetUnit, 'kw');
 
             const toWatts: Record<string, number> = {
                 w: 1,
@@ -941,18 +1119,25 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const targetWatts = toWatts[to] || 1000;
             const result = watts / targetWatts;
 
+            const allEquivalents = [
+                { id: 'kw', label: 'Kilowatts (kW)', value: `${(watts / 1000).toFixed(2)} kW` },
+                { id: 'hp', label: 'Mechanical Horsepower (HP)', value: `${(watts / 745.699872).toFixed(2)} HP` },
+                { id: 'ps', label: 'Metric Horsepower (PS)', value: `${(watts / 735.49875).toFixed(2)} PS` },
+                { id: 'w', label: 'Watts (W)', value: `${Math.round(watts).toLocaleString()} W` },
+                { id: 'btu_hr', label: 'Heat Rate (BTU/hr)', value: `${Math.round(watts / 0.29307107).toLocaleString()} BTU/hr` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Power',
                     value: `${result.toFixed(2)} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Kilowatts (kW)', value: `${(watts / 1000).toFixed(2)} kW` },
-                    { label: 'Mechanical Horsepower (HP)', value: `${(watts / 745.699872).toFixed(2)} HP` },
-                    { label: 'Metric Horsepower (PS)', value: `${(watts / 735.49875).toFixed(2)} PS` },
-                    { label: 'Watts (W)', value: `${Math.round(watts).toLocaleString()} W` },
-                    { label: 'Heat Rate (BTU/hr)', value: `${Math.round(watts / 0.29307107).toLocaleString()} BTU/hr` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -1002,8 +1187,16 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Zero or inverted reciprocal consumption", "US vs UK gallon discrepancy"],
         calculate: (inputs) => {
             const val = Math.max(0.01, Number(inputs.fuelVal) || 30);
-            const from = String(inputs.sourceUnit || 'mpg_us');
-            const to = String(inputs.targetUnit || 'l100km');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'mpg_us' || s === 'mpg' || s === 'us mpg') return 'mpg_us';
+                if (s === 'l100km' || s === 'l/100km') return 'l100km';
+                if (s === 'mpg_uk' || s === 'uk mpg' || s === 'imperial mpg') return 'mpg_uk';
+                if (s === 'kml' || s === 'km/l') return 'kml';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'mpg_us');
+            const to = normalize(inputs.targetUnit, 'l100km');
 
             let mpgUS = val;
             if (from === 'l100km') mpgUS = 235.214583 / val;
@@ -1028,17 +1221,24 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const mpgUK = mpgUS / 0.832674;
             const kml = mpgUS / 2.35214583;
 
+            const allEquivalents = [
+                { id: 'mpg_us', label: 'US Miles per Gallon (MPG)', value: `${mpgUS.toFixed(2)} MPG` },
+                { id: 'l100km', label: 'Liters per 100 Kilometers', value: `${l100km.toFixed(2)} L/100km` },
+                { id: 'mpg_uk', label: 'Imperial (UK) MPG', value: `${mpgUK.toFixed(2)} MPG` },
+                { id: 'kml', label: 'Kilometers per Liter (km/L)', value: `${kml.toFixed(2)} km/L` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Fuel Economy',
                     value: `${result.toFixed(2)} ${targetLabel}`
                 },
-                secondaryMetrics: [
-                    { label: 'US Miles per Gallon (MPG)', value: `${mpgUS.toFixed(2)} MPG` },
-                    { label: 'Liters per 100 Kilometers', value: `${l100km.toFixed(2)} L/100km` },
-                    { label: 'Imperial (UK) MPG', value: `${mpgUK.toFixed(2)} MPG` },
-                    { label: 'Kilometers per Liter (km/L)', value: `${kml.toFixed(2)} km/L` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -1096,8 +1296,20 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
         edgeCases: ["Fractional tablespoon subdivisions", "Liquid volume scaling"],
         calculate: (inputs) => {
             const amt = Number(inputs.amount) || 1;
-            const from = String(inputs.sourceUnit || 'cup');
-            const to = String(inputs.targetUnit || 'tbsp');
+            const normalize = (u: any, fallback: string) => {
+                const s = String(u || '').toLowerCase().trim();
+                if (s === 'cup' || s === 'cups') return 'cup';
+                if (s === 'tbsp' || s === 'tablespoon' || s === 'tablespoons') return 'tbsp';
+                if (s === 'tsp' || s === 'teaspoon' || s === 'teaspoons') return 'tsp';
+                if (s === 'floz' || s === 'fl oz' || s === 'fluid ounce' || s === 'fluid ounces') return 'floz';
+                if (s === 'ml' || s === 'milliliter' || s === 'milliliters') return 'ml';
+                if (s === 'pint' || s === 'pints' || s === 'pt') return 'pint';
+                if (s === 'quart' || s === 'quarts' || s === 'qt') return 'quart';
+                if (s === 'l' || s === 'liter' || s === 'liters') return 'l';
+                return fallback;
+            };
+            const from = normalize(inputs.sourceUnit, 'cup');
+            const to = normalize(inputs.targetUnit, 'tbsp');
 
             const toML: Record<string, number> = {
                 cup: 236.588,
@@ -1119,18 +1331,28 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const targetML = toML[to] || 14.7868;
             const result = ml / targetML;
 
+            const allEquivalents = [
+                { id: 'tbsp', label: 'Tablespoons (tbsp)', value: `${(ml / 14.7868).toFixed(1)} tbsp` },
+                { id: 'tsp', label: 'Teaspoons (tsp)', value: `${(ml / 4.92892).toFixed(1)} tsp` },
+                { id: 'cup', label: 'US Cups', value: `${(ml / 236.588).toFixed(2)} cups` },
+                { id: 'floz', label: 'Fluid Ounces (fl oz)', value: `${(ml / 29.5735).toFixed(2)} fl oz` },
+                { id: 'ml', label: 'Metric Milliliters', value: `${ml.toFixed(1)} mL` },
+                { id: 'pint', label: 'Pints (pt)', value: `${(ml / 473.176).toFixed(2)} pt` },
+                { id: 'quart', label: 'Quarts (qt)', value: `${(ml / 946.353).toFixed(2)} qt` },
+                { id: 'l', label: 'Liters (L)', value: `${(ml / 1000).toFixed(3)} L` }
+            ];
+
+            const filteredSecondary = allEquivalents.filter(
+                item => item.id !== from && item.id !== to
+            );
+
             return {
                 primaryOutput: {
                     label: 'Converted Culinary Amount',
                     value: `${result.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${labels[to] || to}`
                 },
-                secondaryMetrics: [
-                    { label: 'Tablespoons (tbsp)', value: `${(ml / 14.7868).toFixed(1)} tbsp` },
-                    { label: 'Teaspoons (tsp)', value: `${(ml / 4.92892).toFixed(1)} tsp` },
-                    { label: 'US Cups', value: `${(ml / 236.588).toFixed(2)} cups` },
-                    { label: 'Fluid Ounces (fl oz)', value: `${(ml / 29.5735).toFixed(2)} fl oz` },
-                    { label: 'Metric Milliliters', value: `${ml.toFixed(1)} mL` }
-                ]
+                secondaryMetrics: filteredSecondary,
+                secondaryOutputs: filteredSecondary
             };
         }
     },
@@ -1222,7 +1444,7 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'UK & Australia Ring Size', value: `UK ${ukLetter}` },
                 secondaryMetrics: [
-                    { label: 'Inside Circumference (EU ISO Size)', value: `${circMm.toFixed(1)} mm` },
+                    { label: 'Inside Circumference (EU)', value: `${circMm.toFixed(1)} mm` },
                     { label: 'Inside Diameter (Millimeters)', value: `${diamMm.toFixed(2)} mm` },
                     { label: 'Inside Diameter (Inches)', value: `${diamInches.toFixed(3)} in` },
                     { label: 'US / Canada Ring Size', value: `Size ${us}` }
@@ -1439,8 +1661,8 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
                     { label: 'US & UK Size', value: `${band}${cup} (UK: ${band}${ukCup})` },
                     { label: 'Continental European (EU)', value: `${euBand}${euCup}` },
                     { label: 'France & Spain (FR/ES)', value: `${frBand}${euCup}` },
-                    { label: 'Australia & New Zealand (AU/NZ)', value: `Size ${auBand}${cup}` },
-                    { label: 'Sister Sizes (Equal Cup Volume)', value: `Tighter: ${sisterTight} | Looser: ${sisterLoose}` }
+                    { label: 'Australia & NZ (AU/NZ)', value: `Size ${auBand}${cup}` },
+                    { label: 'Sister Sizes (Equal Volume)', value: `Tighter: ${sisterTight} | Looser: ${sisterLoose}` }
                 ]
             };
         }
@@ -1491,18 +1713,21 @@ export const conversionUnitsCalculators: CalculatorDefinition[] = [
             const tsp = tbsp * 3;
             const mlLiquid = usCups * 236.588;
 
+            const allCookingMetrics = [
+                { id: 'us_cups', label: 'US Cup Measurement', value: `${usCups.toFixed(2)} Cups` },
+                { id: 'oz', label: 'Weight in Ounces (oz)', value: `${totalOz.toFixed(2)} oz` },
+                { id: 'tbsp', label: 'Tablespoons & Teaspoons', value: `${tbsp.toFixed(1)} tbsp (${tsp.toFixed(0)} tsp)` },
+                { id: 'ml', label: 'Liquid Volume Equivalent', value: `~${Math.round(mlLiquid)} mL` },
+                { id: 'density', label: 'Density Standard', value: `1 Cup = ${cupGrams}g (${ing.replace('_', ' ').toUpperCase()})` }
+            ];
+            const secondaryMetrics = allCookingMetrics.filter(m => m.id !== unit).map(({ id, ...rest }) => rest);
+
             return {
                 primaryOutput: {
                     label: 'Metric Weight Equivalent',
                     value: `${Math.round(totalGrams).toLocaleString()} grams (g)`
                 },
-                secondaryMetrics: [
-                    { label: 'US Cup Measurement', value: `${usCups.toFixed(2)} Cups` },
-                    { label: 'Weight in Ounces (oz)', value: `${totalOz.toFixed(2)} oz` },
-                    { label: 'Tablespoons & Teaspoons', value: `${tbsp.toFixed(1)} tbsp (${tsp.toFixed(0)} tsp)` },
-                    { label: 'Liquid Volume Equivalent', value: `~${Math.round(mlLiquid)} mL` },
-                    { label: 'Ingredient Density Standard', value: `1 Cup = ${cupGrams}g (${ing.replace('_', ' ').toUpperCase()})` }
-                ]
+                secondaryMetrics
             };
         }
     }

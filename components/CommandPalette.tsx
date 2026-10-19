@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { allCalculators } from '@/lib/calculators';
 import { masterCategories } from '@/lib/categories';
 import { CANVAS_TEMPLATES, CanvasTemplate } from '@/lib/canvasTemplates';
+import { searchCalculators } from '@/lib/searchEngine';
 
 export interface CanvasTabItem {
   id: string;
@@ -46,6 +47,7 @@ export type PaletteItem =
       group: string;
       description: string;
       url: string;
+      matchedInputLabel?: string;
     };
 
 export default function CommandPalette({
@@ -99,9 +101,28 @@ export default function CommandPalette({
   // Filter items matching query
   const filteredItems = useMemo<PaletteItem[]>(() => {
     const q = query.trim().toLowerCase();
-    const items: PaletteItem[] = [];
+    // 1. Calculators Deep Multi-Field Search (Weighted Relevance Ranking)
+    const rankedResults = searchCalculators(allCalculators, q);
 
-    // 1. Canvas Sheets / Tabs
+    // Limit to top 40 calculators for high-performance rendering
+    const cappedResults = rankedResults.slice(0, 40);
+
+    const calculatorItems: PaletteItem[] = cappedResults.map(
+      ({ calculator: calc, matchedInputLabel }) => ({
+        type: 'calculator',
+        id: calc.id,
+        title: calc.name,
+        categorySlug: calc.category,
+        categoryName: categoryMap.get(calc.category) || calc.category,
+        group: calc.group || '',
+        description: calc.description,
+        url: `/${calc.category}/${calc.id}`,
+        matchedInputLabel,
+      })
+    );
+
+    // 2. Canvas Sheets / Tabs
+    const tabItems: PaletteItem[] = [];
     if (tabs.length > 0) {
       const matchingTabs = tabs.filter((tab) => {
         if (!q) return true;
@@ -114,7 +135,7 @@ export default function CommandPalette({
       });
 
       matchingTabs.forEach((tab) => {
-        items.push({
+        tabItems.push({
           type: 'tab',
           id: tab.id,
           title: tab.title,
@@ -126,7 +147,8 @@ export default function CommandPalette({
       });
     }
 
-    // 2. Starter Templates
+    // 3. Starter Templates
+    const templateItems: PaletteItem[] = [];
     const matchingTemplates = CANVAS_TEMPLATES.filter((tpl) => {
       if (!q) return true; // Show starter templates by default
       return (
@@ -140,7 +162,7 @@ export default function CommandPalette({
     });
 
     matchingTemplates.forEach((tpl) => {
-      items.push({
+      templateItems.push({
         type: 'template',
         id: tpl.id,
         title: tpl.name,
@@ -150,32 +172,14 @@ export default function CommandPalette({
       });
     });
 
-    // 3. Calculators Search
-    const searchTerms = q.split(/\s+/).filter(Boolean);
-    let matchedCalcs = allCalculators;
-
-    if (searchTerms.length > 0) {
-      matchedCalcs = allCalculators.filter((calc) => {
-        const textToSearch = `${calc.name} ${calc.category} ${calc.group || ''} ${calc.description} ${calc.naturalLanguageQueries?.join(' ') || ''}`.toLowerCase();
-        return searchTerms.every((term) => textToSearch.includes(term));
-      });
+    // When query is active, render the highest-scoring calculators at the very top.
+    // When query is empty, show Tabs, Starter Templates, then Calculators.
+    const items: PaletteItem[] = [];
+    if (q) {
+      items.push(...calculatorItems, ...tabItems, ...templateItems);
+    } else {
+      items.push(...tabItems, ...templateItems, ...calculatorItems);
     }
-
-    // Limit to top 40 calculators for high-performance rendering
-    const cappedCalcs = matchedCalcs.slice(0, 40);
-
-    cappedCalcs.forEach((calc) => {
-      items.push({
-        type: 'calculator',
-        id: calc.id,
-        title: calc.name,
-        categorySlug: calc.category,
-        categoryName: categoryMap.get(calc.category) || calc.category,
-        group: calc.group || '',
-        description: calc.description,
-        url: `/${calc.category}/${calc.id}`,
-      });
-    });
 
     return items;
   }, [query, tabs, activeTabId, categoryMap]);
@@ -371,9 +375,16 @@ export default function CommandPalette({
                             </span>
                           )}
                           {item.type === 'calculator' && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80 shrink-0 font-mono">
-                              {item.categoryName}
-                            </span>
+                            <>
+                              <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700/80 shrink-0 font-mono">
+                                {item.categoryName}
+                              </span>
+                              {item.matchedInputLabel && (
+                                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/10 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 dark:border-emerald-500/40 shrink-0 font-mono">
+                                  Matched input: &quot;{item.matchedInputLabel}&quot;
+                                </span>
+                              )}
+                            </>
                           )}
                         </div>
                         <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-sans">

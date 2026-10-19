@@ -53,7 +53,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Monthly Payment Required', value: `$${Math.round(monthlyPayment).toLocaleString()} / mo`, suffix: `$${Math.round(totalMonthly)} with extra` },
                 secondaryMetrics: [
                     { label: 'Total Standard Interest', value: `$${Math.round(standardTotalInterest).toLocaleString()}` },
-                    { label: 'Interest Saved with Extra Payments', value: `$${Math.round(interestSaved).toLocaleString()}` },
+                    { label: 'Interest Saved w/ Extra Pay', value: `$${Math.round(interestSaved).toLocaleString()}` },
                     { label: 'Payoff Time Acceleration', value: extra > 0 ? `${yearsSaved} Years Sooner (${actualMonths} vs ${nMonths} months)` : 'Standard Schedule' },
                     { label: 'Total Lifetime Loan Cost', value: `$${Math.round(balance + actualInterest).toLocaleString()}` }
                 ]
@@ -100,8 +100,8 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Direct Scholarship Aid', value: `$${Math.round(directGrantSavings).toLocaleString()}`, suffix: `${percentDiscount.toFixed(0)}% Tuition Covered` },
                 secondaryMetrics: [
-                    { label: 'Total Value (Aid + Avoided Loan Interest)', value: `$${Math.round(totalFinancialImpact).toLocaleString()}` },
-                    { label: 'Avoided 10-Year Student Loan Interest', value: `$${Math.round(loanInterestAvoided).toLocaleString()}` },
+                    { label: 'Total Value (Aid + Int. Saved)', value: `$${Math.round(totalFinancialImpact).toLocaleString()}` },
+                    { label: 'Avoided 10-Yr Loan Interest', value: `$${Math.round(loanInterestAvoided).toLocaleString()}` },
                     { label: 'Net Remaining Tuition Cost', value: `$${Math.round(netTuitionCost).toLocaleString()} (${years} years)` },
                     { label: 'Monthly Loan Payment Saved', value: `$${Math.round(monthlyPaymentAvoided).toLocaleString()} / month` }
                 ]
@@ -150,7 +150,7 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Projected 4-Year College Cost', value: `$${Math.round(totalFutureCost).toLocaleString()}`, suffix: `in ${years} Years` },
                 secondaryMetrics: [
-                    { label: 'Projected Year 1 Annual Tuition', value: `$${Math.round(futureYear1Tuition).toLocaleString()} / year` },
+                    { label: 'Projected Year 1 Tuition', value: `$${Math.round(futureYear1Tuition).toLocaleString()} / year` },
                     { label: 'Monthly 529 Savings Target', value: `$${Math.round(monthly529Contribution).toLocaleString()} / month` },
                     { label: 'Total Inflation Multiple', value: `${(totalFutureCost / (currentCost * 4)).toFixed(2)}x of Today's Cost` },
                     { label: "Today's 4-Year Baseline Cost", value: `$${Math.round(currentCost * 4).toLocaleString()}` }
@@ -206,10 +206,10 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Lifetime Net Earnings Premium', value: `$${Math.round(netLifetimeGain).toLocaleString()}`, suffix: `${years}-Year Horizon` },
                 secondaryMetrics: [
-                    { label: 'Investment Breakeven Payback Period', value: `${breakevenYears.toFixed(1)} Years to Break Even` },
+                    { label: 'Breakeven Payback Period', value: `${breakevenYears.toFixed(1)} Years to Break Even` },
                     { label: 'Annual Salary Premium (Year 1)', value: `+$${Math.round(annualPremium).toLocaleString()} / year` },
                     { label: 'Total Education ROI', value: `${Math.round(roiPercent).toLocaleString()}% Return on Investment` },
-                    { label: 'Lifetime Cumulative Career Advantage', value: `$${Math.round(totalGradEarnings - totalBaseEarnings).toLocaleString()} Gross Premium` }
+                    { label: 'Lifetime Career Advantage', value: `$${Math.round(totalGradEarnings - totalBaseEarnings).toLocaleString()} Gross Premium` }
                 ]
             };
         }
@@ -249,10 +249,10 @@ export const educationLearningCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Cost per Instructional Hour', value: `$${costPerHour.toFixed(2)} / hour`, suffix: `$${Math.round(totalCost)} Total Cost` },
                 secondaryMetrics: [
-                    { label: 'Work Hours to Recoup Investment', value: `${Math.round(hoursToRecoup)} Hours (${weeksToRecoup.toFixed(1)} Weeks of Full-Time Work)` },
+                    { label: 'Work Hours to Recoup Cost', value: `${Math.round(hoursToRecoup)} Hours (${weeksToRecoup.toFixed(1)} Weeks of Full-Time Work)` },
                     { label: 'Total Course All-In Investment', value: `$${Math.round(totalCost).toLocaleString()}` },
-                    { label: 'Annual Salary Value of Skill Upgrade', value: `$${Math.round(annualWageGain).toLocaleString()} / year` },
-                    { label: 'First Year Return on Course Cost', value: `${Math.round((annualWageGain / totalCost) * 100)}% Annual ROI` }
+                    { label: 'Annual Salary Skill Boost', value: `$${Math.round(annualWageGain).toLocaleString()} / year` },
+                    { label: 'Year 1 Return on Course Cost', value: `${Math.round((annualWageGain / totalCost) * 100)}% Annual ROI` }
                 ]
             };
         }

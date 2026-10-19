@@ -424,7 +424,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Monthly Payment', value: monthly.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Total Principal Borrowed', value: p.toFixed(2), prefix: '$' },
-                    { label: 'Total Finance Charge (Interest)', value: totalInterest.toFixed(2), prefix: '$' },
+                    { label: 'Total Finance Charge', value: totalInterest.toFixed(2), prefix: '$' },
                     { label: 'Total Repayment Amount', value: totalPaid.toFixed(2), prefix: '$' }
                 ]
             };
@@ -634,7 +634,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Break-Even Timeframe', value: monthlySavings > 0 ? `${breakEvenMonths.toFixed(1)} Months (~${(breakEvenMonths / 12).toFixed(1)} yrs)` : 'N/A (No Savings)' },
                     { label: 'Lifetime Net Savings', value: lifetimeSavings.toFixed(2), prefix: '$' },
-                    { label: 'New Monthly Principal & Interest', value: newMonthly.toFixed(2), prefix: '$' },
+                    { label: 'New Monthly Payment', value: newMonthly.toFixed(2), prefix: '$' },
                     { label: 'Upfront Refinance Fees', value: closing.toFixed(2), prefix: '$' }
                 ]
             };
@@ -734,7 +734,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'New Consolidated Monthly Payment', value: newMonthly.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Monthly Payment Savings', value: monthlySavings > 0 ? monthlySavings.toFixed(2) : '0.00', prefix: '$' },
-                    { label: 'Total Interest on Consolidation', value: totalNewInterest.toFixed(2), prefix: '$' },
+                    { label: 'Consolidation Interest', value: totalNewInterest.toFixed(2), prefix: '$' },
                     { label: 'Consolidation Term', value: `${term * 12} Months (${term} Years)` }
                 ]
             };
@@ -836,7 +836,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Time to Full Payoff', value: `${(months / 12).toFixed(1)} Years`, suffix: `(${months} Mo)` },
                 secondaryMetrics: [
-                    { label: 'Total Finance Charges (Interest)', value: totalInterest.toFixed(2), prefix: '$' },
+                    { label: 'Total Finance Charges', value: totalInterest.toFixed(2), prefix: '$' },
                     { label: 'Total Cash Repaid', value: (bal + totalInterest).toFixed(2), prefix: '$' }
                 ]
             };
@@ -939,7 +939,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Base Payment (Pre-Tax)', value: baseMonthly.toFixed(2), prefix: '$' },
                     { label: 'Monthly Depreciation Cost', value: monthlyDepreciation.toFixed(2), prefix: '$' },
-                    { label: 'Monthly Rent Charge (Finance Fee)', value: monthlyFinanceFee.toFixed(2), prefix: '$' },
+                    { label: 'Monthly Rent Charge', value: monthlyFinanceFee.toFixed(2), prefix: '$' },
                     { label: 'End of Lease Residual Value', value: residualVal.toFixed(2), prefix: '$' },
                     { label: 'Total Lease Outlay Over Term', value: totalLeaseOutlay.toFixed(2), prefix: '$' }
                 ]
@@ -1080,7 +1080,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Maximum Affordable Home Price', value: maxHomePrice.toFixed(0), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Maximum Monthly Housing Budget', value: maxMonthlyHousing.toFixed(2), prefix: '$' },
-                    { label: 'Maximum Borrowing Loan Capacity', value: maxLoan.toFixed(0), prefix: '$' },
+                    { label: 'Max Borrowing Capacity', value: maxLoan.toFixed(0), prefix: '$' },
                     { label: 'Down Payment Applied', value: down.toFixed(0), prefix: '$' },
                     { label: 'Gross Monthly Income', value: monthlyIncome.toFixed(2), prefix: '$' }
                 ]
@@ -1120,7 +1120,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Recommended Max Monthly Rent', value: targetRent.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Annual Housing Cost', value: annualRentCost.toFixed(2), prefix: '$' },
-                    { label: 'Remaining Cash After Rent & Debt', value: netDisposableRemaining.toFixed(2), prefix: '$' },
+                    { label: 'Remaining Cash Flow', value: netDisposableRemaining.toFixed(2), prefix: '$' },
                     { label: 'Monthly Debt Service', value: debts.toFixed(2), prefix: '$' }
                 ]
             };
@@ -1179,7 +1179,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                     { label: 'Total Net Cost of Buying', value: netCostBuying.toFixed(0), prefix: '$' },
                     { label: 'Total Net Cost of Renting', value: netCostRenting.toFixed(0), prefix: '$' },
                     { label: 'Future Home Value in ' + years + ' Yrs', value: endHomeValue.toFixed(0), prefix: '$' },
-                    { label: 'Monthly Buying Outlay (Mortgage+Tax)', value: totalMonthlyBuy.toFixed(2), prefix: '$' }
+                    { label: 'Monthly Buying Outlay', value: totalMonthlyBuy.toFixed(2), prefix: '$' }
                 ]
             };
         }
@@ -1220,7 +1220,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Net Monthly Cash Flow', value: monthlyCashFlow.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Annual Net Operating Income (NOI)', value: noiAnnual.toFixed(2), prefix: '$' },
+                    { label: 'Net Operating Income (NOI)', value: noiAnnual.toFixed(2), prefix: '$' },
                     { label: 'Capitalization Rate (Cap Rate)', value: `${capRate.toFixed(2)}%` },
                     { label: 'Annual Net Cash Flow', value: annualCashFlow.toFixed(2), prefix: '$' }
                 ]
@@ -1352,9 +1352,9 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Interest-Only Monthly Payment (Draw Phase)', value: interestOnlyMonthly.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Monthly Payment in Repayment Phase', value: amortizingMonthly.toFixed(2), prefix: '$' },
+                    { label: 'Repayment Phase Payment', value: amortizingMonthly.toFixed(2), prefix: '$' },
                     { label: 'Principal Balance Drawn', value: bal.toFixed(2), prefix: '$' },
-                    { label: 'Annual Interest Cost (Draw Phase)', value: (interestOnlyMonthly * 12).toFixed(2), prefix: '$' }
+                    { label: 'Annual Interest (Draw Phase)', value: (interestOnlyMonthly * 12).toFixed(2), prefix: '$' }
                 ]
             };
         }
@@ -1399,8 +1399,8 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Upfront Points Cost', value: upfrontCost.toFixed(2), prefix: '$' },
                     { label: 'Monthly Payment Savings', value: monthlySavings.toFixed(2), prefix: '$' },
-                    { label: 'Discounted Interest Rate', value: `${newRate.toFixed(3)}%` },
-                    { label: 'Lifetime Interest Savings (30 Yrs)', value: ((monthlySavings * 360) - upfrontCost).toFixed(2), prefix: '$' }
+                    { label: 'Discounted Interest Rate', value: `${newRate.toFixed(2)}%` },
+                    { label: 'Lifetime Interest Savings', value: ((monthlySavings * 360) - upfrontCost).toFixed(2), prefix: '$' }
                 ]
             };
         }
@@ -1438,7 +1438,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Projected Property Value', value: futureVal.toFixed(0), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Total Value Gain', value: totalGain.toFixed(0), prefix: '$' },
-                    { label: 'Cumulative Appreciation Percentage', value: `${totalGainPct.toFixed(1)}%` },
+                    { label: 'Total Appreciation %', value: `${totalGainPct.toFixed(1)}%` },
                     { label: 'Initial Baseline Value', value: pv.toFixed(0), prefix: '$' }
                 ]
             };
@@ -1679,7 +1679,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Monthly Interest Payment', value: monthlyInterest.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Total Financing Cost (Fee + Interest)', value: totalCost.toFixed(2), prefix: '$' },
+                    { label: 'Total Financing Cost', value: totalCost.toFixed(2), prefix: '$' },
                     { label: 'Upfront Origination Fee', value: origFee.toFixed(2), prefix: '$' },
                     { label: 'Total Interest Over ' + months + ' Months', value: totalInterest.toFixed(2), prefix: '$' }
                 ]
@@ -1730,7 +1730,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Lump-Sum Balloon Payment Due', value: Math.max(0, balance).toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Monthly Payment During Loan', value: monthlyPmt.toFixed(2), prefix: '$' },
-                    { label: 'Total Interest Paid Before Balloon', value: totalInterestPaid.toFixed(2), prefix: '$' },
+                    { label: 'Interest Before Balloon', value: totalInterestPaid.toFixed(2), prefix: '$' },
                     { label: 'Original Principal Financed', value: p.toFixed(2), prefix: '$' }
                 ]
             };
@@ -1880,7 +1880,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'End Balance Portfolio Value', value: fv.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Total Invested Capital', value: totalContributed.toFixed(2), prefix: '$' },
-                    { label: 'Total Compound Growth / Interest', value: totalEarnings.toFixed(2), prefix: '$' },
+                    { label: 'Compound Growth / Interest', value: totalEarnings.toFixed(2), prefix: '$' },
                     { label: 'Profit-to-Principal Multiple', value: `${(fv / (totalContributed || 1)).toFixed(2)}x` }
                 ]
             };
@@ -2089,7 +2089,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Total Principal Saved', value: totalSaved.toFixed(2), prefix: '$' },
                     { label: 'Total Interest Earned', value: interest.toFixed(2), prefix: '$' },
-                    { label: 'Average Monthly Interest in Year ' + t, value: ((fv * (apy / 100)) / 12).toFixed(2), prefix: '$' }
+                    { label: 'Monthly Interest (Yr ' + t + ')', value: ((fv * (apy / 100)) / 12).toFixed(2), prefix: '$' }
                 ]
             };
         }
@@ -2217,7 +2217,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Net Ending Portfolio Value', value: netFv.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Total Fees Paid to Fund Managers', value: totalFeesLost.toFixed(2), prefix: '$' },
+                    { label: 'Total Fund Management Fees', value: totalFeesLost.toFixed(2), prefix: '$' },
                     { label: 'Net Annual Return Rate', value: `${netR.toFixed(2)}%` },
                     { label: 'Gross Value (Without Fees)', value: grossFv.toFixed(2), prefix: '$' }
                 ]
@@ -2264,7 +2264,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Tax-Free Nest Egg at Age ' + retAge, value: fv.toFixed(0), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Total 100% Tax-Free Earnings', value: taxFreeEarnings.toFixed(0), prefix: '$' },
-                    { label: 'Estimated Monthly Income (4% Rule)', value: safeWithdrawalMonthly.toFixed(2), prefix: '$' },
+                    { label: 'Monthly Income (4% Rule)', value: safeWithdrawalMonthly.toFixed(2), prefix: '$' },
                     { label: 'Total Contributions Invested', value: totalContributed.toFixed(0), prefix: '$' }
                 ]
             };
@@ -2349,7 +2349,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Required Minimum Distribution (RMD)', value: rmdAmount.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Monthly Equivalent Distribution', value: (rmdAmount / 12).toFixed(2), prefix: '$' },
+                    { label: 'Monthly Distribution', value: (rmdAmount / 12).toFixed(2), prefix: '$' },
                     { label: 'IRS Life Expectancy Factor', value: factor.toFixed(1) },
                     { label: 'RMD as % of Account Balance', value: `${((rmdAmount / bal) * 100).toFixed(2)}%` }
                 ]
@@ -2409,9 +2409,9 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Projected 401(k) Balance at Retirement', value: balance.toFixed(0), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Monthly Retirement Income (4% Rule)', value: monthlyIncome4Pct.toFixed(2), prefix: '$' },
+                    { label: 'Retirement Income (4% Rule)', value: monthlyIncome4Pct.toFixed(2), prefix: '$' },
                     { label: 'Total Employee Contributions', value: totalEmp.toFixed(0), prefix: '$' },
-                    { label: 'Total Free Employer Match Received', value: totalMatch.toFixed(0), prefix: '$' }
+                    { label: 'Employer Match Received', value: totalMatch.toFixed(0), prefix: '$' }
                 ]
             };
         }
@@ -2451,7 +2451,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Annuity Value at Accumulation End', value: fv.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Total Premiums Paid', value: totalPaid.toFixed(2), prefix: '$' },
-                    { label: 'Total Guaranteed Interest Growth', value: growth.toFixed(2), prefix: '$' }
+                    { label: 'Guaranteed Interest Growth', value: growth.toFixed(2), prefix: '$' }
                 ]
             };
         }
@@ -2488,8 +2488,8 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Guaranteed Monthly Annuity Payout', value: monthlyPayout.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Total Lifetime Payouts Received', value: totalLifetimePayout.toFixed(2), prefix: '$' },
-                    { label: 'Total Earnings / Interest Built-In', value: totalInterestReceived.toFixed(2), prefix: '$' },
+                    { label: 'Lifetime Payouts Received', value: totalLifetimePayout.toFixed(2), prefix: '$' },
+                    { label: 'Total Earnings & Interest', value: totalInterestReceived.toFixed(2), prefix: '$' },
                     { label: 'Annual Income Stream', value: (monthlyPayout * 12).toFixed(2), prefix: '$' }
                 ]
             };
@@ -2573,9 +2573,9 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Projected Retirement Nest Egg', value: projectedNestEgg.toFixed(0), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Required Target Nest Egg (4% Rule)', value: requiredNestEgg.toFixed(0), prefix: '$' },
+                    { label: 'Target Nest Egg (4% Rule)', value: requiredNestEgg.toFixed(0), prefix: '$' },
                     { label: 'Retirement Readiness Status', value: surplusOrShortfall >= 0 ? `On Track (+$$${surplusOrShortfall.toFixed(0)} Surplus)` : `Shortfall of $$${Math.abs(surplusOrShortfall).toFixed(0)}` },
-                    { label: 'Sustainable Monthly Income at Age ' + retAge, value: ((projectedNestEgg * 0.04) / 12).toFixed(2), prefix: '$' }
+                    { label: 'Monthly Income at Age ' + retAge, value: ((projectedNestEgg * 0.04) / 12).toFixed(2), prefix: '$' }
                 ]
             };
         }
@@ -2612,7 +2612,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Compound Annual Growth Rate (CAGR)', value: `${cagr.toFixed(2)}%` },
                 secondaryMetrics: [
-                    { label: 'Arithmetic Average Annual Return', value: `${arithmeticMean.toFixed(2)}%` },
+                    { label: 'Average Annual Return', value: `${arithmeticMean.toFixed(2)}%` },
                     { label: 'Total Cumulative Return', value: `${totalReturnPct.toFixed(2)}%` },
                     { label: 'Absolute Capital Gain', value: (fv - p).toFixed(2), prefix: '$' }
                 ]
@@ -2911,7 +2911,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Total Net Profit / Gain', value: totalNetProfit.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Total Return Percentage (ROI)', value: `${totalRoiPct.toFixed(2)}%` },
-                    { label: 'Capital Gain (Excluding Dividends)', value: capitalGain.toFixed(2), prefix: '$' },
+                    { label: 'Capital Gain (Excl. Div.)', value: capitalGain.toFixed(2), prefix: '$' },
                     { label: 'Dividend Income Collected', value: div.toFixed(2), prefix: '$' },
                     { label: 'Total Cost Basis', value: totalCost.toFixed(2), prefix: '$' }
                 ]
@@ -3002,7 +3002,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Projected DCA Portfolio Value', value: fv.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Total Invested Capital', value: totalInvested.toFixed(2), prefix: '$' },
-                    { label: 'Total Capital Gains & Compounding', value: profit.toFixed(2), prefix: '$' },
+                    { label: 'Capital Gains & Growth', value: profit.toFixed(2), prefix: '$' },
                     { label: 'Total Number of Purchases', value: `${t * 12} Contributions` }
                 ]
             };
@@ -3093,7 +3093,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Savings Shortfall Remaining', value: gap.toFixed(2), prefix: '$' },
                     { label: 'Emergency Fund Progress', value: `${pctFunded.toFixed(1)}% Funded` },
-                    { label: 'Current Runway with Existing Cash', value: `${(saved / (expenses || 1)).toFixed(1)} Months` }
+                    { label: 'Runway with Existing Cash', value: `${(saved / (expenses || 1)).toFixed(1)} Months` }
                 ]
             };
         }
@@ -3124,7 +3124,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Years to Double Capital (Rule of 72)', value: `${approxYears.toFixed(1)} Years` },
                 secondaryMetrics: [
-                    { label: 'Exact Mathematical Doubling Time', value: `${exactYears.toFixed(2)} Years` },
+                    { label: 'Exact Doubling Time', value: `${exactYears.toFixed(2)} Years` },
                     { label: 'Tripling Time (Rule of 114)', value: `${(114 / r).toFixed(1)} Years` },
                     { label: 'Quadrupling Time (Rule of 144)', value: `${(144 / r).toFixed(1)} Years` }
                 ]
@@ -3175,7 +3175,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Target FIRE Number', value: fireNumber.toFixed(0), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Projected FIRE Age', value: `${fireAge} Years Old` },
-                    { label: 'Years to Financial Independence', value: `${years} Years` },
+                    { label: 'Years to Financial Freedom', value: `${years} Years` },
                     { label: 'Annual Safe Income Stream', value: exp.toFixed(0), prefix: '$' }
                 ]
             };
@@ -3321,8 +3321,8 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Estimated Total Federal Tax Owed', value: fedTax.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Effective Overall Tax Rate', value: `${effectiveRate.toFixed(1)}%` },
-                    { label: 'FICA Payroll Taxes (SS + Medicare)', value: ficaTax.toFixed(2), prefix: '$' },
-                    { label: 'Taxable Income (After Deductions)', value: taxableIncome.toFixed(2), prefix: '$' },
+                    { label: 'FICA Taxes (SS + Medicare)', value: ficaTax.toFixed(2), prefix: '$' },
+                    { label: 'Taxable Income Post-Deduction', value: taxableIncome.toFixed(2), prefix: '$' },
                     { label: 'Estimated Take-Home Pay', value: netIncome.toFixed(2), prefix: '$' }
                 ]
             };
@@ -3372,7 +3372,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Final Total Amount (With Tax)', value: total.toFixed(2), prefix: '$' },
                     { label: 'Net Base Price (Pre-Tax)', value: base.toFixed(2), prefix: '$' },
-                    { label: 'Effective Tax Rate', value: `${(rate * 100).toFixed(3)}%` }
+                    { label: 'Effective Tax Rate', value: `${(rate * 100).toFixed(2)}%` }
                 ]
             };
         }
@@ -3426,7 +3426,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: diff >= 0 ? 'Marriage Tax Bonus (Savings)' : 'Marriage Tax Penalty', value: Math.abs(diff).toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Joint Filing Tax Liability', value: marriedJointTax.toFixed(2), prefix: '$' },
-                    { label: 'Combined Single Filing Tax Liability', value: singleTaxesTotal.toFixed(2), prefix: '$' },
+                    { label: 'Combined Single Tax Total', value: singleTaxesTotal.toFixed(2), prefix: '$' },
                     { label: 'Status Impact', value: diff >= 0 ? 'Filing Jointly Saves Money' : 'Filing Jointly Incurs Marriage Penalty' }
                 ]
             };
@@ -3464,8 +3464,8 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Estimated Federal Estate Tax Owed', value: estateTax.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Taxable Portion Above Exemption', value: taxableEstate.toFixed(2), prefix: '$' },
-                    { label: 'Net Estate Passing to Beneficiaries', value: (estate - estateTax).toFixed(2), prefix: '$' },
+                    { label: 'Taxable Estate Balance', value: taxableEstate.toFixed(2), prefix: '$' },
+                    { label: 'Net Estate to Beneficiaries', value: (estate - estateTax).toFixed(2), prefix: '$' },
                     { label: 'Effective Estate Tax Rate', value: `${((estateTax / (estate || 1)) * 100).toFixed(2)}%` }
                 ]
             };
@@ -3515,7 +3515,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Annual Net Take-Home Pay', value: netAnnual.toFixed(2), prefix: '$' },
                     { label: 'Federal Income Tax (Annual)', value: fedTax.toFixed(2), prefix: '$' },
-                    { label: 'FICA Social Security & Medicare', value: ficaTax.toFixed(2), prefix: '$' },
+                    { label: 'FICA Taxes (SS & Medicare)', value: ficaTax.toFixed(2), prefix: '$' },
                     { label: 'State Income Tax (Annual)', value: stateTax.toFixed(2), prefix: '$' }
                 ]
             };
@@ -3597,7 +3597,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Total Sales Commission Earned', value: commissionEarned.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Total Earnings (Base + Commission)', value: totalCompensation.toFixed(2), prefix: '$' },
+                    { label: 'Total Earnings (Base+Comm)', value: totalCompensation.toFixed(2), prefix: '$' },
                     { label: 'Guaranteed Base Salary', value: base.toFixed(2), prefix: '$' },
                     { label: 'Commission Share of Income', value: `${((commissionEarned / (totalCompensation || 1)) * 100).toFixed(1)}%` }
                 ]
@@ -3644,7 +3644,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Estimated Monthly Social Security Benefit', value: monthlyBenefit.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Annual Benefit at Age ' + age, value: annualBenefit.toFixed(2), prefix: '$' },
-                    { label: 'Full Retirement Age (FRA) Primary Insurance Amount (PIA)', value: pia.toFixed(2), prefix: '$' },
+                    { label: 'Full Retirement Age PIA', value: pia.toFixed(2), prefix: '$' },
                     { label: 'Adjustment Factor', value: `${(adjustment * 100).toFixed(0)}% of FRA Benefit` }
                 ]
             };
@@ -3733,9 +3733,9 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Total Self-Employment Tax (15.3%)', value: totalSeTax.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Social Security Portion (12.4%)', value: ssTax.toFixed(2), prefix: '$' },
+                    { label: 'Social Security (12.4%)', value: ssTax.toFixed(2), prefix: '$' },
                     { label: 'Medicare Portion (2.9%)', value: medicareTax.toFixed(2), prefix: '$' },
-                    { label: '50% Above-the-Line Tax Deduction', value: halfSeDeduction.toFixed(2), prefix: '$' }
+                    { label: '50% Above-the-Line Deduction', value: halfSeDeduction.toFixed(2), prefix: '$' }
                 ]
             };
         }
@@ -3775,7 +3775,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Total Taxes Withheld per Paycheck', value: totalWithheld.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Federal Income Tax Withholding', value: fedTaxPerPeriod.toFixed(2), prefix: '$' },
-                    { label: 'FICA (Social Security & Medicare)', value: ficaPerPeriod.toFixed(2), prefix: '$' },
+                    { label: 'FICA (SS & Medicare)', value: ficaPerPeriod.toFixed(2), prefix: '$' },
                     { label: 'Net Take-Home per Check', value: (gross - totalWithheld).toFixed(2), prefix: '$' }
                 ]
             };
@@ -3851,7 +3851,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Annual Property Tax Bill', value: annualTax.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Monthly Escrow Property Tax Portion', value: monthlyTax.toFixed(2), prefix: '$' },
+                    { label: 'Monthly Property Tax Escrow', value: monthlyTax.toFixed(2), prefix: '$' },
                     { label: 'Taxable Assessed Value', value: taxableVal.toFixed(2), prefix: '$' },
                     { label: 'Annual Exemption Savings', value: (exemption * rate).toFixed(2), prefix: '$' }
                 ]
@@ -3892,9 +3892,9 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Total Annual Freelance Tax Liability', value: totalTax.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Quarterly Estimated Tax Payment (IRS 1040-ES)', value: quarterlyEstimated.toFixed(2), prefix: '$' },
-                    { label: 'Self-Employment Tax (SECA 15.3%)', value: seTax.toFixed(2), prefix: '$' },
-                    { label: 'Net Take-Home Profit After Taxes', value: (netProfit - totalTax).toFixed(2), prefix: '$' }
+                    { label: 'Quarterly Estimated Tax', value: quarterlyEstimated.toFixed(2), prefix: '$' },
+                    { label: 'Self-Employment Tax (SECA)', value: seTax.toFixed(2), prefix: '$' },
+                    { label: 'Net Profit After Taxes', value: (netProfit - totalTax).toFixed(2), prefix: '$' }
                 ]
             };
         }
@@ -3974,7 +3974,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Total Needs (Target: 50%)', value: needs.toFixed(2), prefix: '$' },
                     { label: 'Total Wants (Target: 30%)', value: wants.toFixed(2), prefix: '$' },
-                    { label: 'Total Savings / Debt (Target: 20%)', value: savings.toFixed(2), prefix: '$' },
+                    { label: 'Savings/Debt (20% Target)', value: savings.toFixed(2), prefix: '$' },
                     { label: 'Unallocated Cash Margin', value: unallocated.toFixed(2), prefix: '$' }
                 ]
             };
@@ -4052,7 +4052,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Calculated Future Value (FV)', value: fv.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Total Invested Capital (PV + PMT*n)', value: (pv + pmt * n).toFixed(2), prefix: '$' },
+                    { label: 'Total Invested Capital', value: (pv + pmt * n).toFixed(2), prefix: '$' },
                     { label: 'Total Compounded Earnings', value: (fv - (pv + pmt * n)).toFixed(2), prefix: '$' }
                 ]
             };
@@ -4105,9 +4105,9 @@ export const financialCalculators: CalculatorDefinition[] = [
             const apr = fees > 0 ? Math.max(rate, solvedRate) : rate;
 
             return {
-                primaryOutput: { label: 'True Annual Percentage Rate (APR)', value: `${apr.toFixed(3)}%` },
+                primaryOutput: { label: 'True Annual Percentage Rate', value: `${apr.toFixed(2)}%` },
                 secondaryMetrics: [
-                    { label: 'Stated Nominal Interest Rate', value: `${rate.toFixed(3)}%` },
+                    { label: 'Stated Nominal Interest Rate', value: `${rate.toFixed(2)}%` },
                     { label: 'Monthly Payment Installment', value: monthlyPmt.toFixed(2), prefix: '$' },
                     { label: 'Financed Closing Fees', value: fees.toFixed(2), prefix: '$' }
                 ]
@@ -4146,7 +4146,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Future Equivalent Cost', value: futureCost.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Remaining Purchasing Power Today', value: purchasingPower.toFixed(2), prefix: '$' },
+                    { label: 'Remaining Purchasing Power', value: purchasingPower.toFixed(2), prefix: '$' },
                     { label: 'Cumulative Inflation Increase', value: `${(((futureCost - amount) / amount) * 100).toFixed(1)}%` },
                     { label: 'Real Value Erosion', value: `-${lossPct.toFixed(1)}%` }
                 ]
@@ -4387,7 +4387,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: method === 'ddb' ? 'Year 1 DDB Depreciation' : 'Annual Straight-Line Depreciation', value: (method === 'ddb' ? ddbYear1 : straightLineAnnual).toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Total Lifetime Depreciable Base', value: totalDepreciable.toFixed(2), prefix: '$' },
+                    { label: 'Total Depreciable Base', value: totalDepreciable.toFixed(2), prefix: '$' },
                     { label: 'Straight-Line Annual Expense', value: straightLineAnnual.toFixed(2), prefix: '$' },
                     { label: 'Terminal Salvage Value', value: salvage.toFixed(2), prefix: '$' }
                 ]
@@ -4435,8 +4435,8 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Total Projected 4-Year Degree Cost', value: totalDegreeCost.toFixed(0), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Estimated Year 1 Tuition at Enrollment', value: year1FutureCost.toFixed(0), prefix: '$' },
-                    { label: 'Monthly Savings Target (0% Interest Baseline)', value: monthlySavingsNeeded.toFixed(2), prefix: '$' },
+                    { label: 'Estimated Year 1 Tuition', value: year1FutureCost.toFixed(0), prefix: '$' },
+                    { label: 'Monthly Savings Target (0%)', value: monthlySavingsNeeded.toFixed(2), prefix: '$' },
                     { label: 'Current 4-Year Cost Today', value: (currentCost * degreeYears).toFixed(0), prefix: '$' }
                 ]
             };
@@ -4624,7 +4624,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Net Profit Margin', value: `${netMargin.toFixed(2)}%` },
                 secondaryMetrics: [
-                    { label: 'Net Profit Kept per $100 Revenue', value: `$${netMargin.toFixed(2)}` },
+                    { label: 'Profit per $100 Revenue', value: `$${netMargin.toFixed(2)}` },
                     { label: 'Total Gross Revenue', value: rev.toFixed(2), prefix: '$' }
                 ]
             };
@@ -4661,7 +4661,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Recommended Selling Price', value: sellingPrice.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Dollar Gross Profit per Unit', value: grossProfit.toFixed(2), prefix: '$' },
-                    { label: 'Equivalent Cost Markup Percentage', value: `${markup.toFixed(2)}%` },
+                    { label: 'Cost Markup Percentage', value: `${markup.toFixed(2)}%` },
                     { label: 'Unit Production Cost', value: cost.toFixed(2), prefix: '$' }
                 ]
             };
@@ -4728,10 +4728,10 @@ export const financialCalculators: CalculatorDefinition[] = [
             const ear = (Math.pow(1 + nom / n, n) - 1) * 100;
 
             return {
-                primaryOutput: { label: 'Effective Annual Rate (EAR / APY)', value: `${ear.toFixed(4)}%` },
+                primaryOutput: { label: 'Effective Annual Rate (APY)', value: `${ear.toFixed(2)}%` },
                 secondaryMetrics: [
-                    { label: 'Stated Nominal APR', value: `${(nom * 100).toFixed(4)}%` },
-                    { label: 'Compounding Yield Premium', value: `+${(ear - nom * 100).toFixed(4)}%` }
+                    { label: 'Stated Nominal APR', value: `${(nom * 100).toFixed(2)}%` },
+                    { label: 'Compounding Yield Premium', value: `+${(ear - nom * 100).toFixed(2)}%` }
                 ]
             };
         }
@@ -4847,7 +4847,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Required Salary in Target City', value: requiredSalary.toFixed(0), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Cost of Living Difference', value: `${diffPct >= 0 ? '+' : ''}${diffPct.toFixed(1)}%` },
-                    { label: 'Annual Salary Adjustment Needed', value: `${dollarDiff >= 0 ? '+' : ''}${dollarDiff.toFixed(0)}`, prefix: '$' }
+                    { label: 'Salary Adjustment Needed', value: `${dollarDiff >= 0 ? '+' : ''}${dollarDiff.toFixed(0)}`, prefix: '$' }
                 ]
             };
         }
@@ -5007,7 +5007,7 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Amount Owed per Person', value: perPerson.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
-                    { label: 'Total Combined Bill (With Tax & Tip)', value: totalBill.toFixed(2), prefix: '$' },
+                    { label: 'Total Combined Bill', value: totalBill.toFixed(2), prefix: '$' },
                     { label: 'Total Tip Amount', value: tipAmount.toFixed(2), prefix: '$' },
                     { label: 'Total Sales Tax', value: taxAmount.toFixed(2), prefix: '$' }
                 ]
@@ -5047,7 +5047,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Annual Subscriptions Cost', value: totalAnnual.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Monthly Subscriptions Outlay', value: totalMonthly.toFixed(2), prefix: '$' },
-                    { label: 'Opportunity Cost in 10 Yrs (If Invested at 7%)', value: tenYearCostWithCompounding.toFixed(0), prefix: '$' }
+                    { label: '10-Yr Opportunity Cost (@7%)', value: tenYearCostWithCompounding.toFixed(0), prefix: '$' }
                 ]
             };
         }
@@ -5202,7 +5202,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Net Trading Profit', value: netProfit.toFixed(2), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'Gross Trading Profit', value: grossProfit.toFixed(2), prefix: '$' },
-                    { label: 'Total Brokerage Fees (Round-Trip)', value: totalBrokerage.toFixed(2), prefix: '$' },
+                    { label: 'Total Brokerage Fees', value: totalBrokerage.toFixed(2), prefix: '$' },
                     { label: 'Net Return on Trade (ROI)', value: `${roiPct.toFixed(2)}%` }
                 ]
             };
@@ -5346,9 +5346,9 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Monthly Mortgage Payment', value: `£${Math.round(monthlyPayment).toLocaleString()}`, suffix: `per month (${repType === 'repayment' ? 'Capital + Interest' : 'Interest-Only'})` },
                 secondaryMetrics: [
                     { label: 'Mortgage Loan Borrowed', value: `£${Math.round(loanAmount).toLocaleString()} (${ltv.toFixed(1)}% LTV)` },
-                    { label: 'Total Interest Payable Over Term', value: `£${Math.round(totalInterest).toLocaleString()}` },
+                    { label: 'Total Interest Over Term', value: `£${Math.round(totalInterest).toLocaleString()}` },
                     { label: 'Total Cost Over Term', value: `£${Math.round(totalRepayment).toLocaleString()}` },
-                    { label: 'Estimated Stamp Duty (SDLT Standard)', value: `£${Math.round(sdlt).toLocaleString()}` }
+                    { label: 'Estimated Stamp Duty (SDLT)', value: `£${Math.round(sdlt).toLocaleString()}` }
                 ]
             };
         }
@@ -5418,9 +5418,9 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: paymentLabel, value: `$${Math.round(periodicPayment).toLocaleString()} CAD`, suffix: `${years}-Yr Amortization (${freq.replace('_', ' ').toUpperCase()})` },
                 secondaryMetrics: [
-                    { label: 'Mortgage Loan (incl. CMHC Insurance)', value: `$${Math.round(totalInsuredLoan).toLocaleString()} (CMHC Fee: $${Math.round(cmhcAmount).toLocaleString()})` },
-                    { label: 'Total Interest Over Amortization', value: `$${Math.round(totalInterest).toLocaleString()}` },
-                    { label: 'Canada Stress Test Qualifying Rate', value: `${qualifyingRate.toFixed(2)}% (Contract Rate + 2%)` },
+                    { label: 'Loan (incl. CMHC Insurance)', value: `$${Math.round(totalInsuredLoan).toLocaleString()} (CMHC Fee: $${Math.round(cmhcAmount).toLocaleString()})` },
+                    { label: 'Total Amortization Interest', value: `$${Math.round(totalInterest).toLocaleString()}` },
+                    { label: 'Stress Test Qualifying Rate', value: `${qualifyingRate.toFixed(2)}% (Contract Rate + 2%)` },
                     { label: 'Down Payment Equity Ratio', value: `${downPct.toFixed(1)}% ($${Math.round(down).toLocaleString()} CAD)` }
                 ]
             };
@@ -5469,7 +5469,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Net Base Amount (excl. Tax)', value: `$${net.toFixed(2)}` },
                     { label: 'Value Added Tax (VAT) Amount', value: `$${vat.toFixed(2)}` },
-                    { label: 'Gross Invoice Total (incl. Tax)', value: `$${gross.toFixed(2)}` },
+                    { label: 'Gross Invoice (incl. Tax)', value: `$${gross.toFixed(2)}` },
                     { label: 'Effective Tax Share of Gross', value: `${((vat / gross) * 100).toFixed(1)}%` }
                 ]
             };
@@ -5532,9 +5532,9 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Total Stamp Duty (SDLT) Payable', value: `£${Math.round(totalTax).toLocaleString()}`, suffix: `${effectiveRate.toFixed(2)}% Effective Tax Rate` },
                 secondaryMetrics: [
                     { label: 'Base Progressive SDLT', value: `£${Math.round(sdlt).toLocaleString()}` },
-                    { label: 'Additional Surcharges (Buy-to-Let / Non-UK)', value: `£${Math.round(surchargeTotal).toLocaleString()} (${(surcharge * 100).toFixed(0)}%)` },
-                    { label: 'Effective Rate on Purchase Price', value: `${effectiveRate.toFixed(2)}%` },
-                    { label: 'Total Capital Needed (incl. Tax)', value: `£${Math.round(price + totalTax).toLocaleString()}` }
+                    { label: 'Surcharges (BTL / Non-UK)', value: `£${Math.round(surchargeTotal).toLocaleString()} (${(surcharge * 100).toFixed(0)}%)` },
+                    { label: 'Effective Purchase Tax Rate', value: `${effectiveRate.toFixed(2)}%` },
+                    { label: 'Total Capital Needed', value: `£${Math.round(price + totalTax).toLocaleString()}` }
                 ]
             };
         }
@@ -5582,7 +5582,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Total Expected Corpus', value: `₹${Math.round(maturityValue).toLocaleString()}`, suffix: `${wealthMultiplier.toFixed(1)}x Wealth Multiplier` },
                 secondaryMetrics: [
                     { label: 'Total Amount Invested', value: `₹${Math.round(totalInvested).toLocaleString()}` },
-                    { label: 'Estimated Wealth Gain (Returns)', value: `₹${Math.round(wealthGain).toLocaleString()}` },
+                    { label: 'Estimated Wealth Gain', value: `₹${Math.round(wealthGain).toLocaleString()}` },
                     { label: 'Total Months Invested', value: `${n} Months (${y} Years)` },
                     { label: 'Return on Capital Ratio', value: `+${((wealthGain / totalInvested) * 100).toFixed(0)}% Profit` }
                 ]
@@ -5632,9 +5632,9 @@ export const financialCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Monthly Loan EMI', value: `₹${Math.round(emi).toLocaleString()}`, suffix: `for ${n} months (${years} yrs)` },
                 secondaryMetrics: [
                     { label: 'Total Interest Payable', value: `₹${Math.round(totalInterest).toLocaleString()}` },
-                    { label: 'Total Amount Payable (Principal + Interest)', value: `₹${Math.round(totalPayment).toLocaleString()}` },
+                    { label: 'Total Amount Payable', value: `₹${Math.round(totalPayment).toLocaleString()}` },
                     { label: 'Principal Loan Amount', value: `₹${Math.round(p).toLocaleString()}` },
-                    { label: 'Interest Share of Total Payment', value: `${interestRatio.toFixed(1)}%` }
+                    { label: 'Interest Share of Payment', value: `${interestRatio.toFixed(1)}%` }
                 ]
             };
         }
@@ -5727,7 +5727,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                     { label: 'Total Invested Capital', value: `₹${Math.round(totalDeposited).toLocaleString()}` },
                     { label: 'Total Interest Earned', value: `₹${Math.round(totalInterest).toLocaleString()}` },
                     { label: 'Annual Compound Growth', value: `+${((totalInterest / totalDeposited) * 100).toFixed(1)}% Return` },
-                    { label: 'Quarterly Compounding Frequency', value: 'Bank Standard (4 Quarters / Yr)' }
+                    { label: 'Quarterly Compounding', value: 'Bank Standard (4 Quarters / Yr)' }
                 ]
             };
         }
@@ -5890,7 +5890,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                     { label: 'Total Invested Capital', value: `₹${Math.round(totalInvested).toLocaleString()}` },
                     { label: 'Estimated Wealth Gain', value: `₹${Math.round(totalBalance - totalInvested).toLocaleString()}` },
                     { label: 'Final Year Monthly SIP Amount', value: `₹${Math.round(currentMonthlySip / (1 + stepUpPct)).toLocaleString()} / month` },
-                    { label: 'Static Non-Step-Up SIP Benchmark', value: `₹${Math.round(staticBalance).toLocaleString()} (Invested: ₹${Math.round(staticInvested).toLocaleString()})` }
+                    { label: 'Static SIP Benchmark', value: `₹${Math.round(staticBalance).toLocaleString()} (Invested: ₹${Math.round(staticInvested).toLocaleString()})` }
                 ]
             };
         }
@@ -5991,10 +5991,10 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Tax-Exempt HRA Amount', value: `₹${Math.round(exemptHra).toLocaleString()}`, suffix: `Taxable HRA: ₹${Math.round(taxableHra).toLocaleString()}` },
                 secondaryMetrics: [
-                    { label: 'Condition 1: Actual HRA Received', value: `₹${Math.round(cond1).toLocaleString()}` },
-                    { label: 'Condition 2: Rent Paid - 10% Basic', value: `₹${Math.round(cond2).toLocaleString()}` },
-                    { label: `Condition 3: ${isMetro ? '50%' : '40%'} of Basic Salary`, value: `₹${Math.round(cond3).toLocaleString()}` },
-                    { label: 'Estimated Tax Savings (30% Bracket)', value: `~₹${Math.round(approxTaxSavings).toLocaleString()} / year` }
+                    { label: 'Condition 1: Actual HRA', value: `₹${Math.round(cond1).toLocaleString()}` },
+                    { label: 'Condition 2: Rent - 10% Basic', value: `₹${Math.round(cond2).toLocaleString()}` },
+                    { label: `Condition 3: ${isMetro ? '50%' : '40%'} Basic Salary`, value: `₹${Math.round(cond3).toLocaleString()}` },
+                    { label: 'Tax Savings (30% Bracket)', value: `~₹${Math.round(approxTaxSavings).toLocaleString()} / year` }
                 ]
             };
         }
@@ -6066,7 +6066,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                     { label: 'Gross Invoice Amount', value: `₹${Math.round(amount).toLocaleString()}` },
                     { label: 'TDS Withholding Amount', value: `₹${Math.round(tdsAmount).toLocaleString()}` },
                     { label: 'Applicable Rate & Section', value: `${rate}% under ${sectionName}` },
-                    { label: 'Statutory Annual Exemption Limit', value: `₹${Math.round(threshold).toLocaleString()} per Financial Year` }
+                    { label: 'Statutory Exemption Limit', value: `₹${Math.round(threshold).toLocaleString()} per Financial Year` }
                 ]
             };
         }
@@ -6167,9 +6167,9 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Total EPF Corpus at Retirement', value: `₹${Math.round(balance).toLocaleString()}`, suffix: `at Age ${retAge} (${totalYears} Yrs Contribution)` },
                 secondaryMetrics: [
-                    { label: 'Total Employee 12% Contributions', value: `₹${Math.round(totalEmployeeContrib).toLocaleString()}` },
-                    { label: 'Total Employer 3.67% Contributions', value: `₹${Math.round(totalEmployerContrib).toLocaleString()}` },
-                    { label: 'Total Compound Interest Accrued', value: `₹${Math.round(totalInterestAccrued).toLocaleString()}` },
+                    { label: 'Employee 12% Contributions', value: `₹${Math.round(totalEmployeeContrib).toLocaleString()}` },
+                    { label: 'Employer 3.67% Contributions', value: `₹${Math.round(totalEmployerContrib).toLocaleString()}` },
+                    { label: 'Total Accrued Interest', value: `₹${Math.round(totalInterestAccrued).toLocaleString()}` },
                     { label: 'Final Monthly Basic Pay', value: `₹${Math.round(basic).toLocaleString()} / month` }
                 ]
             };
@@ -6259,7 +6259,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                     { label: 'Weekly Take-Home Pay', value: `£${Math.round(netWeekly).toLocaleString()} / week` },
                     { label: 'Annual Income Tax (PAYE)', value: `£${Math.round(incomeTax).toLocaleString()}` },
                     { label: 'National Insurance (NI)', value: `£${Math.round(ni).toLocaleString()}` },
-                    { label: 'Pension & Student Loan Deductions', value: `£${Math.round(pensionDeduction + studentLoan).toLocaleString()} (Pension: £${Math.round(pensionDeduction).toLocaleString()})` }
+                    { label: 'Pension & Loan Deductions', value: `£${Math.round(pensionDeduction + studentLoan).toLocaleString()} (Pension: £${Math.round(pensionDeduction).toLocaleString()})` }
                 ]
             };
         }
@@ -6339,7 +6339,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                     { label: 'Federal Income Tax (CRA)', value: `$${Math.round(fedTax).toLocaleString()} CAD` },
                     { label: `Provincial Tax (${prov})`, value: `$${Math.round(provTax).toLocaleString()} CAD` },
                     { label: 'CPP & EI Deductions', value: `$${Math.round(cpp + ei).toLocaleString()} (CPP: $${Math.round(cpp)}, EI: $${Math.round(ei)})` },
-                    { label: 'Total Effective Tax & Deduction Rate', value: `${effectiveTaxRate.toFixed(1)}%` }
+                    { label: 'Total Effective Tax Rate', value: `${effectiveTaxRate.toFixed(1)}%` }
                 ]
             };
         }
@@ -6418,7 +6418,7 @@ export const financialCalculators: CalculatorDefinition[] = [
                     { label: 'Annual Net Take-Home Pay', value: `$${Math.round(netAnnual).toLocaleString()} AUD` },
                     { label: 'ATO Income Tax (Stage 3)', value: `$${Math.round(incomeTax).toLocaleString()} AUD` },
                     { label: 'Medicare Levy (2.0%)', value: `$${Math.round(medicareLevy).toLocaleString()} AUD` },
-                    { label: 'Employer Superannuation (11.5%)', value: `$${Math.round(employerSuper).toLocaleString()} AUD / year` }
+                    { label: 'Superannuation (11.5%)', value: `$${Math.round(employerSuper).toLocaleString()} AUD / year` }
                 ]
             };
         }
@@ -6546,8 +6546,8 @@ export const financialCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Estimated Super at Retirement', value: `$${Math.round(balance).toLocaleString()} AUD`, suffix: `at Age ${retAge} (${years} Yrs Accumulation)` },
                 secondaryMetrics: [
-                    { label: 'Estimated Annual Retirement Income (5% Drawdown)', value: `$${Math.round(annualDrawdown).toLocaleString()} AUD / year` },
-                    { label: 'Total Gross Employer Contributions', value: `$${Math.round(totalContributed).toLocaleString()} AUD` },
+                    { label: 'Annual Income (5% Drawdown)', value: `$${Math.round(annualDrawdown).toLocaleString()} AUD / year` },
+                    { label: 'Gross Employer Contributions', value: `$${Math.round(totalContributed).toLocaleString()} AUD` },
                     { label: 'Investment Growth Generated', value: `$${Math.round(balance - totalContributed - (Number(inputs.currentSuperBalance) || 85000)).toLocaleString()} AUD` },
                     { label: 'Net Annual Super Return Rate', value: `${(netReturnRate * 100).toFixed(2)}% (after 15% tax)` }
                 ]

@@ -52,8 +52,8 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Air Quality Index (AQI)', value: `${aqiRounded} AQI`, suffix: category.split(' ')[0] },
                 secondaryMetrics: [
                     { label: 'EPA Health Advisory Level', value: category },
-                    { label: 'General Population Recommendation', value: aqiRounded <= 100 ? 'Safe for outdoor exercise and recreation' : aqiRounded <= 150 ? 'Sensitive groups should reduce prolonged outdoor exertion' : 'Avoid outdoor physical activities; use HEPA air purifier indoors' },
-                    { label: 'Measured Pollutant Concentration', value: `${c} ${type === 'co' ? 'ppm' : 'µg/m³'}` },
+                    { label: 'Population Recommendation', value: aqiRounded <= 100 ? 'Safe for outdoor exercise and recreation' : aqiRounded <= 150 ? 'Sensitive groups should reduce prolonged outdoor exertion' : 'Avoid outdoor physical activities; use HEPA air purifier indoors' },
+                    { label: 'Pollutant Concentration', value: `${c} ${type === 'co' ? 'ppm' : 'µg/m³'}` },
                     { label: 'AQI Color Code', value: color }
                 ]
             };
@@ -102,7 +102,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
                     { label: 'Virtual Food Water Share', value: `${dietGalDaily} Gal/day (${Math.round((dietGalDaily / totalDailyGal) * 100)}% of footprint)` },
                     { label: 'Direct Domestic Water Use', value: `${Math.round(directDomesticGalDaily)} Gal/day` },
                     { label: 'Annual Total Water Consumption', value: `${Math.round(annualGal).toLocaleString()} Gallons / year` },
-                    { label: 'Comparison to US National Average', value: totalDailyGal < 1800 ? `${Math.round(((1800 - totalDailyGal) / 1800) * 100)}% below national average (1,800 gal/day)` : 'Above national average' }
+                    { label: 'Comparison to US Average', value: totalDailyGal < 1800 ? `${Math.round(((1800 - totalDailyGal) / 1800) * 100)}% below national average (1,800 gal/day)` : 'Above national average' }
                 ]
             };
         }
@@ -150,7 +150,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Annual Carbon Sequestration', value: `${Math.round(annualCO2Lbs).toLocaleString()} lbs CO2 / year` },
                     { label: 'Surviving Mature Trees', value: `~${Math.round(survivingTrees)} Trees (85% survival rate)` },
-                    { label: 'Passenger Car Miles Offset Annually', value: `${Math.round(carMilesOffsetAnnual).toLocaleString()} Miles` },
+                    { label: 'Car Miles Offset Annually', value: `${Math.round(carMilesOffsetAnnual).toLocaleString()} Miles` },
                     { label: 'Annual Stormwater Intercepted', value: `${Math.round(stormwaterGalAnnual).toLocaleString()} Gallons / year` }
                 ]
             };
@@ -199,8 +199,8 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Ecological Footprint', value: `${totalGHA.toFixed(1)} Global Hectares`, suffix: `${earthsNeeded.toFixed(1)} Planet Earths` },
                 secondaryMetrics: [
-                    { label: 'Planets Required if Everyone Lived Like You', value: `${earthsNeeded.toFixed(2)} Earths (Biocapacity limit: 1.0)` },
-                    { label: 'Transportation Biocapacity Demand', value: `${transportGHA.toFixed(2)} gha` },
+                    { label: 'Planets Required if Equal', value: `${earthsNeeded.toFixed(2)} Earths (Biocapacity limit: 1.0)` },
+                    { label: 'Transport Biocapacity Demand', value: `${transportGHA.toFixed(2)} gha` },
                     { label: 'Food & Agricultural Footprint', value: `${dietGHA.toFixed(2)} gha` },
                     { label: 'Sustainability Status', value: 'Ecological biocapacity demand calculated' }
                 ]
@@ -248,9 +248,9 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Cumulative Lifetime Utility Savings', value: `$${Math.round(cumulativeSavings).toLocaleString()}`, suffix: `${years}-Year Horizon` },
                 secondaryMetrics: [
                     { label: 'Year 1 Estimated Savings', value: `$${Math.round(annualSpend * offset).toLocaleString()} / year` },
-                    { label: 'Status Quo Cumulative Utility Spend', value: `$${Math.round(cumulativeUtilityCost).toLocaleString()}` },
+                    { label: 'Status Quo Cumulative Spend', value: `$${Math.round(cumulativeUtilityCost).toLocaleString()}` },
                     { label: 'Clean Energy Generated', value: `~${Math.round((annualSpend / 0.16) * offset * years / 1000)} MWh` },
-                    { label: 'Lifetime Carbon Emissions Avoided', value: `${co2AvoidedTons.toFixed(1)} Metric Tons CO2` }
+                    { label: 'Carbon Emissions Avoided', value: `${co2AvoidedTons.toFixed(1)} Metric Tons CO2` }
                 ]
             };
         }
@@ -294,7 +294,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
                     { label: 'Red Meat Share of Emissions', value: `${Math.round(beefAnnualKg)} kg CO2e (${Math.round((beefAnnualKg / totalKgCO2) * 100)}%)` },
                     { label: 'Equivalent Driving Distance', value: `${Math.round(carMilesEquiv).toLocaleString()} Passenger Car Miles` },
                     { label: 'Poultry & Dairy Emissions', value: `${Math.round(poultryAnnualKg + dairyAnnualKg)} kg CO2e / year` },
-                    { label: '1 Meatless Day/Week Savings Potential', value: `-${Math.round((beefAnnualKg / (beef || 1)) + 50)} kg CO2e / year` }
+                    { label: '1 Meatless Day/Wk Savings', value: `-${Math.round((beefAnnualKg / (beef || 1)) + 50)} kg CO2e / year` }
                 ]
             };
         }
@@ -344,9 +344,9 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Annual Energy Saved', value: `${Math.round(totalKWhSaved).toLocaleString()} kWh`, suffix: `${Math.round(totalCO2Lbs)} lbs CO2 Avoided` },
                 secondaryMetrics: [
                     { label: 'Total Landfill Waste Diverted', value: `${Math.round(totalLbsWasteDiverted)} lbs / year` },
-                    { label: 'Water Conserved (Paper Recycling)', value: `${Math.round(paperWaterGal).toLocaleString()} Gallons` },
+                    { label: 'Water Conserved (Paper)', value: `${Math.round(paperWaterGal).toLocaleString()} Gallons` },
                     { label: 'Equivalent TV Operating Hours', value: `${Math.round(totalKWhSaved * 10).toLocaleString()} Hours (100W TV)` },
-                    { label: 'Trees Saved from Paper Recycling', value: `${(paper * 52 * 0.0085).toFixed(1)} Mature Trees / year` }
+                    { label: 'Trees Saved (Paper Recycle)', value: `${(paper * 52 * 0.0085).toFixed(1)} Mature Trees / year` }
                 ]
             };
         }
@@ -388,7 +388,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Estimated Annual Savings', value: `$${Math.round(annualTotalSavings).toLocaleString()} / year`, suffix: `$${Math.round(fiveYearSavings).toLocaleString()} (5-Yr)` },
                 secondaryMetrics: [
-                    { label: 'Gas Fuel Cost vs EV Electricity', value: `$${Math.round(gasFuelCostAnnual)} Gas vs $${Math.round(evFuelCostAnnual)} EV` },
+                    { label: 'Gas Cost vs EV Electricity', value: `$${Math.round(gasFuelCostAnnual)} Gas vs $${Math.round(evFuelCostAnnual)} EV` },
                     { label: 'Fuel Cost per Mile', value: `Gas: $${(gasPrice / mpg).toFixed(3)}/mi vs EV: $${(elecRate / 3.6).toFixed(3)}/mi` },
                     { label: 'Annual Maintenance Advantage', value: `+$${maintSavingsAnnual} Saved (No oil changes/tuneups)` },
                     { label: 'Annual Carbon Reduction', value: `${co2SavedTons.toFixed(1)} Metric Tons CO2 / year` }
@@ -441,10 +441,10 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Net 25-Year Clean Energy Profit', value: `$${Math.round(net25YearProfit).toLocaleString()}`, suffix: `${simplePaybackYears.toFixed(1)} Yr Payback` },
                 secondaryMetrics: [
-                    { label: 'Net System Cost (after 30% Tax Credit)', value: `$${Math.round(netCost).toLocaleString()} (Credit: $${Math.round(federalTaxCredit).toLocaleString()})` },
-                    { label: 'Year 1 Electricity Bill Savings', value: `$${Math.round(year1Savings).toLocaleString()} / year` },
+                    { label: 'Net Cost (after 30% Credit)', value: `$${Math.round(netCost).toLocaleString()} (Credit: $${Math.round(federalTaxCredit).toLocaleString()})` },
+                    { label: 'Year 1 Electric Savings', value: `$${Math.round(year1Savings).toLocaleString()} / year` },
                     { label: 'Annual Solar Generation', value: `${Math.round(annualGenerationKWh).toLocaleString()} kWh / year` },
-                    { label: 'Simple Investment Payback Period', value: `${simplePaybackYears.toFixed(1)} Years` }
+                    { label: 'Investment Payback Period', value: `${simplePaybackYears.toFixed(1)} Years` }
                 ]
             };
         }
@@ -491,7 +491,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Annual Water Conserved', value: `${Math.round(totalGalSaved).toLocaleString()} Gallons`, suffix: `$${Math.round(waterBillSavings)} / yr saved` },
                 secondaryMetrics: [
-                    { label: 'Annual Water & Sewer Bill Savings', value: `$${Math.round(waterBillSavings).toLocaleString()} / year` },
+                    { label: 'Annual Water & Sewer Savings', value: `$${Math.round(waterBillSavings).toLocaleString()} / year` },
                     { label: 'Toilet Efficiency Savings', value: `${Math.round(toiletSavingsGalAnnual).toLocaleString()} Gal/yr` },
                     { label: 'Showerhead Efficiency Savings', value: `${Math.round(showerSavingsGalAnnual).toLocaleString()} Gal/yr` },
                     { label: 'Water Heater Energy Avoided', value: `~${Math.round(waterHeatingGasKWh)} kWh / year` }
@@ -530,7 +530,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Annual Cost of Wasted Food', value: `$${Math.round(annualWastedDollars).toLocaleString()}`, suffix: `$${Math.round(monthlyWastedDollars)} / month` },
                 secondaryMetrics: [
-                    { label: 'Annual Weight of Discarded Food', value: `~${Math.round(wastedFoodLbsAnnual)} lbs / year` },
+                    { label: 'Annual Food Waste Weight', value: `~${Math.round(wastedFoodLbsAnnual)} lbs / year` },
                     { label: 'Landfill Methane Impact', value: `${Math.round(methaneCO2eKg * 2.20462)} lbs CO2e / year` },
                     { label: '10-Year Cumulative Loss', value: `$${Math.round(annualWastedDollars * 10).toLocaleString()}` },
                     { label: 'Meal Prep Savings Opportunity', value: `Cutting waste in half saves $${Math.round(annualWastedDollars / 2).toLocaleString()} / year` }
@@ -573,9 +573,9 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Annual Single-Use Plastic Waste', value: `${totalItemsAnnual.toLocaleString()} Items`, suffix: `${totalWeightLbs.toFixed(1)} lbs / year` },
                 secondaryMetrics: [
-                    { label: 'Petroleum Consumed in Production', value: `~${Math.round(oilLitersConsumed)} Liters Crude Oil` },
+                    { label: 'Petroleum Used in Production', value: `~${Math.round(oilLitersConsumed)} Liters Crude Oil` },
                     { label: 'Bottles & Bags Discarded', value: `${bottlesAnnual} Bottles, ${bagsAnnual} Bags` },
-                    { label: 'Decomposition Lifespan in Nature', value: '450 to 1,000+ Years per item' },
+                    { label: 'Decomposition Lifespan', value: '450 to 1,000+ Years per item' },
                     { label: 'Reusable Alternative Savings', value: `Switching to reusable saves ~$${Math.round(bottlesAnnual * 1.50)}/yr` }
                 ]
             };
@@ -617,7 +617,7 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Potential Annual Energy Savings', value: `$${Math.round(annualSavingsDollars).toLocaleString()} / year`, suffix: `${(potentialSavingsPct * 100).toFixed(0)}% Bill Reduction` },
                 secondaryMetrics: [
-                    { label: 'Estimated Weatherization Retrofit Cost', value: `$${Math.round(retrofitCostEst).toLocaleString()}` },
+                    { label: 'Weatherization Retrofit Cost', value: `$${Math.round(retrofitCostEst).toLocaleString()}` },
                     { label: 'Upgrade Investment Payback', value: `${paybackYears.toFixed(1)} Years` },
                     { label: 'Current Energy Cost Intensity', value: `$${costPerSqFt.toFixed(2)} / sq ft / year` },
                     { label: '10-Year Cumulative Savings', value: `$${Math.round(annualSavingsDollars * 10).toLocaleString()}` }
@@ -657,9 +657,9 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Annual Finished Compost Output', value: `${Math.round(finishedCompostLbsAnnual)} lbs`, suffix: `${finishedCuYds.toFixed(2)} Cu Yds` },
                 secondaryMetrics: [
                     { label: 'Total Organic Waste Diverted', value: `${Math.round(totalInputLbsAnnual).toLocaleString()} lbs / year` },
-                    { label: 'Landfill Methane Emissions Avoided', value: `${Math.round(landfillMethaneCO2e).toLocaleString()} lbs CO2e / year` },
+                    { label: 'Methane Emissions Avoided', value: `${Math.round(landfillMethaneCO2e).toLocaleString()} lbs CO2e / year` },
                     { label: 'Organic Soil Amendment Value', value: `~$${Math.round(finishedCuYds * 45)} worth of retail garden compost` },
-                    { label: 'Optimal Carbon-to-Nitrogen Ratio', value: 'Maintain 2 to 3 parts Brown (Yard) to 1 part Green (Kitchen)' }
+                    { label: 'Optimal Carbon/Nitrogen Ratio', value: 'Maintain 2 to 3 parts Brown (Yard) to 1 part Green (Kitchen)' }
                 ]
             };
         }
@@ -702,9 +702,9 @@ export const environmentSustainabilityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Upfront Green Construction Premium', value: `$${Math.round(greenUpfrontPremium).toLocaleString()}`, suffix: `${(premiumRate * 100).toFixed(1)}% Premium` },
                 secondaryMetrics: [
                     { label: 'Total Green Project Budget', value: `$${Math.round(totalProjectCost).toLocaleString()}` },
-                    { label: 'Annual Operational Utility Savings', value: `$${Math.round(annualUtilitySavings).toLocaleString()} / year` },
+                    { label: 'Annual Operational Savings', value: `$${Math.round(annualUtilitySavings).toLocaleString()} / year` },
                     { label: 'Investment Payback Period', value: `${paybackYears.toFixed(1)} Years` },
-                    { label: '30-Year Net Lifecycle Financial Gain', value: `+$${Math.round(netBenefit30Year).toLocaleString()}` }
+                    { label: '30-Yr Net Financial Gain', value: `+$${Math.round(netBenefit30Year).toLocaleString()}` }
                 ]
             };
         }

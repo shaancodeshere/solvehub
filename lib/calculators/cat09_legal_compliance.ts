@@ -62,7 +62,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Estimated Support Duration', value: durationText },
                     { label: 'Annual Alimony Obligation', value: `$${Math.round(annualAlimony).toLocaleString()} / year` },
-                    { label: 'Total Estimated Lifetime Support', value: `$${Math.round(totalEstimatedPayout).toLocaleString()}` },
+                    { label: 'Estimated Lifetime Support', value: `$${Math.round(totalEstimatedPayout).toLocaleString()}` },
                     { label: 'Post-Support Income Disparity', value: `Payer: $${Math.round(payer - monthlyAlimony).toLocaleString()} / Recipient: $${Math.round(recipient + monthlyAlimony).toLocaleString()}` }
                 ]
             };
@@ -112,8 +112,8 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Payer Pro-Rata Income Share', value: `${(payerSharePercent * 100).toFixed(1)}% of Combined Income` },
                     { label: 'Annual Child Support Total', value: `$${Math.round(payerMonthlyPayment * 12).toLocaleString()} / year` },
-                    { label: 'Total Combined Child Support Need', value: `$${Math.round(totalSupportObligation).toLocaleString()} / month` },
-                    { label: 'Payer Share of Health & Daycare', value: `$${Math.round(extraCosts * payerSharePercent).toLocaleString()} / month` }
+                    { label: 'Combined Child Support Need', value: `$${Math.round(totalSupportObligation).toLocaleString()} / month` },
+                    { label: 'Payer Health & Daycare Share', value: `$${Math.round(extraCosts * payerSharePercent).toLocaleString()} / month` }
                 ]
             };
         }
@@ -167,7 +167,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Attorney Base Fee', value: `$${Math.round(totalFees).toLocaleString()}` },
                     { label: 'Net Client Settlement Recovery', value: structure === 'contingency' ? `$${Math.round(netClient).toLocaleString()}` : 'N/A (Direct Out-of-Pocket Expense)' },
-                    { label: 'Paralegal & Associate Support Fees', value: `$${Math.round(estimatedParalegalFees).toLocaleString()}` },
+                    { label: 'Paralegal & Associate Fees', value: `$${Math.round(estimatedParalegalFees).toLocaleString()}` },
                     { label: 'Effective Billing Rate', value: `$${rate} / hour` }
                 ]
             };
@@ -212,9 +212,9 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Weekly Wage Replacement (TTD)', value: `$${Math.round(weeklyBenefit).toLocaleString()} / wk`, suffix: 'Tax-Free Benefit' },
                 secondaryMetrics: [
-                    { label: 'Total Temporary Disability (TTD) Paid', value: `$${Math.round(totalTTDPaid).toLocaleString()} (${weeksTTD} weeks)` },
-                    { label: 'Estimated Permanent Disability (PPD) Award', value: `$${Math.round(estimatedPPDAward).toLocaleString()} (${(impairmentPct * 100).toFixed(0)}% rating)` },
-                    { label: 'Total Estimated Indemnity Compensation', value: `$${Math.round(totalClaimValue).toLocaleString()}` },
+                    { label: 'Total Temporary Disability', value: `$${Math.round(totalTTDPaid).toLocaleString()} (${weeksTTD} weeks)` },
+                    { label: 'Estimated PPD Award', value: `$${Math.round(estimatedPPDAward).toLocaleString()} (${(impairmentPct * 100).toFixed(0)}% rating)` },
+                    { label: 'Estimated Total Indemnity', value: `$${Math.round(totalClaimValue).toLocaleString()}` },
                     { label: 'Statutory Benefit Cap Status', value: rawTTD > maxCap ? `Capped at State Max ($${maxCap}/wk)` : 'Full 66.7% Wage Replacement Rate' }
                 ]
             };
@@ -261,7 +261,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Base Severance Pay', value: `$${Math.round(severancePay).toLocaleString()}` },
                     { label: 'Accrued PTO Payout', value: `$${Math.round(ptoPayout).toLocaleString()} (${ptoHours} hours)` },
-                    { label: 'Estimated COBRA Health Bridge (3 mo)', value: `$${Math.round(cobraHealthEst).toLocaleString()}` },
+                    { label: 'COBRA Health Bridge (3 mo)', value: `$${Math.round(cobraHealthEst).toLocaleString()}` },
                     { label: 'Weekly Salary Equivalent', value: `$${Math.round(weeklyRate).toLocaleString()} / week` }
                 ]
             };
@@ -305,7 +305,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Estimated Gross Settlement Value', value: `$${Math.round(grossSettlement).toLocaleString()}`, suffix: `Multiplier: ${mult}x` },
                 secondaryMetrics: [
                     { label: 'Estimated Net in Pocket to You', value: `$${Math.round(netToClient).toLocaleString()}` },
-                    { label: 'Pain & Suffering Non-Economic Damages', value: `$${Math.round(generalDamages).toLocaleString()}` },
+                    { label: 'Pain & Suffering Damages', value: `$${Math.round(generalDamages).toLocaleString()}` },
                     { label: 'Attorney Legal Fee', value: `$${Math.round(attyFee).toLocaleString()} (${(attyPct * 100).toFixed(1)}%)` },
                     { label: 'Total Economic Hard Damages', value: `$${Math.round(specialDamages).toLocaleString()}` }
                 ]
@@ -343,8 +343,8 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Total Court Fine Obligation', value: `$${Math.round(totalFine).toLocaleString()}`, suffix: `$${base} Base Ticket` },
                 secondaryMetrics: [
-                    { label: 'State Penalty Assessments & Surcharges', value: `$${Math.round(statutoryPenaltyAssessment).toLocaleString()}` },
-                    { label: 'Mandatory Court Security & Admin Fees', value: `$${Math.round(adminFees).toLocaleString()}` },
+                    { label: 'State Penalty Assessments', value: `$${Math.round(statutoryPenaltyAssessment).toLocaleString()}` },
+                    { label: 'Court Security & Admin Fees', value: `$${Math.round(adminFees).toLocaleString()}` },
                     { label: 'With Traffic School Option', value: `$${Math.round(totalFine + trafficSchoolFee).toLocaleString()} (+$${trafficSchoolFee} fee)` },
                     { label: 'Surcharge Multiplier Rate', value: `${(factor * 100).toFixed(0)}% above base fine` }
                 ]
@@ -439,9 +439,9 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Total Contract Value (TCV)', value: `$${Math.round(grandTotalContractValue).toLocaleString()}`, suffix: `${years}-Year Agreement` },
                 secondaryMetrics: [
-                    { label: 'Nominal Term Revenue (Excl. Contingency)', value: `$${Math.round(totalNominal).toLocaleString()}` },
-                    { label: 'Contingency & Scope Expansion Reserve', value: `$${Math.round(contingencyAmount).toLocaleString()} (${(contingency * 100).toFixed(0)}%)` },
-                    { label: 'Average Annual Contract Value (ACV)', value: `$${Math.round(avgAnnualValue).toLocaleString()} / year` },
+                    { label: 'Nominal Term Revenue', value: `$${Math.round(totalNominal).toLocaleString()}` },
+                    { label: 'Contingency Expansion Reserve', value: `$${Math.round(contingencyAmount).toLocaleString()} (${(contingency * 100).toFixed(0)}%)` },
+                    { label: 'Average Annual Value (ACV)', value: `$${Math.round(avgAnnualValue).toLocaleString()} / year` },
                     { label: 'Final Year Annual Run-Rate', value: `$${Math.round(base * Math.pow(1 + esc, years - 1)).toLocaleString()} / year` }
                 ]
             };
@@ -491,7 +491,7 @@ export const legalComplianceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Statutory Maximum Fine Ceiling', value: `€${Math.round(statutoryMaximum).toLocaleString()} EUR`, suffix: turnoverCeiling > staticCap ? `${(turnoverPct * 100).toFixed(0)}% Global Turnover Applied` : `Static Statutory Cap (€${staticCap / 1000000}M)` },
                 secondaryMetrics: [
-                    { label: 'Risk-Adjusted Estimated Fine Exposure', value: `€${Math.round(estimatedExposure).toLocaleString()} EUR` },
+                    { label: 'Estimated Fine Exposure', value: `€${Math.round(estimatedExposure).toLocaleString()} EUR` },
                     { label: 'Statutory Classification', value: tierName },
                     { label: 'Turnover Percentage Benchmark', value: `€${Math.round(turnoverCeiling).toLocaleString()} (${(turnoverPct * 100).toFixed(0)}% of €${Math.round(turnover).toLocaleString()})` },
                     { label: 'Equivalent USD Estimate', value: `~$${Math.round(statutoryMaximum * 1.08).toLocaleString()} USD` }

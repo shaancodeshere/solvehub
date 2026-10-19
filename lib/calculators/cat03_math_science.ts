@@ -42,7 +42,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Calculated Result', value: Number.isInteger(result) ? result : Number(result.toFixed(6)) },
                 secondaryMetrics: [
                     { label: 'Expression', value: `${a} ${opSymbol} ${b} = ${Number.isInteger(result) ? result : Number(result.toFixed(6))}` },
-                    { label: 'Opposite Operation (a - b / a + b)', value: String(op === 'add' ? a - b : (op === 'subtract' ? a + b : a * b)) }
+                    { label: 'Opposite Operation', value: String(op === 'add' ? a - b : (op === 'subtract' ? a + b : a * b)) }
                 ]
             };
         }
@@ -441,7 +441,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: `${n}-th Root of ${x}`, value: Number.isInteger(rootVal) ? rootVal : Number(rootVal.toFixed(6)) },
                 secondaryMetrics: [
-                    { label: 'Power Form Verification ((x^(1/n))^n)', value: String(Math.round(Math.pow(rootVal, n))) },
+                    { label: 'Power Form Verification', value: String(Math.round(Math.pow(rootVal, n))) },
                     { label: 'Square Root Comparison (√x)', value: Math.sqrt(Math.max(0, x)).toFixed(4) }
                 ]
             };
@@ -686,7 +686,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Percentage Decrease', value: `${pctDrop.toFixed(2)}%` },
                 secondaryMetrics: [
                     { label: 'Absolute Decrease Amount', value: `-${drop.toFixed(2)}` },
-                    { label: 'Remaining Percentage of Original', value: `${((v2 / v1) * 100).toFixed(2)}%` }
+                    { label: 'Remaining Percentage', value: `${((v2 / v1) * 100).toFixed(2)}%` }
                 ]
             };
         }
@@ -722,8 +722,8 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Percentage Difference', value: `${pctDiff.toFixed(2)}%` },
                 secondaryMetrics: [
-                    { label: 'Absolute Difference (|V1 - V2|)', value: String(diff.toFixed(2)) },
-                    { label: 'Average of Values ((V1 + V2) / 2)', value: String(avg.toFixed(2)) }
+                    { label: 'Absolute Difference', value: String(diff.toFixed(2)) },
+                    { label: 'Average of Values', value: String(avg.toFixed(2)) }
                 ]
             };
         }
@@ -825,7 +825,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: '|x| Absolute Value', value: absVal },
                 secondaryMetrics: [
-                    { label: 'Distance from Zero on Number Line', value: `${absVal} units` },
+                    { label: 'Distance from Zero', value: `${absVal} units` },
                     { label: 'Opposite Sign Value (-x)', value: String(-x) },
                     { label: 'Squared Value (x²)', value: String((x * x).toFixed(2)) }
                 ]
@@ -1158,7 +1158,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Greatest Common Factor (GCF / GCD)', value: gcf },
                 secondaryMetrics: [
-                    { label: 'Least Common Multiple (LCM) of a & b', value: String((a * b) / gcd2(a, b)) },
+                    { label: 'Least Common Multiple (LCM)', value: String((a * b) / gcd2(a, b)) },
                     { label: 'Simplified Ratio a : b', value: `${a / gcd2(a, b)} : ${b / gcd2(a, b)}` }
                 ]
             };
@@ -1903,7 +1903,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Sample Standard Deviation (s)', value: Number(sampleStd.toFixed(4)) },
                 secondaryMetrics: [
-                    { label: 'Population Standard Deviation (σ)', value: String(Number(popStd.toFixed(4))) },
+                    { label: 'Population Std Dev (σ)', value: String(Number(popStd.toFixed(4))) },
                     { label: 'Sample Variance (s²)', value: String(Number(sampleVar.toFixed(4))) },
                     { label: 'Sample Mean (x̄)', value: String(Number(mean.toFixed(4))) },
                     { label: 'Sample Size (n)', value: `${n} items` }
@@ -2107,8 +2107,8 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Combinations (nCr - Order does not matter)', value: nCr },
                 secondaryMetrics: [
-                    { label: 'Permutations (nPr - Order matters)', value: String(nPr) },
-                    { label: 'Permutations with Repetition (n^r)', value: String(Math.pow(n, r)) },
+                    { label: 'Permutations (nPr)', value: String(nPr) },
+                    { label: 'Permutations w/ Repetition', value: String(Math.pow(n, r)) },
                     { label: 'Factorial n!', value: n <= 20 ? String(rFact) : 'Large' }
                 ]
             };
@@ -2197,7 +2197,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Confidence Interval', value: `[${lower.toFixed(2)}, ${upper.toFixed(2)}]` },
                 secondaryMetrics: [
                     { label: 'Margin of Error (± ME)', value: `± ${me.toFixed(4)}` },
-                    { label: 'Standard Error of the Mean (SE)', value: stdError.toFixed(4) },
+                    { label: 'Standard Error (SE)', value: stdError.toFixed(4) },
                     { label: 'Point Estimate (Mean)', value: String(mean) }
                 ]
             };
@@ -2249,7 +2249,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Statistical Significance', value: sig },
                     { label: 'Z Statistic Value', value: String(z) },
-                    { label: 'Cumulative Probability P(Z ≤ z)', value: cdf.toFixed(5) }
+                    { label: 'Cumulative Prob P(Z ≤ z)', value: cdf.toFixed(5) }
                 ]
             };
         }
@@ -2345,7 +2345,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Pearson Correlation Coefficient (r)', value: Number(r.toFixed(4)) },
                 secondaryMetrics: [
-                    { label: 'Coefficient of Determination (R²)', value: `${(r2 * 100).toFixed(2)}%` },
+                    { label: 'Determination Coeff (R²)', value: `${(r2 * 100).toFixed(2)}%` },
                     { label: 'Relationship Strength', value: strength }
                 ]
             };
@@ -2387,8 +2387,9 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             const sumXY = xs.reduce((acc, x, i) => acc + x * ys[i], 0);
             const sumX2 = xs.reduce((acc, x) => acc + x * x, 0);
 
-            const slope = ((n * sumXY) - (sumX * sumY)) / ((n * sumX2) - (sumX * sumX));
-            const intercept = (sumY - (slope * sumX)) / n;
+            const denom = (n * sumX2) - (sumX * sumX);
+            const slope = denom !== 0 ? ((n * sumXY) - (sumX * sumY)) / denom : 0;
+            const intercept = isFinite(slope) ? (sumY - (slope * sumX)) / n : (n > 0 ? sumY / n : 0);
             const predictedY = (slope * predX) + intercept;
 
             return {
@@ -2473,7 +2474,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Chi-Square Statistic (χ²)', value: Number(chi2.toFixed(4)) },
                 secondaryMetrics: [
                     { label: 'Degrees of Freedom (df)', value: String(df) },
-                    { label: 'Critical Value (α = 0.05, df = 2)', value: '5.991' },
+                    { label: 'Critical Value (α=0.05)', value: '5.991' },
                     { label: 'Null Hypothesis Decision', value: chi2 > 5.991 ? 'Reject H₀ (Significant Difference)' : 'Fail to Reject H₀' }
                 ]
             };
@@ -2520,7 +2521,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'ANOVA F-Statistic', value: Number(fStat.toFixed(4)) },
                 secondaryMetrics: [
                     { label: 'Mean Square Between (MSB)', value: msBetween.toFixed(3) },
-                    { label: 'Mean Square Within / Error (MSW)', value: msWithin.toFixed(3) },
+                    { label: 'Mean Square Within (MSW)', value: msWithin.toFixed(3) },
                     { label: 'Grand Mean (x̄̄)', value: grandMean.toFixed(2) }
                 ]
             };
@@ -2563,7 +2564,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Quartiles (Q1, Q2, Q3)', value: `Q1 = ${q1}, Q2 = ${q2}, Q3 = ${q3}` },
                 secondaryMetrics: [
-                    { label: 'Interquartile Range (IQR = Q3 - Q1)', value: String(q3 - q1) },
+                    { label: 'Interquartile Range (IQR)', value: String(q3 - q1) },
                     { label: 'Minimum & Maximum', value: `Min: ${s[0]}, Max: ${s[n - 1]}` }
                 ]
             };
@@ -2598,8 +2599,8 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Interquartile Range (IQR)', value: Number(iqr.toFixed(4)) },
                 secondaryMetrics: [
-                    { label: 'Lower Outlier Threshold (Q1 - 1.5·IQR)', value: String(Number(lowerOutlier.toFixed(2))) },
-                    { label: 'Upper Outlier Threshold (Q3 + 1.5·IQR)', value: String(Number(upperOutlier.toFixed(2))) }
+                    { label: 'Lower Outlier (Q1 - 1.5·IQR)', value: String(Number(lowerOutlier.toFixed(2))) },
+                    { label: 'Upper Outlier (Q3 + 1.5·IQR)', value: String(Number(upperOutlier.toFixed(2))) }
                 ]
             };
         }
@@ -2636,9 +2637,9 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Posterior Probability P(A|B)', value: `${pAGivenBPct.toFixed(2)}%` },
                 secondaryMetrics: [
-                    { label: 'Total Probability P(B)', value: `${(pB * 100).toFixed(3)}%` },
-                    { label: 'True Positive Contribution (P(B|A)·P(A))', value: `${(pBGivenA * pA * 100).toFixed(4)}%` },
-                    { label: 'False Positive Contribution', value: `${(pBGivenNotA * pNotA * 100).toFixed(4)}%` }
+                    { label: 'Total Probability P(B)', value: `${(pB * 100).toFixed(2)}%` },
+                    { label: 'True Positive P(B|A)·P(A)', value: `${(pBGivenA * pA * 100).toFixed(2)}%` },
+                    { label: 'False Positive Contribution', value: `${(pBGivenNotA * pNotA * 100).toFixed(2)}%` }
                 ]
             };
         }
@@ -2973,7 +2974,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Total Volume', value: Number(vol.toFixed(4)), suffix: 'cubic units' },
                 secondaryMetrics: [
-                    { label: 'Volume in Liters (if dimensions in cm)', value: `${(vol / 1000).toFixed(4)} L` },
+                    { label: 'Volume in Liters (from cm)', value: `${(vol / 1000).toFixed(4)} L` },
                     { label: 'Volume in Gallons (approx)', value: `${(vol / 3785.41).toFixed(4)} gal` }
                 ]
             };
@@ -3252,7 +3253,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Perimeter (Ramanujan Approx)', value: `${perimeter.toFixed(4)} units` },
                     { label: 'Eccentricity (e)', value: ecc.toFixed(4) },
-                    { label: 'Focal Distance (c = √(a² - b²))', value: `${Math.sqrt(a * a - b * b).toFixed(4)} units` }
+                    { label: 'Focal Distance (c)', value: `${Math.sqrt(a * a - b * b).toFixed(4)} units` }
                 ]
             };
         }
@@ -4277,7 +4278,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                     { label: 'Energy in Kilojoules (kJ)', value: `${keKj.toFixed(2)} kJ` },
                     { label: 'Speed in km/h', value: `${(v * 3.6).toFixed(1)} km/h` },
                     { label: 'Speed in mph', value: `${(v * 2.23694).toFixed(1)} mph` },
-                    { label: 'Equivalent Food Calories (kcal)', value: `${keCalories.toFixed(2)} kcal` }
+                    { label: 'Equivalent Calories (kcal)', value: `${keCalories.toFixed(2)} kcal` }
                 ]
             };
         }
@@ -4312,7 +4313,7 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Gravitational Potential Energy', value: Number(pe.toFixed(2)), suffix: 'Joules (J)' },
                 secondaryMetrics: [
                     { label: 'Energy in Kilojoules', value: `${(pe / 1000).toFixed(3)} kJ` },
-                    { label: 'Impact Velocity upon Free Fall (√(2gh))', value: `${Math.sqrt(2 * g * h).toFixed(2)} m/s` }
+                    { label: 'Impact Free Fall Velocity', value: `${Math.sqrt(2 * g * h).toFixed(2)} m/s` }
                 ]
             };
         }

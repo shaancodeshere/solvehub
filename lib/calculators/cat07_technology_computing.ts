@@ -109,7 +109,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Binary Storage (OS Standard)', value: `${tib.toFixed(3)} TiB`, suffix: `${gib.toFixed(1)} GiB` },
                 secondaryMetrics: [
-                    { label: 'Decimal Storage (Drive Manufacturers)', value: `${tb.toFixed(3)} TB (${gb.toFixed(1)} GB)` },
+                    { label: 'Decimal Drive Storage (GB)', value: `${tb.toFixed(3)} TB (${gb.toFixed(1)} GB)` },
                     { label: 'Total Exact Bytes', value: `${Math.round(bytes).toLocaleString()} Bytes` },
                     { label: '12MP High-Res Photos Capacity', value: `~${photos12MP.toLocaleString()} Photos (@ 3.5 MB each)` },
                     { label: '4K UHD Movie Streams (~25 GB)', value: `~${movies4K} Full Movies` }
@@ -171,9 +171,9 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Estimated Download Duration', value: formatTime(totalSeconds), suffix: `@ ${speed} Mbps` },
                 secondaryMetrics: [
                     { label: 'Effective Transfer Speed', value: `${transferMBps} MB / second` },
-                    { label: 'Time on Gigabit Fiber (1000 Mbps)', value: formatTime(gigabitSecs) },
+                    { label: 'Time on Gigabit Fiber', value: formatTime(gigabitSecs) },
                     { label: 'Time on 5G Mobile (300 Mbps)', value: formatTime(megabits / (300 * 0.90)) },
-                    { label: 'Total Data Transferred (incl. overhead)', value: `${Math.round(sizeMB * (1 + overhead / 100)).toLocaleString()} MB` }
+                    { label: 'Total Transferred (+Overhead)', value: `${Math.round(sizeMB * (1 + overhead / 100)).toLocaleString()} MB` }
                 ]
             };
         }
@@ -292,7 +292,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
                     { label: 'CSS Format', value: rgbStr },
                     { label: 'HSL Representation', value: hslStr },
                     { label: 'Normalized Decimals (0-1.0)', value: `r: ${rNorm.toFixed(3)}, g: ${gNorm.toFixed(3)}, b: ${bNorm.toFixed(3)}` },
-                    { label: 'Contrast Pairing Recommendation', value: l > 0.5 ? 'Pair with Black / Dark Grey Text (#111827)' : 'Pair with White Text (#FFFFFF)' }
+                    { label: 'Contrast Recommendation', value: l > 0.5 ? 'Pair with Black / Dark Grey Text (#111827)' : 'Pair with White Text (#FFFFFF)' }
                 ]
             };
         }
@@ -385,7 +385,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Total Display Pixels', value: `${totalPixels.toLocaleString()} Pixels` },
                     { label: 'Pixel Pitch (Dot Pitch)', value: `${dotPitchMm.toFixed(4)} mm` },
-                    { label: 'Optimal Viewing Distance (20/20 vision)', value: `~${optimalDistanceFeet} ft (${Math.round(optimalDistanceInches)} inches)` },
+                    { label: 'Optimal Viewing Distance', value: `~${optimalDistanceFeet} ft (${Math.round(optimalDistanceInches)} inches)` },
                     { label: 'Retina Resolving Distance', value: ppi >= 200 ? 'Retina sharp at typical desk distances (> 17 inches)' : 'Standard desktop density' }
                 ]
             };
@@ -493,7 +493,7 @@ export const technologyComputingCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Hash Digest Length', value: `${hexChars} Hex Characters`, suffix: `${digestBits} Bits` },
                 secondaryMetrics: [
                     { label: 'Security Classification', value: security },
-                    { label: 'Collision Resistance Search Space', value: collisionSpace },
+                    { label: 'Collision Resistance Space', value: collisionSpace },
                     { label: 'Input Plaintext Payload', value: `${chars} Characters (${chars} Bytes ASCII)` },
                     { label: 'Primary Use Case', value: algo === 'bcrypt' ? 'User Password Storage & Authentication' : 'Digital Signatures, Blockchain, File Integrity' }
                 ]

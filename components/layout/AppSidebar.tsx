@@ -9,7 +9,7 @@ import { useSidebar } from './AppShell';
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { isSidebarOpen, setIsSidebarOpen, setIsCommandPaletteOpen } = useSidebar();
+  const { isSidebarOpen, setIsSidebarOpen, setIsCommandPaletteOpen, setIsShortcutsModalOpen } = useSidebar();
 
   const isCanvas = pathname === '/';
   const isLibrary =
@@ -94,17 +94,14 @@ export default function AppSidebar() {
               type="button"
               onClick={() => setIsCommandPaletteOpen(true)}
               className="w-full text-left px-3 py-2 rounded-lg text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-900/80 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 transition flex items-center justify-between group shadow-sm"
-              title="Search calculators and sheets (/ or Cmd + K)"
+              title="Search calculators (/)"
             >
               <span className="flex items-center gap-2">
                 <svg className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <span>Quick Search</span>
+                <span>Search</span>
               </span>
-              <kbd className="px-2 py-0.5 text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-950 border border-[var(--border)] dark:border-slate-700/80 rounded text-slate-600 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:border-emerald-500/40 inline-flex items-center shadow-sm">
-                /
-              </kbd>
             </button>
           </div>
         </div>
@@ -118,6 +115,30 @@ export default function AppSidebar() {
           </span>
           <ThemeToggle />
         </div>
+
+        {/* Shortcuts Trigger Button */}
+        <button
+          type="button"
+          onClick={() => setIsShortcutsModalOpen(true)}
+          className="w-full text-left px-3 py-2 rounded-lg text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-900/80 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 transition flex items-center gap-2 group shadow-sm"
+          title="View Keyboard Shortcuts"
+        >
+          <svg
+            className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 18v1m0 0a2 2 0 01-2 2h4a2 2 0 01-2-2m-4-6a6 6 0 118 0c0 1.5-1 2.5-1.5 3.5H9.5C9 14.5 8 13.5 8 12z"
+            />
+          </svg>
+          <span>Shortcuts</span>
+        </button>
+
         <div className="text-xs text-slate-500 font-mono flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>Canonical Ledger Active</span>

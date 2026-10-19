@@ -39,10 +39,11 @@ export function sendCalculatorToCanvas(payload: BridgePayload): void {
         const cleanCanvasText = paramLines.join('\n');
         localStorage.setItem('solvehub_active_canvas', cleanCanvasText);
 
-        // 3. Store the output hero and secondary metrics for Section C
+        // 3. Store the output hero and secondary metrics for Section C with the originating script
         const outputData = {
             primaryOutput: payload.primaryOutput,
             secondaryMetrics: payload.secondaryMetrics,
+            script: cleanCanvasText,
         };
         localStorage.setItem('solvehub_active_calculator_output', JSON.stringify(outputData));
     } catch (err) {

@@ -422,9 +422,9 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Net Working / Business Days', value: `${netBizDays} Days` },
                 secondaryMetrics: [
-                    { label: 'Weekend Days (Saturdays & Sundays)', value: `${weekendDays} Days` },
+                    { label: 'Weekend Days (Sat & Sun)', value: `${weekendDays} Days` },
                     { label: 'Observed Holidays Deducted', value: `${holidays} Days` },
-                    { label: 'Productive Working Hours (@ 8h/day)', value: `${netBizDays * 8} Hours` }
+                    { label: 'Working Hours (@ 8h/day)', value: `${netBizDays * 8} Hours` }
                 ]
             };
         }
@@ -643,9 +643,9 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Optimal Bedtime (5 Cycles / 7.5 hrs)', value: calcBedtime(5) },
                 secondaryMetrics: [
-                    { label: 'Ideal Bedtime (6 Cycles / 9 hrs)', value: calcBedtime(6) },
-                    { label: 'Minimum Bedtime (4 Cycles / 6 hrs)', value: calcBedtime(4) },
-                    { label: 'Short Rest Bedtime (3 Cycles / 4.5 hrs)', value: calcBedtime(3) }
+                    { label: 'Ideal Bedtime (6 Cycles)', value: calcBedtime(6) },
+                    { label: 'Minimum Bedtime (4 Cycles)', value: calcBedtime(4) },
+                    { label: 'Short Rest (3 Cycles)', value: calcBedtime(3) }
                 ]
             };
         }
@@ -683,7 +683,7 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Reading Speed Used', value: `${wpm} Words Per Minute` },
                     { label: 'Audiobook Duration (@ 150 WPM)', value: `${Math.round(words / 150)} Minutes` },
-                    { label: 'Approximate Book Pages (~250 words/pg)', value: `${Math.ceil(words / 250)} Pages` }
+                    { label: 'Approx Book Pages (250 w/pg)', value: `${Math.ceil(words / 250)} Pages` }
                 ]
             };
         }
@@ -721,7 +721,7 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Gross WPM (without errors)', value: `${Math.round(grossWpm)} WPM` },
                     { label: 'Accuracy Rating', value: `${accuracy.toFixed(1)}%` },
-                    { label: 'Characters Per Minute (CPM approx)', value: `${Math.round(grossWpm * 5)} CPM` }
+                    { label: 'Characters Per Minute (CPM)', value: `${Math.round(grossWpm * 5)} CPM` }
                 ]
             };
         }
@@ -890,7 +890,7 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'CGPA Change', value: `${newCgpa >= oldGpa ? '+' : ''}${(newCgpa - oldGpa).toFixed(3)}` },
                     { label: 'Total Cumulative Credits', value: `${totalCredits} Credits` },
-                    { label: 'Percentage Equivalent (out of 10.0 scale)', value: `${(newCgpa * 9.5).toFixed(1)}% (CBSE Formula)` }
+                    { label: 'Percentage (out of 10.0)', value: `${(newCgpa * 9.5).toFixed(1)}% (CBSE Formula)` }
                 ]
             };
         }
@@ -1001,8 +1001,8 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Recommended Weekly Study Hours', value: `${weeklyStudyHours.toFixed(1)} Hours/Week` },
                 secondaryMetrics: [
                     { label: 'Daily Study Time (6 Days/Week)', value: `${(weeklyStudyHours / 6).toFixed(1)} Hours/Day` },
-                    { label: 'Total Weekly Academic Commitment (Class + Study)', value: `${totalWorkload.toFixed(1)} Hours/Week` },
-                    { label: 'Semester Total Study Hours (~15 Weeks)', value: `${Math.round(weeklyStudyHours * 15)} Hours` }
+                    { label: 'Weekly Academic Hours', value: `${totalWorkload.toFixed(1)} Hours/Week` },
+                    { label: 'Semester Total Study Hours', value: `${Math.round(weeklyStudyHours * 15)} Hours` }
                 ]
             };
         }
@@ -1109,7 +1109,7 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Total Tax Deduction Value', value: Math.round(deduction), prefix: '$' },
                 secondaryMetrics: [
                     { label: 'IRS Standard Rate Applied', value: `$${rate.toFixed(2)} / mile` },
-                    { label: 'Monthly Equivalent (for 12 mos)', value: `$${Math.round(deduction / 12)} / month` }
+                    { label: 'Monthly Equivalent (12 mos)', value: `$${Math.round(deduction / 12)} / month` }
                 ]
             };
         }
@@ -1144,7 +1144,7 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Scaled Ingredient Amount', value: Number(scaledQty.toFixed(2)) },
                 secondaryMetrics: [
-                    { label: 'Recipe Scaling Multiplier Factor', value: `${factor.toFixed(2)}x` },
+                    { label: 'Recipe Scaling Multiplier', value: `${factor.toFixed(2)}x` },
                     { label: 'Original Ingredient Amount', value: String(qty) }
                 ]
             };
@@ -1259,7 +1259,7 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Generated Secure Password', value: pass },
                 secondaryMetrics: [
                     { label: 'Entropy Security Strength', value: `${entropyBits} Bits (${entropyBits >= 80 ? 'Very Strong' : 'Moderate'})` },
-                    { label: 'Estimated Brute-Force Crack Time', value: entropyBits >= 80 ? 'Trillions of Years' : 'Centuries' }
+                    { label: 'Brute-Force Crack Time', value: entropyBits >= 80 ? 'Trillions of Years' : 'Centuries' }
                 ]
             };
         }
@@ -1397,7 +1397,7 @@ export const dateTimeProductivityCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Exact Elapsed Duration', value: `${years} Yrs, ${months} Mos, ${days} Days`, suffix: `${totalDays.toLocaleString()} Total Days` },
                 secondaryMetrics: [
                     { label: 'Total Calendar Weeks', value: `${totalWeeks} Weeks` },
-                    { label: 'Estimated Business / Working Days', value: `~${approxBusinessDays.toLocaleString()} Work Days` },
+                    { label: 'Business / Working Days', value: `~${approxBusinessDays.toLocaleString()} Work Days` },
                     { label: 'Total Elapsed Hours', value: `${totalHours.toLocaleString()} Hours` },
                     { label: 'Total Elapsed Minutes', value: `${(totalHours * 60).toLocaleString()} Minutes` }
                 ]

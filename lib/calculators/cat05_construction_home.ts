@@ -38,8 +38,8 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Concrete Volume Required', value: Number(totalYards.toFixed(2)), suffix: 'Cubic Yards' },
                 secondaryMetrics: [
                     { label: 'Volume in Cubic Feet', value: `${Number((totalYards * 27).toFixed(1))} cu ft` },
-                    { label: '80 lb Pre-mixed Bags (0.6 cu ft)', value: `${bags80} Bags` },
-                    { label: '60 lb Pre-mixed Bags (0.45 cu ft)', value: `${bags60} Bags` }
+                    { label: '80 lb Bags (0.6 cu ft)', value: `${bags80} Bags` },
+                    { label: '60 lb Bags (0.45 cu ft)', value: `${bags60} Bags` }
                 ]
             };
         }
@@ -115,8 +115,8 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Roofing Squares Required', value: Number(squares.toFixed(1)), suffix: 'Squares (100 sq ft)' },
                 secondaryMetrics: [
                     { label: 'Total Surface Area with Waste', value: `${Math.round(actualSqFt)} sq ft` },
-                    { label: 'Shingle Bundles Needed (3/Square)', value: `${bundles} Bundles` },
-                    { label: 'Underlayment Rolls (400 sq ft/roll)', value: `${underlaymentRolls} Rolls` }
+                    { label: 'Shingle Bundles (3/Square)', value: `${bundles} Bundles` },
+                    { label: 'Underlayment Rolls (400 sq ft)', value: `${underlaymentRolls} Rolls` }
                 ]
             };
         }
@@ -158,7 +158,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Tiled Area with Waste Margin', value: `${totalSqFt.toFixed(1)} sq ft` },
                     { label: 'Estimated Boxes (10 tiles/box)', value: `${boxesNeeded} Boxes` },
-                    { label: 'Thin-Set Mortar Needed (~50 sq ft/bag)', value: `${Math.ceil(totalSqFt / 50)} Bags (50 lb)` }
+                    { label: 'Thin-Set Mortar (~50 sq ft)', value: `${Math.ceil(totalSqFt / 50)} Bags (50 lb)` }
                 ]
             };
         }
@@ -404,7 +404,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Room Net Square Footage', value: `${roomArea} sq ft` },
                     { label: 'Total Material to Order', value: `${totalAreaWithWaste.toFixed(1)} sq ft` },
-                    { label: 'Total Coverage Provided by Boxes', value: `${boxes * boxSize} sq ft` }
+                    { label: 'Total Coverage of Boxes', value: `${boxes * boxSize} sq ft` }
                 ]
             };
         }
@@ -605,8 +605,8 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: `Insulation Bags / Rolls (R-${rVal})`, value: bagsNeeded, suffix: 'Bags' },
                 secondaryMetrics: [
                     { label: 'Insulation Layer Thickness', value: `~${thicknessIn} Inches` },
-                    { label: 'Total Insulated Area with Waste', value: `${Math.round(sqFt * 1.05)} sq ft` },
-                    { label: 'Energy Cost Reduction Potential', value: '15% - 25% on HVAC bills' }
+                    { label: 'Insulated Area with Waste', value: `${Math.round(sqFt * 1.05)} sq ft` },
+                    { label: 'Energy Cost Reduction %', value: '15% - 25% on HVAC bills' }
                 ]
             };
         }
@@ -684,7 +684,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Net Siding Surface Area', value: `${Math.round(netSqFt)} sq ft` },
                     { label: 'Vinyl Siding Boxes (2 Sq/box)', value: `${boxes} Boxes` },
-                    { label: 'Housewrap Rolls (900 sq ft/roll)', value: `${Math.ceil(netSqFt / 900)} Rolls` }
+                    { label: 'Housewrap Rolls (900 sq ft)', value: `${Math.ceil(netSqFt / 900)} Rolls` }
                 ]
             };
         }
@@ -725,7 +725,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Total Pavers Required', value: paversCount, suffix: 'Pavers' },
                 secondaryMetrics: [
                     { label: 'Patio Total Area', value: `${areaSqFt} sq ft` },
-                    { label: 'Bedding Sand Required (1" depth)', value: `${sandTons.toFixed(1)} Tons` },
+                    { label: 'Bedding Sand (1" depth)', value: `${sandTons.toFixed(1)} Tons` },
                     { label: 'Crushed Base Gravel (4" depth)', value: `${baseGravelTons.toFixed(1)} Tons` }
                 ]
             };
@@ -763,8 +763,8 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Total Bricks Required', value: totalBricks, suffix: 'Bricks' },
                 secondaryMetrics: [
                     { label: 'Wall Surface Area', value: `${wallSqFt} sq ft` },
-                    { label: 'Mortar Bags Needed (80 lb bags)', value: `${mortarBags} Bags` },
-                    { label: 'Brick Pallets (approx 500/pallet)', value: `${(totalBricks / 500).toFixed(1)} Pallets` }
+                    { label: 'Mortar Needed (80 lb bags)', value: `${mortarBags} Bags` },
+                    { label: 'Brick Pallets (~500/pallet)', value: `${(totalBricks / 500).toFixed(1)} Pallets` }
                 ]
             };
         }
@@ -850,8 +850,8 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Required HVAC Capacity', value: totalBTU.toLocaleString(), suffix: 'BTU / hr' },
                 secondaryMetrics: [
                     { label: 'Air Conditioner Tonnage', value: `${tons} Tons (${(Number(tons) * 12000).toLocaleString()} BTU)` },
-                    { label: 'Equivalent Electric Heating Power', value: `${kw} kW` },
-                    { label: 'Recommended Mini-Split / AC Size', value: totalBTU <= 6000 ? '6,000 BTU' : totalBTU <= 9000 ? '9,000 BTU' : totalBTU <= 12000 ? '12,000 BTU (1 Ton)' : totalBTU <= 18000 ? '18,000 BTU (1.5 Ton)' : totalBTU <= 24000 ? '24,000 BTU (2 Ton)' : `${Math.ceil(totalBTU / 6000) * 6000} BTU` }
+                    { label: 'Electric Heating Power', value: `${kw} kW` },
+                    { label: 'Recommended Mini-Split/AC', value: totalBTU <= 6000 ? '6,000 BTU' : totalBTU <= 9000 ? '9,000 BTU' : totalBTU <= 12000 ? '12,000 BTU (1 Ton)' : totalBTU <= 18000 ? '18,000 BTU (1.5 Ton)' : totalBTU <= 24000 ? '24,000 BTU (2 Ton)' : `${Math.ceil(totalBTU / 6000) * 6000} BTU` }
                 ]
             };
         }
@@ -1188,7 +1188,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 return {
                     primaryOutput: { label: 'Recommended Tank Capacity', value: `${tankGallons} Gallons`, suffix: `FHR: ${fhrDemand} Gal/hr` },
                     secondaryMetrics: [
-                        { label: 'Required First Hour Rating (FHR)', value: `${fhrDemand} Gallons` },
+                        { label: 'First Hour Rating (FHR)', value: `${fhrDemand} Gallons` },
                         { label: 'Target Output Temperature', value: '120°F (Scald-Safe Standard)' },
                         { label: 'Recommended Fuel / Efficiency', value: 'Hybrid Heat Pump Water Heater (UEF ≥ 3.5) or High-Efficiency Gas' }
                     ]
@@ -1289,8 +1289,8 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Estimated Landscaping Cost', value: `$${Math.round(totalCost).toLocaleString()}`, suffix: `$${costPerSqFt.toFixed(2)} / sq ft` },
                 secondaryMetrics: [
-                    { label: 'Estimated Material & Plant Costs', value: `$${Math.round(materialCost).toLocaleString()}` },
-                    { label: 'Estimated Labor & Installation Costs', value: `$${Math.round(laborCost).toLocaleString()}` },
+                    { label: 'Material & Plant Costs', value: `$${Math.round(materialCost).toLocaleString()}` },
+                    { label: 'Labor & Installation Costs', value: `$${Math.round(laborCost).toLocaleString()}` },
                     { label: 'Typical Price Range (±20%)', value: `$${Math.round(totalCost * 0.8).toLocaleString()} - $${Math.round(totalCost * 1.2).toLocaleString()}` }
                 ]
             };
@@ -1392,9 +1392,9 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Loose Haul Volume', value: `${Math.round(looseCubicYards)} Cu Yds`, suffix: `(${Math.round(bankCubicYards)} Bank Yds)` },
                 secondaryMetrics: [
                     { label: 'In-Ground Bank Volume (BCY)', value: `${bankCubicYards.toFixed(1)} Cu Yds` },
-                    { label: 'Standard 10-Yard Dump Truck Loads', value: `${dumpTruckTrips10Yd} Truckloads` },
-                    { label: 'Tri-Axle 14-Yard Dump Truck Loads', value: `${dumpTruckTrips14Yd} Truckloads` },
-                    { label: 'Estimated Excavator Machine Time', value: `~${machineHours} Hours (@ 25 yd/hr)` }
+                    { label: '10-Yard Dump Truck Loads', value: `${dumpTruckTrips10Yd} Truckloads` },
+                    { label: '14-Yard Dump Truck Loads', value: `${dumpTruckTrips14Yd} Truckloads` },
+                    { label: 'Excavator Machine Time', value: `~${machineHours} Hours (@ 25 yd/hr)` }
                 ]
             };
         }
@@ -1448,8 +1448,8 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Retaining Wall Blocks Needed', value: blocks, suffix: `Blocks (+ ${capBlocks} Caps)` },
                 secondaryMetrics: [
-                    { label: 'Total Wall Face Area (incl. buried row)', value: `${totalSqFt.toFixed(1)} sq ft` },
-                    { label: 'Drainage Gravel Backfill (12" chimney)', value: `${gravelTons.toFixed(1)} Tons (${gravelCuYds.toFixed(1)} Cu Yds)` },
+                    { label: 'Wall Face Area (incl. buried)', value: `${totalSqFt.toFixed(1)} sq ft` },
+                    { label: 'Drainage Gravel (12" chimney)', value: `${gravelTons.toFixed(1)} Tons (${gravelCuYds.toFixed(1)} Cu Yds)` },
                     { label: 'Base Trench Leveling Gravel', value: `${baseGravelTons.toFixed(1)} Tons` },
                     { label: 'Geogrid Reinforcement Needed', value: h > 4 ? 'REQUIRED: Grid reinforcement recommended every 2 courses for walls > 4 ft' : 'Not required for gravity walls under 4 ft' }
                 ]
@@ -1582,7 +1582,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Effective Transfer Speed', value: `${transferRateMBps} MB / second` },
                     { label: 'Total File Size (MB)', value: `${Math.round(sizeMB).toLocaleString()} MB` },
-                    { label: 'Gigabit Fiber Speed Comparison (1000 Mbps)', value: `${Math.ceil(totalMegabits / (1000 * 0.90))} seconds` }
+                    { label: 'Gigabit Fiber Speed (1 Gbps)', value: `${Math.ceil(totalMegabits / (1000 * 0.90))} seconds` }
                 ]
             };
         }
@@ -1622,7 +1622,7 @@ export const constructionHomeCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Monthly Data Transfer', value: totalMonthlyGB >= 1000 ? `${totalMonthlyTB.toFixed(2)} TB` : `${totalMonthlyGB.toFixed(1)} GB`, suffix: '/ month' },
                 secondaryMetrics: [
-                    { label: 'Required Peak Bandwidth Capacity', value: `${peakMbps.toFixed(2)} Mbps` },
+                    { label: 'Peak Bandwidth Capacity', value: `${peakMbps.toFixed(2)} Mbps` },
                     { label: 'Average Sustained Data Rate', value: `${avgMbps.toFixed(2)} Mbps` },
                     { label: 'Total Megabytes Transferred', value: `${Math.round(totalMonthlyMB).toLocaleString()} MB` },
                     { label: 'Hosting / CDN Recommendation', value: totalMonthlyTB > 10 ? 'Enterprise CDN + Dedicated High-Bandwidth Cloud Hosting' : totalMonthlyTB > 1 ? 'Standard Cloud VPS / AWS CloudFront / Cloudflare' : 'Shared / Entry VPS Hosting Sufficient' }

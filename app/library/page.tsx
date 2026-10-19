@@ -6,6 +6,7 @@ import { masterCategories } from '@/lib/categories';
 import { allCalculators } from '@/lib/calculators';
 import { CalculatorDefinition } from '@/types/calculator';
 import SidebarExpandButton from '@/components/layout/SidebarExpandButton';
+import { searchCalculators } from '@/lib/searchEngine';
 
 export default function LibraryPage() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -29,23 +30,26 @@ export default function LibraryPage() {
         return map;
     }, []);
 
-    // 3. Filtered calculators list
-    const filteredCalculators = useMemo(() => {
-        const q = debouncedQuery.trim().toLowerCase();
+    // 3. Filtered and ranked calculators list using Deep Multi-Field Search
+    const filteredResults = useMemo(() => {
+        const q = debouncedQuery.trim();
 
-        return allCalculators.filter((calc) => {
-            const matchesCat = selectedCategory === 'all' || calc.category === selectedCategory;
-            if (!matchesCat) return false;
+        if (!q) {
+            const list =
+                selectedCategory === 'all'
+                    ? allCalculators
+                    : allCalculators.filter((calc) => calc.category === selectedCategory);
+            return list.map((calc) => ({
+                calculator: calc,
+                score: 0,
+                matchedInputLabel: undefined as string | undefined,
+            }));
+        }
 
-            if (!q) return true;
-
-            return (
-                calc.name.toLowerCase().includes(q) ||
-                calc.description.toLowerCase().includes(q) ||
-                calc.category.toLowerCase().includes(q) ||
-                calc.naturalLanguageQueries?.some((nlq) => nlq.toLowerCase().includes(q))
-            );
-        });
+        const ranked = searchCalculators(allCalculators, q);
+        return ranked.filter(
+            (item) => selectedCategory === 'all' || item.calculator.category === selectedCategory
+        );
     }, [debouncedQuery, selectedCategory]);
 
     return (
@@ -155,7 +159,7 @@ export default function LibraryPage() {
                 {/* Results Counter / Active Filter Bar */}
                 <div className="flex items-center justify-between text-sm font-mono text-slate-600 dark:text-slate-400 pt-3 border-t border-[#cbd5e1] dark:border-slate-800/80">
                     <div>
-                        Showing <span className="text-slate-900 dark:text-white font-bold">{filteredCalculators.length}</span> of{' '}
+                        Showing <span className="text-slate-900 dark:text-white font-bold">{filteredResults.length}</span> of{' '}
                         <span className="text-slate-700 dark:text-slate-300">{allCalculators.length}</span> calculators
                         {selectedCategory !== 'all' && (
                             <span className="text-sky-600 dark:text-sky-400 ml-1.5">
@@ -178,7 +182,7 @@ export default function LibraryPage() {
                 </div>
 
                 {/* Calculator Cards Grid */}
-                {filteredCalculators.length === 0 ? (
+                {filteredResults.length === 0 ? (
                     <div className="p-12 text-center bg-[#e8edf2] dark:bg-[#161b22] border border-[#cbd5e1] dark:border-slate-800 rounded-2xl space-y-3">
                         <div className="text-3xl">🔍</div>
                         <h3 className="text-base font-semibold text-slate-900 dark:text-white font-mono">No calculators found</h3>
@@ -199,7 +203,7 @@ export default function LibraryPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {filteredCalculators.map((calc: CalculatorDefinition) => {
+                        {filteredResults.map(({ calculator: calc, matchedInputLabel }) => {
                             const catDef = categoryMap.get(calc.category);
 
                             return (
@@ -218,6 +222,11 @@ export default function LibraryPage() {
                                                 <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-[#dbe3eb] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#cbd5e1] dark:border-slate-700">
                                                     {calc.bucket}
                                                 </span>
+                                                {matchedInputLabel && (
+                                                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-lg bg-emerald-500/10 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 truncate max-w-[220px]" title={`Matched input: "${matchedInputLabel}"`}>
+                                                        Matched input: &quot;{matchedInputLabel}&quot;
+                                                    </span>
+                                                )}
                                             </div>
                                             {calc.cpc && (
                                                 <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold shrink-0">

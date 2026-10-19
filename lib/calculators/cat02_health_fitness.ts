@@ -336,7 +336,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Excess Weight Above Normal BMI', value: excessKg > 0 ? `${excessKg.toFixed(1)} kg (${(excessKg * 2.20462).toFixed(1)} lbs)` : 'None (Within Normal Range)' },
                 secondaryMetrics: [
                     { label: 'Current BMI', value: `${bmi.toFixed(1)} kg/m²` },
-                    { label: 'Upper Normal Weight Threshold (BMI 24.9)', value: `${maxNormal.toFixed(1)} kg` }
+                    { label: 'Upper Normal Weight (BMI 24.9)', value: `${maxNormal.toFixed(1)} kg` }
                 ]
             };
         }
@@ -571,7 +571,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Waist-to-Height Ratio (WHtR)', value: whtr.toFixed(2) },
                 secondaryMetrics: [
                     { label: 'Health Assessment', value: status },
-                    { label: 'Max Recommended Waist (50% Height)', value: `${(h * 0.5).toFixed(1)} cm` }
+                    { label: 'Max Waist (50% Height)', value: `${(h * 0.5).toFixed(1)} cm` }
                 ]
             };
         }
@@ -613,7 +613,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Estimated Visceral Fat Rating', value: `${rating} / 59` },
                 secondaryMetrics: [
-                    { label: 'Visceral Fat Risk Classification', value: level },
+                    { label: 'Visceral Fat Risk Level', value: level },
                     { label: 'Target Optimal Rating', value: '1 - 9 (Low Risk)' }
                 ]
             };
@@ -853,7 +853,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Current Blood Alcohol Concentration (BAC)', value: `${bac.toFixed(3)}%` },
                 secondaryMetrics: [
                     { label: 'Driving Legality Status', value: legalStatus },
-                    { label: 'Estimated Hours Until Completely Sober (0.00% BAC)', value: `${hoursToSober.toFixed(1)} Hours` }
+                    { label: 'Hours to 0.00% BAC (Sober)', value: `${hoursToSober.toFixed(1)} Hours` }
                 ]
             };
         }
@@ -898,9 +898,9 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Daily Maintenance Calories', value: Math.round(maintenanceTdee), suffix: 'kcal/day' },
                 secondaryMetrics: [
                     { label: 'Basal Metabolic Rate (BMR)', value: `${Math.round(bmr)} kcal/day` },
-                    { label: 'Weight Loss Target (-0.5 kg / -1 lb/wk)', value: `${Math.round(weightLoss)} kcal/day` },
-                    { label: 'Mild Weight Loss Target (-0.25 kg/wk)', value: `${Math.round(mildLoss)} kcal/day` },
-                    { label: 'Lean Muscle Gain Target (+0.25 kg/wk)', value: `${Math.round(mildGain)} kcal/day` }
+                    { label: 'Weight Loss (-0.5 kg/wk)', value: `${Math.round(weightLoss)} kcal/day` },
+                    { label: 'Mild Weight Loss (-0.25 kg/wk)', value: `${Math.round(mildLoss)} kcal/day` },
+                    { label: 'Muscle Gain (+0.25 kg/wk)', value: `${Math.round(mildGain)} kcal/day` }
                 ]
             };
         }
@@ -1091,7 +1091,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Recommended Daily Protein Intake', value: `${proteinGrams}g / day` },
                 secondaryMetrics: [
                     { label: 'Protein Energy Contribution', value: `${proteinCalories} kcal` },
-                    { label: 'Optimal Per-Meal Dose (4 Meals/Day)', value: `${Math.round(proteinGrams / 4)}g / meal` },
+                    { label: 'Per-Meal Dose (4 Meals/Day)', value: `${Math.round(proteinGrams / 4)}g / meal` },
                     { label: 'Per Pound Equivalent', value: `${(proteinGrams / (w * 2.20462)).toFixed(2)} g/lb` }
                 ]
             };
@@ -1127,7 +1127,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Daily Dietary Fat Target', value: `${fatGrams}g / day` },
                 secondaryMetrics: [
                     { label: 'Calories from Fat (9 kcal/g)', value: `${Math.round(fatCals)} kcal` },
-                    { label: 'Max Recommended Saturated Fat (<10%)', value: `${maxSatFatGrams}g / day` }
+                    { label: 'Max Saturated Fat (<10%)', value: `${maxSatFatGrams}g / day` }
                 ]
             };
         }
@@ -1201,8 +1201,8 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Daily Water Target', value: `${liters.toFixed(1)} Liters`, suffix: `(${Math.round(ounces)} fl oz)` },
                 secondaryMetrics: [
-                    { label: 'Standard Glasses of Water (8 oz / 250ml)', value: `${Math.round(glasses)} Glasses` },
-                    { label: 'Exercise Hydration Compensation', value: `+${((exerciseMins / 30) * 0.35).toFixed(2)} L` }
+                    { label: 'Glasses of Water (250ml)', value: `${Math.round(glasses)} Glasses` },
+                    { label: 'Exercise Hydration Boost', value: `+${((exerciseMins / 30) * 0.35).toFixed(2)} L` }
                 ]
             };
         }
@@ -1388,7 +1388,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Muscle Building Protein Target', value: `${proteinGrams}g / day` },
                 secondaryMetrics: [
-                    { label: 'Carbohydrates (Fuel / Glycogen)', value: `${carbGrams}g / day` },
+                    { label: 'Carbohydrates (Glycogen)', value: `${carbGrams}g / day` },
                     { label: 'Fats (Hormonal Support)', value: `${fatGrams}g / day` },
                     { label: 'Protein Target per Pound', value: `${(proteinGrams / (w * 2.20462)).toFixed(2)} g/lb` }
                 ]
@@ -1731,7 +1731,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                     { label: 'Brzycki Formula 1RM', value: `${Math.round(brzycki)} kg/lbs` },
                     { label: 'Epley Formula 1RM', value: `${Math.round(epley)} kg/lbs` },
                     { label: '90% Training Max (~3-4 reps)', value: `${Math.round(avg1RM * 0.90)} kg/lbs` },
-                    { label: '80% Hypertrophy Weight (~8 reps)', value: `${Math.round(avg1RM * 0.80)} kg/lbs` }
+                    { label: '80% Hypertrophy (~8 reps)', value: `${Math.round(avg1RM * 0.80)} kg/lbs` }
                 ]
             };
         }
@@ -1772,9 +1772,9 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Zone 2 Aerobic Base (60-70%)', value: `${zone2Low} - ${zone2High} bpm` },
                 secondaryMetrics: [
-                    { label: 'Estimated Max Heart Rate (HRmax)', value: `${hrMax} bpm` },
+                    { label: 'Max Heart Rate (HRmax)', value: `${hrMax} bpm` },
                     { label: 'Zone 1 Recovery (50-60%)', value: `${karvonen(0.50)} - ${karvonen(0.60)} bpm` },
-                    { label: 'Zone 3 Tempo / Aerobic (70-80%)', value: `${karvonen(0.70)} - ${karvonen(0.80)} bpm` },
+                    { label: 'Zone 3 Aerobic (70-80%)', value: `${karvonen(0.70)} - ${karvonen(0.80)} bpm` },
                     { label: 'Zone 4 Threshold (80-90%)', value: `${zone4Low} - ${zone4High} bpm` },
                     { label: 'Zone 5 VO2 Max (90-100%)', value: `${karvonen(0.90)} - ${hrMax} bpm` }
                 ]
@@ -1821,7 +1821,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Estimated VO2 Max', value: vo2max.toFixed(1), suffix: 'mL/kg/min' },
                 secondaryMetrics: [
-                    { label: 'Cardiorespiratory Fitness Rating', value: fitnessCategory },
+                    { label: 'Cardiorespiratory Fitness', value: fitnessCategory },
                     { label: 'Max Heart Rate Used', value: `${Math.round(mhr)} bpm` },
                     { label: 'Resting Heart Rate', value: `${rhr} bpm` }
                 ]
@@ -1968,7 +1968,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Calories Burned Walking', value: Math.round(calories), suffix: 'kcal' },
                 secondaryMetrics: [
                     { label: 'Caloric Burn Rate', value: `${(calories / mins).toFixed(1)} kcal/min` },
-                    { label: 'Estimated Steps (at ~110 steps/min)', value: `${mins * 110} Steps` }
+                    { label: 'Steps (~110 steps/min)', value: `${mins * 110} Steps` }
                 ]
             };
         }
@@ -2279,7 +2279,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Expected Gain at Current Week', value: `~${expectedGain.toFixed(1)} kg (${(expectedGain * 2.20462).toFixed(1)} lbs)` },
                     { label: 'Your Current Gain', value: `${gain.toFixed(1)} kg` },
-                    { label: '2nd & 3rd Trimester Rate Guideline', value: `~${weeklyRate.toFixed(2)} kg / week` }
+                    { label: '2nd/3rd Trimester Guideline', value: `~${weeklyRate.toFixed(2)} kg / week` }
                 ]
             };
         }
@@ -2386,7 +2386,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Most Likely Ovulation Day', value: `Day ${ovulationDay} of Cycle` },
                 secondaryMetrics: [
                     { label: 'Fertile Window (6 Days)', value: `Cycle Days ${fertileStart} to ${fertileEnd}` },
-                    { label: 'Peak Fertility Days (O-2, O-1, O)', value: `Cycle Days ${ovulationDay - 2}, ${ovulationDay - 1}, ${ovulationDay}` },
+                    { label: 'Peak Fertility Days', value: `Cycle Days ${ovulationDay - 2}, ${ovulationDay - 1}, ${ovulationDay}` },
                     { label: 'Next Cycle Expected On', value: `Day ${cycle + 1}` }
                 ]
             };
@@ -2416,9 +2416,9 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Optimal Conception Window', value: `Days ${ovulationDay - 3} to ${ovulationDay + 1}` },
                 secondaryMetrics: [
-                    { label: 'Peak Intercourse Timing for Conception', value: `Day ${ovulationDay - 1} and Day ${ovulationDay}` },
-                    { label: 'Sperm Viability Window in Reproductive Tract', value: 'Up to 5 Days' },
-                    { label: 'Egg Viability Window Post-Ovulation', value: '12 - 24 Hours' }
+                    { label: 'Peak Conception Timing', value: `Day ${ovulationDay - 1} and Day ${ovulationDay}` },
+                    { label: 'Sperm Viability Window', value: 'Up to 5 Days' },
+                    { label: 'Egg Viability Window', value: '12 - 24 Hours' }
                 ]
             };
         }
@@ -2454,8 +2454,8 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Days Until Next Period', value: `${daysUntilNextPeriod} Days` },
                 secondaryMetrics: [
                     { label: 'Current Cycle Day', value: `Day ${currentCycleDay} of ${cycle}` },
-                    { label: 'Upcoming Period Bleeding Window', value: `${duration} Days Duration` },
-                    { label: 'Estimated Next Period Cycle Length', value: `${cycle} Days` }
+                    { label: 'Upcoming Period Window', value: `${duration} Days Duration` },
+                    { label: 'Estimated Next Cycle Length', value: `${cycle} Days` }
                 ]
             };
         }
@@ -2500,7 +2500,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Fertile Window Span', value: `Days ${fertileStart} - ${fertileEnd} of Cycle` },
                     { label: 'Ovulation Day', value: `Day ${ovulationDay}` },
-                    { label: 'Days Remaining in Fertile Window', value: currentDay <= fertileEnd ? `${Math.max(0, fertileEnd - currentDay)} Days` : '0 Days (Window Closed)' }
+                    { label: 'Fertile Window Days Left', value: currentDay <= fertileEnd ? `${Math.max(0, fertileEnd - currentDay)} Days` : '0 Days (Window Closed)' }
                 ]
             };
         }

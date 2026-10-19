@@ -49,7 +49,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Calculated Engine Horsepower', value: `${Math.round(hp)} HP`, suffix: `${Math.round(kw)} kW` },
                 secondaryMetrics: [
-                    { label: 'Wheel Horsepower (WHP @ 15% Drivetrain Loss)', value: `${Math.round(whp)} WHP` },
+                    { label: 'Wheel Horsepower (WHP)', value: `${Math.round(whp)} WHP` },
                     { label: 'Metric Horsepower (PS / CV)', value: `${Math.round(metricHp)} PS` },
                     { label: 'Kilowatt Power (kW)', value: `${kw.toFixed(1)} kW` },
                     { label: 'Torque at Current RPM', value: `${torque} lb-ft (${Math.round(torque * 1.35582)} N·m)` }
@@ -262,7 +262,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                     { label: 'Equivalent Weight (lbf)', value: `${weightLbf.toFixed(1)} lbf` },
                     { label: 'Apparent Scale Reading', value: `${apparentScaleKg.toFixed(1)} kg (${weightLbf.toFixed(1)} lbs)` },
                     { label: 'Earth Equivalent Weight', value: `${earthWeightLbf.toFixed(1)} lbs` },
-                    { label: 'Local Gravitational Acceleration', value: `${g.toFixed(2)} m/s² (${gravityRatio.toFixed(3)}g)` },
+                    { label: 'Local Gravity Acceleration', value: `${g.toFixed(2)} m/s² (${gravityRatio.toFixed(3)}g)` },
                     { label: 'Weight Relative to Earth', value: `${(gravityRatio * 100).toFixed(1)}% of Earth Weight` }
                 ]
             };
@@ -419,7 +419,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Pressure', value: `${psi.toFixed(2)} PSI`, suffix: `${kPa.toFixed(2)} kPa` },
                 secondaryMetrics: [
                     { label: 'Pressure in Bar', value: `${bar.toFixed(4)} bar` },
-                    { label: 'Pressure in Standard Atmospheres', value: `${atm.toFixed(4)} atm` },
+                    { label: 'Standard Atmospheres (atm)', value: `${atm.toFixed(4)} atm` },
                     { label: 'Pressure in Pascals (N/m²)', value: `${Math.round(pascals).toLocaleString()} Pa` },
                     { label: 'Millimeters of Mercury (mmHg)', value: `${(pascals * 0.00750062).toFixed(2)} mmHg` }
                 ]
@@ -462,7 +462,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                     { label: 'New Final Length', value: `${finalLengthM.toFixed(5)} m` },
                     { label: 'Thermal Strain', value: `${strainPercent.toFixed(4)}%` },
                     { label: 'Expansion Rate per 10°C Change', value: `${(alpha * L0 * 10 * 1000).toFixed(2)} mm` },
-                    { label: 'Recommended Expansion Gap Joint', value: `${Math.ceil(Math.abs(deltaLMm) * 1.5)} mm minimum clearance` }
+                    { label: 'Recommended Expansion Gap', value: `${Math.ceil(Math.abs(deltaLMm) * 1.5)} mm minimum clearance` }
                 ]
             };
         }
@@ -593,7 +593,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                     { label: 'Total Uniform Load on Beam', value: `${Math.round(uniformLoadPLF)} lbs / linear ft` },
                     { label: 'Total Carried Load', value: `${Math.round(totalLoadOnBeam).toLocaleString()} lbs` },
                     { label: 'Maximum Bending Moment', value: `${Math.round(maxMomentLbFt).toLocaleString()} lb-ft` },
-                    { label: 'Required Wood Section Modulus (Fb=1000 psi)', value: `${((maxMomentLbFt * 12) / 1000).toFixed(1)} in³` }
+                    { label: 'Wood Section Modulus (Fb=1000)', value: `${((maxMomentLbFt * 12) / 1000).toFixed(1)} in³` }
                 ]
             };
         }
@@ -680,8 +680,8 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Conduction Heat Transfer Rate', value: `${Math.round(heatTransferWatts).toLocaleString()} Watts`, suffix: `${Math.round(heatTransferBTU).toLocaleString()} BTU/hr` },
                 secondaryMetrics: [
                     { label: 'Heat Flux (Rate per Area)', value: `${heatFlux.toFixed(2)} W/m²` },
-                    { label: 'Thermal Resistance (R-Value US)', value: `R-${rValueUS.toFixed(1)}` },
-                    { label: 'Thermal Resistance (SI R-Value)', value: `${rValueSI.toFixed(3)} m²·K/W` },
+                    { label: 'Thermal Resistance (R-Value)', value: `R-${rValueUS.toFixed(1)}` },
+                    { label: 'Thermal Resistance (SI RSI)', value: `${rValueSI.toFixed(3)} m²·K/W` },
                     { label: 'Daily Energy Loss', value: `${((heatTransferWatts * 24) / 1000).toFixed(2)} kWh / day` }
                 ]
             };
@@ -781,7 +781,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Acceleration in ft/s²', value: `${accelFtS2.toFixed(2)} ft/s²` },
                     { label: 'G-Force Experienced', value: `${gForce.toFixed(3)} g` },
-                    { label: 'Distance Covered During Acceleration', value: `${distanceFeet.toFixed(1)} ft (${distanceMeters.toFixed(1)} m)` },
+                    { label: 'Distance During Acceleration', value: `${distanceFeet.toFixed(1)} ft (${distanceMeters.toFixed(1)} m)` },
                     { label: 'Speed Change (Δv)', value: `${(vfMph - v0Mph).toFixed(1)} MPH` }
                 ]
             };
@@ -941,8 +941,8 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Required Pulling Effort', value: `${Math.round(actualEffort)} lbs`, suffix: `${strands}:1 Mechanical Adv.` },
                 secondaryMetrics: [
                     { label: 'Ideal Pull Force (0% friction)', value: `${idealEffort.toFixed(1)} lbs` },
-                    { label: 'Actual Mechanical Advantage (AMA)', value: `${actualMA.toFixed(2)}:1` },
-                    { label: 'Rope Pull Distance for 10 ft Lift', value: `${10 * strands} Feet of Rope` },
+                    { label: 'Actual Advantage (AMA)', value: `${actualMA.toFixed(2)}:1` },
+                    { label: 'Rope Pull for 10 ft Lift', value: `${10 * strands} Feet of Rope` },
                     { label: 'System Mechanical Efficiency', value: `${((idealEffort / actualEffort) * 100).toFixed(1)}%` }
                 ]
             };
@@ -1204,10 +1204,10 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
             return {
                 primaryOutput: { label: 'Annual Carbon Footprint', value: `${totalMetricTons.toFixed(2)} Metric Tons`, suffix: `${Math.round(totalPounds).toLocaleString()} lbs CO2` },
                 secondaryMetrics: [
-                    { label: 'Vehicle Transportation Emissions', value: `${(vehicleCO2Kg / 1000).toFixed(2)} Tons (${Math.round((vehicleCO2Kg / totalCO2Kg) * 100)}%)` },
+                    { label: 'Vehicle Transport Emissions', value: `${(vehicleCO2Kg / 1000).toFixed(2)} Tons (${Math.round((vehicleCO2Kg / totalCO2Kg) * 100)}%)` },
                     { label: 'Home Electricity Emissions', value: `${(electricityCO2Kg / 1000).toFixed(2)} Tons (${Math.round((electricityCO2Kg / totalCO2Kg) * 100)}%)` },
                     { label: 'Aviation Flights Emissions', value: `${(flightCO2Kg / 1000).toFixed(2)} Tons` },
-                    { label: 'Trees Needed to Offset Annually', value: `${treesToOffset.toLocaleString()} Mature Trees` }
+                    { label: 'Trees Needed to Offset/Yr', value: `${treesToOffset.toLocaleString()} Mature Trees` }
                 ]
             };
         }
@@ -1256,7 +1256,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Daily Household Usage', value: `${Math.round(totalDailyGal)} Gallons / day (${Math.round(totalDailyGal * 3.785)} Liters)` },
                     { label: 'Daily Usage per Person', value: `${Math.round(indoorDailyGal / people)} Gallons / person / day` },
-                    { label: 'Estimated Monthly Water & Sewer Bill', value: `$${estMonthlyCost.toFixed(2)} / month` },
+                    { label: 'Monthly Water & Sewer Bill', value: `$${estMonthlyCost.toFixed(2)} / month` },
                     { label: 'Annual Water Usage', value: `${Math.round(monthlyGal * 12).toLocaleString()} Gallons / year` }
                 ]
             };
@@ -1350,7 +1350,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Annual Solar Electricity Generation', value: `${Math.round(annualKWh).toLocaleString()} kWh`, suffix: `$${Math.round(annualSavings).toLocaleString()} / yr` },
                 secondaryMetrics: [
                     { label: 'Average Daily Generation', value: `${dailyKWh.toFixed(1)} kWh / day` },
-                    { label: '25-Year Estimated Utility Savings', value: `$${Math.round(savings25Year).toLocaleString()}` },
+                    { label: '25-Yr Estimated Utility Save', value: `$${Math.round(savings25Year).toLocaleString()}` },
                     { label: '25-Year Lifetime Clean Energy', value: `${Math.round(annualKWh * 25 / 1000)} MWh` },
                     { label: 'Lifetime Carbon Offset', value: `${co2AvoidedTons.toFixed(1)} Metric Tons CO2` }
                 ]
@@ -1460,8 +1460,8 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Estimated Future Resale Value', value: `$${Math.round(value).toLocaleString()}`, suffix: `Year ${years} (${retainedPercent.toFixed(0)}% retained)` },
                 secondaryMetrics: [
                     { label: 'Total Value Depreciated', value: `$${Math.round(totalDeprec).toLocaleString()}` },
-                    { label: 'Average Monthly Depreciation Cost', value: `$${Math.round(monthlyLoss)} / month` },
-                    { label: 'Cost per Mile (at 12,000 mi/yr)', value: `$${(totalDeprec / (years * 12000)).toFixed(2)} / mile` },
+                    { label: 'Monthly Depreciation Cost', value: `$${Math.round(monthlyLoss)} / month` },
+                    { label: 'Cost per Mile (12k mi/yr)', value: `$${(totalDeprec / (years * 12000)).toFixed(2)} / mile` },
                     { label: 'Annual Depreciation Loss', value: `$${Math.round(totalDeprec / years).toLocaleString()} / year` }
                 ]
             };
@@ -1502,7 +1502,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Fuel Cost per Mile', value: `$${costPerMile.toFixed(3)} / mile` },
                     { label: 'Cost per 100 Miles', value: `$${(costPerMile * 100).toFixed(2)}` },
-                    { label: 'Estimated Annual Gas Spend (15k mi)', value: `$${Math.round(annualCost15k).toLocaleString()} / year` },
+                    { label: 'Annual Gas Spend (15k mi)', value: `$${Math.round(annualCost15k).toLocaleString()} / year` },
                     { label: 'Metric Fuel Economy', value: `${kmPerL.toFixed(2)} km / Liter` }
                 ]
             };
@@ -1558,7 +1558,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Nominal EPA Rated Range', value: `${Math.round(epaRange)} Miles` },
                     { label: 'Real-World Energy Efficiency', value: `${realEfficiency.toFixed(2)} mi/kWh (${Math.round(1000 / realEfficiency)} Wh/mi)` },
-                    { label: 'Cost to Fully Charge at Home ($0.16/kWh)', value: `$${costToChargeHome.toFixed(2)}` },
+                    { label: 'Full Charge Cost ($0.16/kWh)', value: `$${costToChargeHome.toFixed(2)}` },
                     { label: 'Electricity Cost per Mile', value: `$${costPerMile.toFixed(3)} / mile` }
                 ]
             };
@@ -1649,7 +1649,7 @@ export const scienceEngineeringCalculators: CalculatorDefinition[] = [
                 secondaryMetrics: [
                     { label: 'Estimated Course Handicap', value: `${courseHandicap} Strokes` },
                     { label: 'Net Score for Round (Par 72)', value: `${score - courseHandicap} Net Strokes` },
-                    { label: 'Strokes Relative to Course Rating', value: `+${(score - rating).toFixed(1)} strokes` },
+                    { label: 'Strokes vs Course Rating', value: `+${(score - rating).toFixed(1)} strokes` },
                     { label: 'Course Difficulty (Slope)', value: slope > 130 ? 'High Difficulty' : slope < 110 ? 'Mild / Forgiving' : 'Standard Difficulty' }
                 ]
             };
