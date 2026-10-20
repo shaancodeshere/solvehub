@@ -401,12 +401,12 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
             const n = Number(inputs.exponentNum) || 0;
 
             const result = Math.pow(b, n);
-            const invResult = Math.pow(b, -n);
+            const invVal = (b === 0) ? '0.000000' : (Number.isFinite(Math.pow(b, -n)) ? Math.pow(b, -n).toFixed(6) : '0.000000');
 
             return {
                 primaryOutput: { label: `${b} ^ ${n}`, value: Number.isInteger(result) ? result : Number(result.toFixed(6)) },
                 secondaryMetrics: [
-                    { label: 'Negative Exponent (b ^ -n)', value: invResult.toFixed(6) },
+                    { label: 'Negative Exponent (b ^ -n)', value: invVal },
                     { label: 'Scientific Notation', value: result.toExponential(4) }
                 ]
             };
@@ -3239,21 +3239,25 @@ export const mathScienceCalculators: CalculatorDefinition[] = [
         naturalLanguageQueries: ["Calculate my ellipse calculator", "What is my ellipse calculator?", "Help me solve ellipse calculator"],
         edgeCases: ["Minor axis larger than major axis Negative radii Circular special case where a=b"],
         calculate: (inputs) => {
-            const a = Number(inputs.semiMajorA) || 8;
-            const b = Number(inputs.semiMinorB) || 5;
+            const rawA = Math.abs(Number(inputs.semiMajorA) || 0);
+            const rawB = Math.abs(Number(inputs.semiMinorB) || 0);
+            const a = Math.max(rawA, rawB) || 8;
+            const b = Math.min(rawA, rawB) || 5;
 
             const area = Math.PI * a * b;
-            // Ramanujan's perimeter approximation
-            const h = Math.pow(a - b, 2) / Math.pow(a + b, 2);
-            const perimeter = Math.PI * (a + b) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
-            const ecc = Math.sqrt(1 - (b * b) / (a * a));
+            const sumAB = a + b;
+            const h = sumAB > 0 ? Math.pow(a - b, 2) / Math.pow(sumAB, 2) : 0;
+            const hTerm = 10 + Math.sqrt(Math.max(0, 4 - 3 * h));
+            const perimeter = sumAB > 0 ? Math.PI * sumAB * (1 + (3 * h) / hTerm) : 0;
+            const ecc = a > 0 ? Math.sqrt(Math.max(0, 1 - (b * b) / (a * a))) : 0;
+            const focalDist = Math.sqrt(Math.max(0, a * a - b * b));
 
             return {
                 primaryOutput: { label: 'Ellipse Area (A = πab)', value: Number(area.toFixed(4)), suffix: 'sq units' },
                 secondaryMetrics: [
                     { label: 'Perimeter (Ramanujan Approx)', value: `${perimeter.toFixed(4)} units` },
                     { label: 'Eccentricity (e)', value: ecc.toFixed(4) },
-                    { label: 'Focal Distance (c)', value: `${Math.sqrt(a * a - b * b).toFixed(4)} units` }
+                    { label: 'Focal Distance (c)', value: `${focalDist.toFixed(4)} units` }
                 ]
             };
         }

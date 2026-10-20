@@ -1673,8 +1673,8 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 return `${m}:${s < 10 ? '0' : ''}${s}`;
             };
 
-            const speedKmh = (distKm / (totalSecs / 3600)).toFixed(2);
-            const speedMph = (distMiles / (totalSecs / 3600)).toFixed(2);
+            const speedKmh = totalSecs > 0 ? (distKm / (totalSecs / 3600)).toFixed(2) : '0.00';
+            const speedMph = totalSecs > 0 ? (distMiles / (totalSecs / 3600)).toFixed(2) : '0.00';
 
             return {
                 primaryOutput: { label: 'Pace per Kilometer', value: `${formatPace(secPerKm)} /km` },
@@ -2088,12 +2088,16 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 return `${min}:${sec < 10 ? '0' : ''}${sec}`;
             };
 
+            const avgSpeed = totalSecs > 0
+                ? `${(distKm / (totalSecs / 3600)).toFixed(2)} km/h (${(distMiles / (totalSecs / 3600)).toFixed(2)} mph)`
+                : '0.00 km/h (0.00 mph)';
+
             return {
                 primaryOutput: { label: 'Required Mile Pace', value: `${formatTime(secPerMile)} /mile` },
                 secondaryMetrics: [
                     { label: 'Required Kilometer Pace', value: `${formatTime(secPerKm)} /km` },
                     { label: 'Track 400m Lap Split', value: `${formatTime(secPer400m)} /lap` },
-                    { label: 'Average Running Speed', value: `${(distKm / (totalSecs / 3600)).toFixed(2)} km/h (${(distMiles / (totalSecs / 3600)).toFixed(2)} mph)` }
+                    { label: 'Average Running Speed', value: avgSpeed }
                 ]
             };
         }
@@ -2137,7 +2141,7 @@ export const healthFitnessCalculators: CalculatorDefinition[] = [
                 primaryOutput: { label: 'Pace per 100m', value: `${formatTime(secPer100m)} / 100m` },
                 secondaryMetrics: [
                     { label: 'Split per 50m Lap', value: `${formatTime(secPer50m)} / 50m` },
-                    { label: 'Swim Speed (km/h)', value: `${((dist / 1000) / (totalSecs / 3600)).toFixed(2)} km/h` },
+                    { label: 'Swim Speed (km/h)', value: totalSecs > 0 ? `${((dist / 1000) / (totalSecs / 3600)).toFixed(2)} km/h` : '0.00 km/h' },
                     { label: 'Estimated 1500m Olympic Split', value: formatTime(secPer100m * 15) }
                 ]
             };

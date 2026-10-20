@@ -22,6 +22,7 @@ export interface MetricItem {
 export interface CalculationResult {
     primaryOutput: MetricItem;
     secondaryMetrics?: MetricItem[];
+    secondaryOutputs?: MetricItem[];
 }
 
 export interface CalculatorDefinition {
