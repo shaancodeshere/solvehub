@@ -10,6 +10,9 @@ interface SidebarContextType {
   isSidebarOpen: boolean;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleSidebar: () => void;
+  isMobileDrawerOpen: boolean;
+  setIsMobileDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleMobileDrawer: () => void;
   isCommandPaletteOpen: boolean;
   setIsCommandPaletteOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isShortcutsModalOpen: boolean;
@@ -20,6 +23,9 @@ const SidebarContext = createContext<SidebarContextType>({
   isSidebarOpen: true,
   setIsSidebarOpen: () => {},
   toggleSidebar: () => {},
+  isMobileDrawerOpen: false,
+  setIsMobileDrawerOpen: () => {},
+  toggleMobileDrawer: () => {},
   isCommandPaletteOpen: false,
   setIsCommandPaletteOpen: () => {},
   isShortcutsModalOpen: false,
@@ -31,6 +37,7 @@ export const useSidebar = () => useContext(SidebarContext);
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
@@ -95,7 +102,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [pathname]);
 
+  // Auto-close mobile drawer on route change
+  useEffect(() => {
+    setIsMobileDrawerOpen(false);
+  }, [pathname]);
+
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const toggleMobileDrawer = () => setIsMobileDrawerOpen((prev) => !prev);
 
   // When on routes other than '/', render CommandPalette globally
   const isRoot = pathname === '/';
@@ -106,6 +119,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         isSidebarOpen,
         setIsSidebarOpen,
         toggleSidebar,
+        isMobileDrawerOpen,
+        setIsMobileDrawerOpen,
+        toggleMobileDrawer,
         isCommandPaletteOpen,
         setIsCommandPaletteOpen,
         isShortcutsModalOpen,

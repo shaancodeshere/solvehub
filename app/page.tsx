@@ -96,6 +96,7 @@ export default function HomePage() {
   const {
     isSidebarOpen,
     setIsSidebarOpen,
+    setIsMobileDrawerOpen,
     isCommandPaletteOpen,
     setIsCommandPaletteOpen,
     isShortcutsModalOpen,
@@ -104,6 +105,7 @@ export default function HomePage() {
   const [activeMode, setActiveMode] = useState<'canvas' | 'library'>('canvas');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
+  const [mobileTab, setMobileTab] = useState<'canvas' | 'receipt'>('canvas');
 
   // Phase 2: Live Receipt & Export State
   const [isCopied, setIsCopied] = useState(false);
@@ -1275,7 +1277,7 @@ export default function HomePage() {
   ]);
 
   return (
-    <div className="flex-1 h-full w-full flex overflow-hidden font-sans relative">
+    <div className="flex-1 h-full w-full flex flex-col overflow-hidden font-sans relative">
       {/* ──────────────────────────────────────────────────────────
           CLEAR / SAVE MODAL DIALOG
          ────────────────────────────────────────────────────────── */}
@@ -1348,19 +1350,85 @@ export default function HomePage() {
       )}
 
       {/* ──────────────────────────────────────────────────────────
+          MOBILE TOP BAR (<768px)
+          - Hamburger menu opens off-canvas Section A navigation drawer
+          - Sleek segmented toggle: [ Canvas | Live Receipt ]
+         ────────────────────────────────────────────────────────── */}
+      <header className="md:hidden flex items-center justify-between px-3 py-2 bg-[var(--surface)] border-b border-[var(--border)] shrink-0 z-10 transition-colors duration-200">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsMobileDrawerOpen(true)}
+            className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-[var(--surface-subtle)] dark:bg-slate-800 border border-[var(--border)] dark:border-slate-700 transition flex items-center justify-center shadow-sm"
+            title="Open Navigation Menu"
+            aria-label="Open Navigation Menu"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+          <div className="flex items-center gap-1.5 font-mono">
+            <span className="bg-emerald-500 text-slate-950 font-bold px-1.5 py-0.5 rounded text-xs">
+              S
+            </span>
+            <span className="font-bold text-sm text-slate-900 dark:text-white">
+              SolveHub
+            </span>
+          </div>
+        </div>
+
+        {/* Segmented View Bar: [ Canvas | Live Receipt ] */}
+        <div className="flex items-center p-0.5 rounded-lg bg-[var(--surface-subtle)] dark:bg-slate-900/90 border border-[var(--border)] dark:border-slate-800 font-mono text-xs shadow-inner">
+          <button
+            type="button"
+            onClick={() => setMobileTab('canvas')}
+            className={`px-3 py-1 rounded-md font-semibold transition ${
+              mobileTab === 'canvas'
+                ? 'bg-[var(--surface)] dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm border border-[var(--border)] dark:border-slate-700'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            Canvas
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab('receipt')}
+            className={`px-3 py-1 rounded-md font-semibold transition flex items-center gap-1.5 ${
+              mobileTab === 'receipt'
+                ? 'bg-[var(--surface)] dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm border border-[var(--border)] dark:border-slate-700'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <span>Live Receipt</span>
+            {totalReceiptItemCount > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold">
+                {totalReceiptItemCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </header>
+
+      {/* ──────────────────────────────────────────────────────────
           CANVAS WORKSPACE & LIVE RECEIPT
          ────────────────────────────────────────────────────────── */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Section B: Natural Editor */}
-        <section className="flex-1 px-6 pt-5 pb-6 overflow-hidden border-r border-[var(--border)] bg-[var(--background)] flex flex-col transition-colors duration-200">
+        <section
+          className={`${
+            mobileTab === 'canvas' ? 'flex w-full' : 'hidden'
+          } md:flex flex-1 px-3.5 sm:px-6 pt-3 sm:pt-5 pb-4 sm:pb-6 overflow-hidden border-r-0 md:border-r border-[var(--border)] bg-[var(--background)] flex-col transition-colors duration-200`}
+        >
           {/* Top Bar: Quick Inserts & Controls */}
-          <div className="flex items-center justify-between gap-3 mb-3.5 shrink-0 min-h-[28px]">
+          <div className="flex items-center justify-between gap-2 sm:gap-3 mb-3.5 shrink-0 min-h-[28px]">
             <div className="flex items-center gap-1.5 text-xs font-mono min-w-0 overflow-x-auto scrollbar-none">
               {!isSidebarOpen && (
                 <button
                   type="button"
                   onClick={() => setIsSidebarOpen(true)}
-                  className="p-1.5 mr-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-transparent hover:bg-[#e2e8f0] dark:hover:bg-slate-800 transition flex items-center justify-center border border-[var(--border)] dark:border-slate-700 shadow-sm shrink-0"
+                  className="p-1.5 mr-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-transparent hover:bg-[#e2e8f0] dark:hover:bg-slate-800 transition hidden md:flex items-center justify-center border border-[var(--border)] dark:border-slate-700 shadow-sm shrink-0"
                   title="Toggle Sidebar (⌘B)"
                   aria-label="Toggle Sidebar"
                 >
@@ -1621,7 +1689,7 @@ export default function HomePage() {
 
         {/* Slide-over History Drawer */}
         {showHistory && (
-          <div className="absolute inset-y-0 right-76 w-80 bg-[#121720]/95 backdrop-blur-md border-l border-slate-800 shadow-2xl z-30 p-4 sm:p-5 flex flex-col">
+          <div className="absolute inset-y-0 right-0 md:right-76 w-80 max-w-[85vw] bg-[#121720]/95 backdrop-blur-md border-l border-slate-800 shadow-2xl z-30 p-4 sm:p-5 flex flex-col">
             <div>
               <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b border-slate-800">
                 <div className="flex items-center gap-2">
@@ -1735,7 +1803,11 @@ export default function HomePage() {
         )}
 
         {/* Section C: Live Structured Receipt */}
-        <aside className="w-76 min-w-[290px] max-w-[315px] bg-[var(--surface)] p-3.5 sm:p-4 flex flex-col justify-between shrink-0 overflow-y-auto border-l border-[var(--border)] transition-colors duration-200">
+        <aside
+          className={`${
+            mobileTab === 'receipt' ? 'flex w-full' : 'hidden'
+          } md:flex md:w-76 md:min-w-[290px] md:max-w-[315px] bg-[var(--surface)] p-3.5 sm:p-4 flex-col justify-between shrink-0 overflow-y-auto border-l-0 md:border-l border-[var(--border)] transition-colors duration-200`}
+        >
           <div>
             <div className="flex justify-between items-center mb-3.5 pb-2.5 border-b border-[var(--border)]">
               <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider">

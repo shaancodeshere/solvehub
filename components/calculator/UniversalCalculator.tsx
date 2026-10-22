@@ -307,14 +307,14 @@ export default function UniversalCalculator({ calculatorId, initialParams, curre
     };
 
     return (
-        <div className="max-w-3xl w-full mx-auto p-4 sm:p-5 bg-[var(--surface)] dark:bg-[#161b22] rounded-2xl shadow-xl border border-[var(--border)] dark:border-slate-800 text-slate-800 dark:text-slate-100 font-mono transition-colors overflow-hidden">
+        <div className="max-w-3xl w-full mx-auto p-3.5 sm:p-5 bg-[var(--surface)] dark:bg-[#161b22] rounded-2xl shadow-xl border border-[var(--border)] dark:border-slate-800 text-slate-800 dark:text-slate-100 font-mono transition-colors overflow-hidden">
             {/* Header */}
             <div className="mb-2 sm:mb-2.5">
                 <h1 className="text-xl font-bold font-mono tracking-tight text-slate-900 dark:text-white mb-0.5">{calculator.name}</h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-2.5 line-clamp-1 max-w-2xl leading-normal">{calculator.description}</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 min-w-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 min-w-0">
                 {/* Form Inputs */}
                 <div className="space-y-2 min-w-0">
                     <h2 className="text-[10px] font-mono tracking-wider mb-1.5 font-semibold uppercase text-slate-400 dark:text-slate-400">

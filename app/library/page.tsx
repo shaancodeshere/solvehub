@@ -53,8 +53,8 @@ export default function LibraryPage() {
     }, [debouncedQuery, selectedCategory]);
 
     return (
-        <main className="flex-1 min-w-0 h-full overflow-y-auto p-6 sm:p-8 font-sans transition-colors duration-200">
-            <div className="max-w-7xl mx-auto space-y-8">
+        <main className="flex-1 min-w-0 h-full overflow-y-auto p-4 sm:p-6 md:p-8 font-sans transition-colors duration-200">
+            <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
                 {/* Navigation Breadcrumbs */}
                 <div className="flex items-center gap-2">
                     <SidebarExpandButton />
