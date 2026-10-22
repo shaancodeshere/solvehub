@@ -29,6 +29,21 @@ interface HistoryItem {
   itemCount: number;
   calculatorOutput?: any;
 }
+
+interface AiSolverResult {
+  isSolvable: boolean;
+  problemType?: string;
+  title: string;
+  answer: string;
+  steps: string;
+  matchedCalculatorSlug?: string | null;
+  matchedCalculatorCategory?: string | null;
+  error?: string;
+}
+
+// In-Memory Client Cache (0ms instant response for previously queried questions)
+const clientSolveCache = new Map<string, AiSolverResult>();
+
 const DEFAULT_CANVAS_TEXT = `ticket 450`;
 
 const BENCHMARK_RATES: Record<string, { rateFromUSD: number; symbol: string; label: string }> = {
@@ -139,6 +154,11 @@ export default function HomePage() {
     secondaryMetrics?: { label: string; value: string | number; prefix?: string; suffix?: string }[];
     script?: string;
   } | null>(null);
+
+  // AI Hybrid Solver Tier 2 State
+  const [aiResult, setAiResult] = useState<AiSolverResult | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   // Active Tab and Canvas Code derivation
   const activeTab = useMemo(() => {
@@ -371,6 +391,132 @@ export default function HomePage() {
     return canvasReceipt.variables.length + (canvasReceipt.financingItems ? canvasReceipt.financingItems.length : 0);
   }, [canvasReceipt]);
 
+  // Natural Language & Word Problem Detection for AI Hybrid Solver
+  const isNaturalLanguageQuestion = useMemo(() => {
+    const trimmed = canvasCode.trim();
+    if (!trimmed) return false;
+
+    const lower = trimmed.toLowerCase();
+    const words = trimmed.split(/\s+/).filter(Boolean);
+
+    // Explicit question mark indicator
+    const hasQuestionMark = lower.includes('?');
+
+    // Key mathematical & word problem keywords
+    const triggerKeywords = [
+      'find',
+      'which',
+      'what',
+      'how',
+      'why',
+      'sequence',
+      'pattern',
+      'increased by',
+      'decreased by',
+      'bottles',
+      'bottle',
+      'budget',
+      'predict',
+      'outlier',
+      'odd one out',
+      'next number',
+      'solve',
+      'algebra',
+      'equation',
+      'permutation',
+      'probability',
+      'tare weight',
+      'age gap',
+    ];
+
+    const hasTriggerKeyword = triggerKeywords.some((kw) => {
+      if (kw.includes(' ')) {
+        return lower.includes(kw);
+      }
+      const regex = new RegExp(`\\b${kw}\\b`, 'i');
+      return regex.test(lower);
+    });
+
+    // When text has >5 words and yields no valid ledger numbers
+    const isWordyWithoutLedger = words.length > 5 && !hasReceiptItems;
+
+    return hasQuestionMark || hasTriggerKeyword || isWordyWithoutLedger;
+  }, [canvasCode, hasReceiptItems]);
+
+  // Hybrid AI Solver Orchestration (debounced 200ms with AbortController & 0ms client-side instant cache)
+  useEffect(() => {
+    if (!isNaturalLanguageQuestion) {
+      setIsAiLoading(false);
+      setAiResult(null);
+      setAiError(null);
+      return;
+    }
+
+    const query = canvasCode.trim();
+    if (!query) return;
+
+    const normalizedKey = query.toLowerCase();
+    const cachedResult = clientSolveCache.get(normalizedKey);
+    if (cachedResult) {
+      setAiResult(cachedResult);
+      setAiError(null);
+      setIsAiLoading(false);
+      return;
+    }
+
+    setIsAiLoading(true);
+    setAiError(null);
+
+    const controller = new AbortController();
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/solve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query }),
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          const errPayload = await res.json().catch(() => ({}));
+          setAiResult({
+            isSolvable: false,
+            title: errPayload.title || "Solver Notice",
+            answer: errPayload.answer || "Could not evaluate",
+            steps: errPayload.steps || errPayload.error || "The service is temporarily unavailable. Please retry in a moment.",
+            error: errPayload.error || "SERVICE_NOTICE",
+          });
+          setIsAiLoading(false);
+          return;
+        }
+
+        const data: AiSolverResult = await res.json();
+        setAiResult(data);
+        if (data && !data.error) {
+          clientSolveCache.set(normalizedKey, data);
+        }
+        setIsAiLoading(false);
+      } catch (err: any) {
+        if (err.name === 'AbortError') return; // Clean abort, do not log error or change state
+        console.warn("Solve request notice:", err);
+        setAiResult({
+          isSolvable: false,
+          title: "Solver Notice",
+          answer: "Could not evaluate",
+          steps: "The service is temporarily unavailable. Please retry in a moment.",
+          error: "SERVICE_NOTICE",
+        });
+        setIsAiLoading(false);
+      }
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [canvasCode, isNaturalLanguageQuestion]);
+
   // Converted amount calculation for hero result card
   const convertedHeroAmount = useMemo(() => {
     if (isCalculatorOutputActive && calculatorOutput?.primaryOutput) {
@@ -441,10 +587,11 @@ export default function HomePage() {
 
   // Core Save to History
   const saveToHistory = (customTitle?: string) => {
-    if (!canvasCode.trim() || !hasReceiptItems) return;
+    if (!canvasCode.trim() || (!hasReceiptItems && !aiResult)) return;
 
     // Derive intelligent default title if none provided
     const fallbackTitle =
+      aiResult?.title ||
       canvasReceipt.variables.find((v) => v.note)?.note ||
       canvasReceipt.variables[0]?.name ||
       canvasReceipt.financingItems?.[0]?.name ||
@@ -1600,7 +1747,62 @@ export default function HomePage() {
             </div>
 
             {/* Top Hero Output Display */}
-            {isCalculatorOutputActive && calculatorOutput?.primaryOutput ? (
+            {isAiLoading ? (
+              <div className="mb-4 py-2.5 px-3.5 rounded-xl border bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40 flex flex-col justify-center gap-1 relative shadow-md animate-pulse">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-mono uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 font-semibold truncate">
+                    AI Quantitative Solver
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 font-semibold">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    Solving...
+                  </span>
+                </div>
+                <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-slate-400 dark:text-slate-300">
+                  Solving...
+                </div>
+              </div>
+            ) : aiResult ? (
+              <div
+                className={`mb-4 py-2.5 px-3.5 rounded-xl border flex flex-col justify-center gap-1 relative shadow-md ${
+                  aiResult.error === 'RATE_LIMIT'
+                    ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-500/30 dark:border-amber-500/40'
+                    : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span
+                    className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate ${
+                      aiResult.error === 'RATE_LIMIT'
+                        ? 'text-amber-700 dark:text-amber-400'
+                        : 'text-emerald-700 dark:text-emerald-400'
+                    }`}
+                  >
+                    {aiResult.title || 'AI Quantitative Solution'}
+                  </span>
+                  {aiResult.problemType && (
+                    <span
+                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                        aiResult.error === 'RATE_LIMIT'
+                          ? 'text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-950/60 border-amber-500/30'
+                          : 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/30'
+                      }`}
+                    >
+                      {aiResult.problemType}
+                    </span>
+                  )}
+                </div>
+                <div
+                  className={`text-xl sm:text-2xl font-bold font-mono tracking-tight break-all ${
+                    aiResult.error === 'RATE_LIMIT'
+                      ? 'text-amber-600 dark:text-amber-300 text-lg sm:text-xl'
+                      : 'text-slate-900 dark:text-white'
+                  }`}
+                >
+                  {aiResult.answer}
+                </div>
+              </div>
+            ) : isCalculatorOutputActive && calculatorOutput?.primaryOutput ? (
               <div className="mb-4 py-2.5 px-3.5 rounded-xl border bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40 flex flex-col justify-center gap-1 relative shadow-md">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[10px] font-mono uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 font-semibold truncate">
@@ -1732,12 +1934,73 @@ export default function HomePage() {
                 <span className="text-[10px] font-mono tracking-wider text-slate-500">Auto-Reordered</span>
               </div>
 
-              {!hasReceiptItems ? (
+              {isAiLoading && !hasReceiptItems ? (
+                <div className="py-4 px-3 text-center border border-dashed border-emerald-500/30 dark:border-emerald-500/40 rounded-lg bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 text-xs font-mono animate-pulse">
+                  Analyzing problem and calculating step-by-step deduction...
+                </div>
+              ) : !hasReceiptItems && !aiResult ? (
                 <div className="p-4 text-center border border-dashed border-slate-800 rounded-lg text-slate-500 text-xs">
                   Type items in Section B (e.g. ticket 450).
                 </div>
               ) : (
-                canvasReceipt.variables.map((v) => {
+                <>
+                  {aiResult && (
+                    <div
+                      className={`py-2.5 px-3 rounded-lg border transition shadow-sm mb-2 flex flex-col gap-1.5 ${
+                        aiResult.error === 'RATE_LIMIT'
+                          ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-500/40 dark:border-amber-500/50'
+                          : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/40 dark:border-emerald-500/50'
+                      }`}
+                    >
+                      <div className="flex justify-between items-center gap-2">
+                        <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                          <span
+                            className={`text-xs font-mono font-bold leading-tight truncate ${
+                              aiResult.error === 'RATE_LIMIT'
+                                ? 'text-amber-600 dark:text-amber-400'
+                                : 'text-emerald-600 dark:text-emerald-400'
+                            }`}
+                          >
+                            {aiResult.title}
+                          </span>
+                          {aiResult.matchedCalculatorSlug && (
+                            <Link
+                              href={`/${aiResult.matchedCalculatorCategory || 'finance-business'}/${aiResult.matchedCalculatorSlug}?currency=${encodeURIComponent(
+                                displayCurrency
+                              )}`}
+                              title="Open Full Calculator"
+                              aria-label="Open Full Calculator"
+                              className="inline-flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/60 px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-emerald-500/30 hover:border-emerald-500/60"
+                            >
+                              ↗
+                            </Link>
+                          )}
+                        </div>
+                        <span
+                          className={`font-mono shrink-0 whitespace-nowrap text-right text-xs font-bold ${
+                            aiResult.error === 'RATE_LIMIT'
+                              ? 'text-amber-600 dark:text-amber-300'
+                              : 'text-slate-900 dark:text-white'
+                          }`}
+                        >
+                          {aiResult.answer}
+                        </span>
+                      </div>
+                      {aiResult.steps && (
+                        <div
+                          className={`text-xs font-mono whitespace-pre-line leading-relaxed pt-1.5 border-t ${
+                            aiResult.error === 'RATE_LIMIT'
+                              ? 'text-amber-700/90 dark:text-amber-300/80 border-amber-500/20'
+                              : 'text-slate-400 dark:text-slate-400 border-emerald-500/20'
+                          }`}
+                        >
+                          {aiResult.steps}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {canvasReceipt.variables.map((v) => {
                   const isDeduction = v.type === 'deduction';
                   const isTax = v.type === 'addition';
                   const isSummary = v.type === 'summary';
@@ -1883,8 +2146,9 @@ export default function HomePage() {
 
                     </div>
                   );
-                })
-              )}
+                })}
+              </>
+            )}
             </div>
 
             {/* Dedicated Financing Breakdown Card (Beneath Cart Total) */}
