@@ -7,6 +7,83 @@ import { allCalculators } from '@/lib/calculators';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useSidebar } from './AppShell';
 
+export function CanvasModeIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M 8 3.5 
+               H 16 
+               A 4.5 4.5 0 0 1 20.5 8 
+               C 20.5 10 18.5 11.2 17.5 12 
+               C 18.5 12.8 20.5 14 20.5 16 
+               A 4.5 4.5 0 0 1 16 20.5 
+               H 8 
+               A 4.5 4.5 0 0 1 3.5 16 
+               C 3.5 14 5.5 12.8 6.5 12 
+               C 5.5 11.2 3.5 10 3.5 8 
+               A 4.5 4.5 0 0 1 8 3.5 
+               Z" />
+    </svg>
+  );
+}
+
+export function LibraryModeIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M 12 6.3
+               A 4.9 4.9 0 1 1 17.7 12
+               A 4.9 4.9 0 1 1 12 17.7
+               A 4.9 4.9 0 1 1 6.3 12
+               A 4.9 4.9 0 1 1 12 6.3
+               Z" />
+    </svg>
+  );
+}
+
+export function ShortcutsPaperclipIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ overflow: "visible" }}
+    >
+      <g transform="rotate(-23 12 12)">
+        {/* Slender, realistic paperclip path */}
+        <path d="M 8.5 13.5
+                 L 8.5 7
+                 A 3.5 3.5 0 0 1 15.5 7
+                 L 15.5 17
+                 A 4.5 4.5 0 0 1 6.5 17
+                 L 6.5 5
+                 A 5.5 5.5 0 0 1 17.5 5
+                 L 17.5 14" />
+      </g>
+    </svg>
+  );
+}
+
+export const ShortcutsBulbIcon = ShortcutsPaperclipIcon;
+
 export default function AppSidebar() {
   const pathname = usePathname();
   const {
@@ -31,13 +108,13 @@ export default function AppSidebar() {
           - Desktop (>1024px): Full calibrated 240px sidebar (w-60)
          ────────────────────────────────────────────────────────── */}
       <aside
-        className={`border-r border-[var(--border)] bg-[var(--surface)] flex-col justify-between shrink-0 select-none hidden md:flex transition-all duration-200 ease-in-out ${
+        className={`border-r border-[var(--border)] bg-[var(--surface)] flex flex-col justify-between shrink-0 select-none hidden md:flex transition-all duration-200 ease-in-out ${
           isSidebarOpen
-            ? 'md:w-16 md:min-w-[64px] md:p-2.5 md:pb-4 lg:w-60 lg:min-w-[240px] lg:p-5 lg:pb-6 opacity-100'
+            ? 'md:w-16 md:min-w-[64px] lg:w-60 lg:min-w-[240px] opacity-100'
             : 'w-0 min-w-0 p-0 overflow-hidden border-none opacity-0'
         }`}
       >
-        <div className="w-full min-w-0">
+        <div className="w-full min-w-0 p-2.5 pb-2 lg:p-5 lg:pb-3 flex-1 overflow-y-auto">
           {/* Brand Header */}
           <div className="flex items-center justify-between gap-2 mb-6 md:mb-5 lg:mb-6">
             <Link
@@ -50,9 +127,6 @@ export default function AppSidebar() {
               </span>
               <span className="font-bold tracking-wider text-xl text-slate-900 dark:text-white font-mono hidden lg:inline">
                 SolveHub
-              </span>
-              <span className="text-xs text-slate-500 font-mono hidden lg:inline">
-                v1.0
               </span>
             </Link>
             <button
@@ -87,11 +161,7 @@ export default function AppSidebar() {
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect width="18" height="18" x="3" y="3" rx="2" />
-                      <path d="M3 9h18" />
-                      <path d="M9 21V9" />
-                    </svg>
+                    <CanvasModeIcon className="w-4 h-4 shrink-0" />
                     <span className="hidden lg:inline truncate">Canvas</span>
                   </div>
                   {isCanvas && (
@@ -110,11 +180,7 @@ export default function AppSidebar() {
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-                      <path d="M6 6h10" />
-                      <path d="M6 10h10" />
-                    </svg>
+                    <LibraryModeIcon className="w-4 h-4 shrink-0" />
                     <span className="hidden lg:inline truncate">Library</span>
                   </div>
                   <span className="text-[11px] bg-[var(--surface-subtle)] dark:bg-slate-900 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded-md border border-[var(--border)] dark:border-slate-700 font-mono hidden lg:inline-block shrink-0">
@@ -150,40 +216,42 @@ export default function AppSidebar() {
         </div>
 
         {/* Footer Meta */}
-        <div className="w-full pt-3 lg:pt-4 border-t border-[var(--border)] flex flex-col items-center lg:items-stretch gap-2.5 lg:gap-3">
-          <div className="flex items-center justify-center lg:justify-between w-full">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold hidden lg:inline">
-              Theme
-            </span>
-            <ThemeToggle />
+        <div className="w-full shrink-0 pb-3 px-2 lg:px-4 flex flex-col">
+          {/* Inset Divider Line */}
+          <div className="w-full h-px bg-slate-300 dark:bg-slate-800 mb-3" />
+
+          {/* Desktop (>1024px): Combined Single Horizontal Row */}
+          <div className="hidden lg:flex items-center gap-2 h-9 mb-2.5 w-full">
+            <button
+              type="button"
+              onClick={() => setIsShortcutsModalOpen(true)}
+              className="flex-1 h-9 px-3.5 flex items-center justify-center gap-2 rounded-xl bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 font-mono text-[11px] font-medium tracking-tight whitespace-nowrap shadow-sm active:scale-[0.98] transition-all cursor-pointer"
+              title="Keyboard Shortcuts"
+            >
+              <ShortcutsPaperclipIcon className="w-4 h-4 text-[#334155] dark:text-slate-300 shrink-0" />
+              <span>Shortcuts</span>
+            </button>
+            <div className="w-px h-5 bg-slate-300 dark:bg-slate-800 select-none shrink-0" />
+            <ThemeToggle className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 shadow-sm transition-all active:scale-95 cursor-pointer" />
           </div>
 
-          {/* Shortcuts Trigger Button */}
-          <button
-            type="button"
-            onClick={() => setIsShortcutsModalOpen(true)}
-            className="w-full px-2.5 py-2 rounded-lg text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-900/80 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 transition flex items-center justify-center lg:justify-start gap-2 group shadow-sm"
-            title="View Keyboard Shortcuts"
-          >
-            <svg
-              className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition shrink-0"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
+          {/* Collapsed Tablet Rail (768px - 1024px): Stacked Icon Column */}
+          <div className="flex lg:hidden flex-col items-center gap-2 mb-2.5 w-full">
+            <button
+              type="button"
+              onClick={() => setIsShortcutsModalOpen(true)}
+              className="h-9 w-9 rounded-xl flex items-center justify-center bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 shadow-sm transition-all active:scale-95 cursor-pointer"
+              title="Keyboard Shortcuts"
+              aria-label="Keyboard Shortcuts"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 18v1m0 0a2 2 0 01-2 2h4a2 2 0 01-2-2m-4-6a6 6 0 118 0c0 1.5-1 2.5-1.5 3.5H9.5C9 14.5 8 13.5 8 12z"
-              />
-            </svg>
-            <span className="hidden lg:inline">Shortcuts</span>
-          </button>
+              <ShortcutsPaperclipIcon className="w-4 h-4 text-[#334155] dark:text-slate-300 shrink-0" />
+            </button>
+            <ThemeToggle className="h-9 w-9 rounded-xl flex items-center justify-center bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 shadow-sm transition-all active:scale-95 cursor-pointer" />
+          </div>
 
-          <div className="text-xs text-slate-500 font-mono flex items-center justify-center lg:justify-start gap-2">
+          <div className="h-4 flex items-center justify-center lg:justify-start gap-2 text-[11px] font-mono text-slate-500">
             <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-            <span className="hidden lg:inline truncate">Canonical Ledger Active</span>
+            <span className="hidden lg:inline truncate leading-none">Canonical Ledger Active</span>
           </div>
         </div>
       </aside>
@@ -218,7 +286,6 @@ export default function AppSidebar() {
                   <span className="font-bold tracking-wider text-xl text-slate-900 dark:text-white font-mono">
                     SolveHub
                   </span>
-                  <span className="text-xs text-slate-500 font-mono">v1.0</span>
                 </Link>
 
                 <button
@@ -251,11 +318,7 @@ export default function AppSidebar() {
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect width="18" height="18" x="3" y="3" rx="2" />
-                          <path d="M3 9h18" />
-                          <path d="M9 21V9" />
-                        </svg>
+                        <CanvasModeIcon className="w-4 h-4 shrink-0" />
                         <span>Canvas</span>
                       </div>
                       {isCanvas && (
@@ -273,11 +336,7 @@ export default function AppSidebar() {
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-                          <path d="M6 6h10" />
-                          <path d="M6 10h10" />
-                        </svg>
+                        <LibraryModeIcon className="w-4 h-4 shrink-0" />
                         <span>Library</span>
                       </div>
                       <span className="text-xs bg-[var(--surface-subtle)] text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-md border border-[var(--border)] font-mono">
@@ -315,31 +374,30 @@ export default function AppSidebar() {
             </div>
 
             {/* Footer */}
-            <div className="pt-4 border-t border-[var(--border)] flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold">
-                  Theme
-                </span>
-                <ThemeToggle />
+            <div className="shrink-0 pb-3 px-4 flex flex-col">
+              {/* Inset Divider Line */}
+              <div className="w-full h-px bg-slate-300 dark:bg-slate-800 mb-3" />
+
+              <div className="flex items-center gap-2 h-9 mb-2.5 w-full">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileDrawerOpen(false);
+                    setIsShortcutsModalOpen(true);
+                  }}
+                  className="flex-1 h-9 px-3.5 flex items-center justify-center gap-2 rounded-xl bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 font-mono text-[11px] font-medium tracking-tight whitespace-nowrap shadow-sm active:scale-[0.98] transition-all cursor-pointer"
+                  title="Keyboard Shortcuts"
+                >
+                  <ShortcutsPaperclipIcon className="w-4 h-4 text-[#334155] dark:text-slate-300 shrink-0" />
+                  <span>Shortcuts</span>
+                </button>
+                <div className="w-px h-5 bg-slate-300 dark:bg-slate-800 select-none shrink-0" />
+                <ThemeToggle className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 shadow-sm transition-all active:scale-95 cursor-pointer" />
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileDrawerOpen(false);
-                  setIsShortcutsModalOpen(true);
-                }}
-                className="w-full text-left px-3 py-2 rounded-xl text-xs font-mono bg-[var(--surface-subtle)] text-slate-700 dark:text-slate-300 border border-[var(--border)] transition flex items-center gap-2 shadow-sm"
-              >
-                <svg className="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v1m0 0a2 2 0 01-2 2h4a2 2 0 01-2-2m-4-6a6 6 0 118 0c0 1.5-1 2.5-1.5 3.5H9.5C9 14.5 8 13.5 8 12z" />
-                </svg>
-                <span>Keyboard Shortcuts</span>
-              </button>
-
-              <div className="text-xs text-slate-500 font-mono flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span>Canonical Ledger Active</span>
+              <div className="h-4 flex items-center gap-2 text-[11px] font-mono text-slate-500">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                <span className="leading-none">Canonical Ledger Active</span>
               </div>
             </div>
           </div>

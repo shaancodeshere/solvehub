@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { masterCategories } from '@/lib/categories';
 import { allCalculators } from '@/lib/calculators';
 import { executeCanvasScript, EvaluatedVariable, formatAmount } from '@/lib/canvasEngine';
@@ -12,6 +13,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import { CANVAS_TEMPLATES, CanvasTemplate } from '@/lib/canvasTemplates';
 import { useSidebar } from '@/components/layout/AppShell';
 import { matchesCalculator } from '@/lib/searchEngine';
+import { CanvasModeIcon, LibraryModeIcon } from '@/components/layout/AppSidebar';
 
 export interface CanvasTab {
   id: string;
@@ -93,6 +95,7 @@ function formatConvertedAmount(amount: number, targetCode: string): string {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const {
     isSidebarOpen,
     setIsSidebarOpen,
@@ -103,6 +106,13 @@ export default function HomePage() {
     setIsShortcutsModalOpen,
   } = useSidebar();
   const [activeMode, setActiveMode] = useState<'canvas' | 'library'>('canvas');
+  const mode = activeMode;
+  const setMode = useCallback((newMode: 'canvas' | 'library') => {
+    setActiveMode(newMode);
+    if (newMode === 'library') {
+      router.push('/library');
+    }
+  }, [router]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
   const [mobileTab, setMobileTab] = useState<'canvas' | 'receipt'>('canvas');
@@ -115,14 +125,20 @@ export default function HomePage() {
   const [displayCurrency, setDisplayCurrency] = useState<string>('USD');
   const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
   const [showTemplatesMenu, setShowTemplatesMenu] = useState(false);
-  const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false);
+
+  // Contextual Templates Modal State
+  const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
+  const isTemplatesModalOpen = isTemplatesOpen;
+  const setIsTemplatesModalOpen = setIsTemplatesOpen;
 
   // Split bill input expansion state
   const [showSplitInput, setShowSplitInput] = useState(false);
   const [splitCount, setSplitCount] = useState<number>(3);
 
-  // History Drawer State
-  const [showHistory, setShowHistory] = useState(false);
+  // Calculation History Centered Modal State
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const showHistory = isHistoryOpen;
+  const setShowHistory = setIsHistoryOpen;
   const [historyList, setHistoryList] = useState<HistoryItem[]>([]);
 
   // Clear Confirmation / Tagging Modal State
@@ -1099,158 +1115,178 @@ export default function HomePage() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      const isEditingText =
-        target &&
-        (target.tagName === 'INPUT' ||
-          target.tagName === 'TEXTAREA' ||
-          target.isContentEditable);
+
+      // ─── 0. ESCAPE: Close active modal ───────────────────────────
+      if (e.key === 'Escape') {
+        if (
+          isHistoryOpen ||
+          isShortcutsModalOpen ||
+          isTemplatesOpen ||
+          showClearModal ||
+          isCommandPaletteOpen ||
+          isDownloadModalOpen
+        ) {
+          e.preventDefault();
+          if (isHistoryOpen) setIsHistoryOpen(false);
+          if (isShortcutsModalOpen) setIsShortcutsModalOpen(false);
+          if (isTemplatesOpen) setIsTemplatesOpen(false);
+          if (showClearModal) setShowClearModal(false);
+          if (isCommandPaletteOpen) setIsCommandPaletteOpen(false);
+          if (isDownloadModalOpen) setIsDownloadModalOpen(false);
+          return;
+        }
+      }
 
       const isModifierKey = e.metaKey || e.ctrlKey;
       const isAltKey = e.altKey;
 
-      // ─── 1. MODIFIER COMBINATIONS (Cmd / Ctrl) ─────────────
+      // ─── 1. MODIFIER COMBINATIONS (Cmd / Ctrl - Active Even When Typing) ───
+      if (isModifierKey && !isAltKey) {
+        const key = e.key.toLowerCase();
 
-      // Cmd + B / Ctrl + B: Toggle Sidebar
-      if (isModifierKey && !isAltKey && e.key.toLowerCase() === 'b') {
-        e.preventDefault();
-        setIsSidebarOpen((prev) => !prev);
-        return;
-      }
-
-      // Cmd + N / Ctrl + N: Create New "Untitled Sheet"
-      if (isModifierKey && !isAltKey && e.key.toLowerCase() === 'n') {
-        e.preventDefault();
-        if (activeMode !== 'canvas') {
-          setActiveMode('canvas');
-        }
-        handleNewTab();
-        return;
-      }
-
-      // Cmd + ] / Ctrl + ]: Next Canvas Sheet
-      if (isModifierKey && !isAltKey && (e.key === ']' || e.key === '}')) {
-        e.preventDefault();
-        setTabs((prevTabs) => {
-          if (prevTabs.length <= 1) return prevTabs;
-          const currentIndex = prevTabs.findIndex((t) => t.id === activeTabId);
-          const nextIndex = (currentIndex + 1) % prevTabs.length;
-          const nextTab = prevTabs[nextIndex];
-          if (nextTab) {
-            setActiveTabId(nextTab.id);
-          }
-          return prevTabs;
-        });
-        return;
-      }
-
-      // Cmd + [ / Ctrl + [: Previous Canvas Sheet
-      if (isModifierKey && !isAltKey && (e.key === '[' || e.key === '{')) {
-        e.preventDefault();
-        setTabs((prevTabs) => {
-          if (prevTabs.length <= 1) return prevTabs;
-          const currentIndex = prevTabs.findIndex((t) => t.id === activeTabId);
-          const prevIndex = (currentIndex - 1 + prevTabs.length) % prevTabs.length;
-          const prevTab = prevTabs[prevIndex];
-          if (prevTab) {
-            setActiveTabId(prevTab.id);
-          }
-          return prevTabs;
-        });
-        return;
-      }
-
-      // Cmd + K / Ctrl + K: Trigger Clear Sheet (only if canvas has content)
-      if (isModifierKey && !isAltKey && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        if (hasCanvasContent) {
-          handleClearClick();
-        }
-        return;
-      }
-
-      // Cmd + C / Ctrl + C: Copy Receipt (when canvas has items or selection is empty)
-      if (isModifierKey && !isAltKey && e.key.toLowerCase() === 'c') {
-        const selection = window.getSelection()?.toString();
-        // If user has highlighted text on the page, allow native copy
-        if (selection && selection.length > 0) {
+        // Cmd/Ctrl + B -> toggle sidebar collapse
+        if (key === 'b') {
+          e.preventDefault();
+          setIsSidebarOpen((prev) => !prev);
           return;
         }
-        // If no text is selected, copy receipt if content exists
-        if (hasReceiptItems || (isCalculatorOutputActive && calculatorOutput)) {
+
+        // Cmd/Ctrl + K -> trigger Clear Sheet confirmation
+        if (key === 'k') {
           e.preventDefault();
-          handleCopyReceipt();
+          handleClearClick();
+          return;
         }
-        return;
-      }
 
-      // Cmd + D / Ctrl + D: Open Download Format Modal (.txt or .csv picker)
-      if (isModifierKey && !isAltKey && e.key.toLowerCase() === 'd') {
-        e.preventDefault();
-        if (hasReceiptItems || (isCalculatorOutputActive && calculatorOutput)) {
+        // Cmd/Ctrl + U -> new sheet
+        if (key === 'u') {
+          e.preventDefault();
+          if (activeMode !== 'canvas') {
+            setActiveMode('canvas');
+          }
+          handleNewTab();
+          return;
+        }
+
+        // Cmd/Ctrl + ]: next canvas sheet
+        if (e.key === ']' || e.key === '}') {
+          e.preventDefault();
+          setTabs((prevTabs) => {
+            if (prevTabs.length <= 1) return prevTabs;
+            const currentIndex = prevTabs.findIndex((t) => t.id === activeTabId);
+            const nextIndex = (currentIndex + 1) % prevTabs.length;
+            const nextTab = prevTabs[nextIndex];
+            if (nextTab) {
+              setActiveTabId(nextTab.id);
+            }
+            return prevTabs;
+          });
+          return;
+        }
+
+        // Cmd/Ctrl + [: previous canvas sheet
+        if (e.key === '[' || e.key === '{') {
+          e.preventDefault();
+          setTabs((prevTabs) => {
+            if (prevTabs.length <= 1) return prevTabs;
+            const currentIndex = prevTabs.findIndex((t) => t.id === activeTabId);
+            const prevIndex = (currentIndex - 1 + prevTabs.length) % prevTabs.length;
+            const prevTab = prevTabs[prevIndex];
+            if (prevTab) {
+              setActiveTabId(prevTab.id);
+            }
+            return prevTabs;
+          });
+          return;
+        }
+
+        // Cmd/Ctrl + C (when target is receipt) -> copy formatted receipt
+        if (key === 'c') {
+          const selection = window.getSelection()?.toString();
+          if (selection && selection.length > 0) {
+            return; // Allow native copy for highlighted text
+          }
+          const isReceiptTarget = Boolean(
+            target?.closest('aside') ||
+            target?.closest('[data-receipt-panel]') ||
+            target?.id === 'receipt-panel'
+          );
+          const isTargetTyping = ['INPUT', 'TEXTAREA'].includes(target?.tagName || '');
+          if ((isReceiptTarget || !isTargetTyping) && (hasReceiptItems || (isCalculatorOutputActive && calculatorOutput))) {
+            e.preventDefault();
+            handleCopyReceipt();
+          }
+          return;
+        }
+
+        // Cmd/Ctrl + D -> download receipt (.txt / .csv)
+        if (key === 'd') {
+          e.preventDefault();
           setIsDownloadModalOpen(true);
+          return;
         }
+      }
+
+      // ─── 2. SINGLE LETTER SHORTCUTS (Strict Input Guards) ──────
+      const activeEl = document.activeElement;
+      const targetEl = e.target as HTMLElement | null;
+      const isTyping = Boolean(
+        (activeEl && (
+          activeEl.tagName === 'INPUT' ||
+          activeEl.tagName === 'TEXTAREA' ||
+          (activeEl as HTMLElement).isContentEditable
+        )) ||
+        (targetEl && (
+          targetEl.tagName === 'INPUT' ||
+          targetEl.tagName === 'TEXTAREA' ||
+          targetEl.isContentEditable
+        ))
+      );
+
+      if (isTyping || isModifierKey || isAltKey) {
         return;
       }
 
-      // ─── 2. SINGLE LETTER SHORTCUTS (Strict Input Guards) ──
-      // Single letter keys trigger ONLY when NOT typing in input, textarea, or contentEditable
-      if (isEditingText || isModifierKey || isAltKey) {
-        return;
-      }
-
-      // Do not trigger single letter shortcuts if any modal/dialog is active
-      const isAnyModalActive =
-        isCommandPaletteOpen ||
-        isTemplatesModalOpen ||
-        isShortcutsModalOpen ||
-        isDownloadModalOpen ||
-        showClearModal;
-
-      if (isAnyModalActive) {
-        return;
-      }
-
-      const key = e.key.toLowerCase();
-
-      // C -> Switch to Canvas Mode
-      if (key === 'c') {
+      // 'c' / 'C' -> setMode('canvas')
+      if (e.key === 'c' || e.key === 'C') {
         e.preventDefault();
-        setActiveMode('canvas');
+        setMode('canvas');
         return;
       }
 
-      // L -> Switch to Library Mode
-      if (key === 'l') {
+      // 'l' / 'L' -> setMode('library')
+      if (e.key === 'l' || e.key === 'L') {
         e.preventDefault();
-        setActiveMode('library');
+        setMode('library');
         return;
       }
 
-      // / -> Open Search Command Palette
+      // 'h' / 'H' -> toggle calculation history modal
+      if (e.key === 'h' || e.key === 'H') {
+        e.preventDefault();
+        setIsHistoryOpen((prev) => !prev);
+        return;
+      }
+
+      // 't' / 'T' -> toggle templates modal
+      if (e.key === 't' || e.key === 'T') {
+        e.preventDefault();
+        setIsTemplatesOpen((prev) => !prev);
+        return;
+      }
+
+      // '/' -> e.preventDefault(), focus search input
       if (e.key === '/') {
         e.preventDefault();
-        setIsCommandPaletteOpen(true);
-        return;
-      }
-
-      // H -> Toggle History Drawer
-      if (key === 'h') {
-        e.preventDefault();
-        setShowHistory((prev) => !prev);
-        return;
-      }
-
-      // T -> Open Templates Modal
-      if (key === 't') {
-        e.preventDefault();
-        setIsTemplatesModalOpen(true);
-        return;
-      }
-
-      // Escape -> Close History Drawer if open
-      if (e.key === 'Escape' && showHistory) {
-        e.preventDefault();
-        setShowHistory(false);
+        const searchInput = document.querySelector<HTMLInputElement>(
+          'input[type="search"], input[placeholder*="Search"], input[placeholder*="search"]'
+        );
+        if (searchInput && document.body.contains(searchInput)) {
+          searchInput.focus();
+          searchInput.select?.();
+        } else {
+          setIsCommandPaletteOpen(true);
+        }
         return;
       }
     };
@@ -1260,20 +1296,27 @@ export default function HomePage() {
   }, [
     activeTabId,
     activeMode,
-    hasCanvasContent,
-    canvasReceipt,
-    calculatorOutput,
-    showHistory,
-    isCommandPaletteOpen,
-    isTemplatesModalOpen,
+    isHistoryOpen,
+    isTemplatesOpen,
     isShortcutsModalOpen,
-    isDownloadModalOpen,
     showClearModal,
+    isCommandPaletteOpen,
+    isDownloadModalOpen,
+    hasReceiptItems,
+    isCalculatorOutputActive,
+    calculatorOutput,
     handleClearClick,
     handleCopyReceipt,
+    handleNewTab,
     setIsSidebarOpen,
     setIsCommandPaletteOpen,
-    setIsTemplatesModalOpen,
+    setIsShortcutsModalOpen,
+    setIsTemplatesOpen,
+    setIsHistoryOpen,
+    setShowClearModal,
+    setIsDownloadModalOpen,
+    setMode,
+    router,
   ]);
 
   return (
@@ -1384,13 +1427,14 @@ export default function HomePage() {
           <button
             type="button"
             onClick={() => setMobileTab('canvas')}
-            className={`px-3 py-1 rounded-md font-semibold transition ${
+            className={`px-3 py-1 rounded-md font-semibold transition flex items-center gap-1.5 ${
               mobileTab === 'canvas'
                 ? 'bg-[var(--surface)] dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm border border-[var(--border)] dark:border-slate-700'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            Canvas
+            <CanvasModeIcon className="w-3.5 h-3.5 shrink-0" />
+            <span>Canvas</span>
           </button>
           <button
             type="button"
@@ -1419,7 +1463,7 @@ export default function HomePage() {
         <section
           className={`${
             mobileTab === 'canvas' ? 'flex w-full' : 'hidden'
-          } md:flex flex-1 px-3.5 sm:px-6 pt-3 sm:pt-5 pb-4 sm:pb-6 overflow-hidden border-r-0 md:border-r border-[var(--border)] bg-[var(--background)] flex-col transition-colors duration-200`}
+          } md:flex flex-1 px-3.5 sm:px-6 pt-3 sm:pt-5 pb-3 overflow-hidden border-r-0 md:border-r border-[var(--border)] bg-[var(--background)] flex-col transition-colors duration-200`}
         >
           {/* Top Bar: Quick Inserts & Controls */}
           <div className="flex items-center justify-between gap-2 sm:gap-3 mb-3.5 shrink-0 min-h-[28px]">
@@ -1523,8 +1567,8 @@ export default function HomePage() {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
-                onClick={() => setShowHistory(!showHistory)}
-                className={`text-xs font-mono px-2.5 py-1 rounded-md border transition flex items-center gap-1.5 ${showHistory
+                onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+                className={`text-xs font-mono px-2.5 py-1 rounded-md border transition flex items-center gap-1.5 ${isHistoryOpen
                   ? 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/40 dark:border-emerald-500/50 text-emerald-600 dark:text-emerald-300'
                   : 'bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-[var(--border)] dark:border-slate-700'
                   }`}
@@ -1633,6 +1677,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleNewTab}
+                title="New Sheet (⌘U / Ctrl+U)"
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--surface-subtle)] dark:bg-slate-900/60 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-dashed border-[var(--border)] dark:border-slate-700 hover:border-emerald-500/50 transition text-[11px] font-mono shrink-0"
               >
                 <span className="text-emerald-500 dark:text-emerald-400 font-bold">+</span>
@@ -1673,142 +1718,21 @@ export default function HomePage() {
             />
           </div>
 
-          <div className="pt-2.5 text-xs font-mono text-slate-500 flex justify-between items-center shrink-0">
-            <span>Section B • Zero-Friction Input</span>
-            <span>Lines: {canvasCode.split('\n').length}</span>
+          <div className="h-4 flex items-center justify-between text-[11px] font-mono text-slate-500 shrink-0 mt-2.5">
+            <span className="leading-none">Section B • Zero-Friction Input</span>
+            <span className="leading-none">Lines: {canvasCode.split('\n').length}</span>
           </div>
         </section>
 
-        {/* Transparent Backdrop to Dismiss on Canvas Click */}
-        {showHistory && (
-          <div
-            className="absolute inset-0 z-20"
-            onClick={() => setShowHistory(false)}
-          />
-        )}
-
-        {/* Slide-over History Drawer */}
-        {showHistory && (
-          <div className="absolute inset-y-0 right-0 md:right-76 w-80 max-w-[85vw] bg-[#121720]/95 backdrop-blur-md border-l border-slate-800 shadow-2xl z-30 p-4 sm:p-5 flex flex-col">
-            <div>
-              <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider">
-                    Calculation History
-                  </span>
-                </div>
-                {/* Keyboard-styled ESC Close Button */}
-                <button
-                  type="button"
-                  onClick={() => setShowHistory(false)}
-                  className="group flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 transition text-xs font-mono"
-                >
-                  <kbd className="px-1.5 py-0.5 text-xs font-semibold bg-slate-800 border border-slate-600 rounded text-slate-400 group-hover:text-slate-200">
-                    esc
-                  </kbd>
-                  <span className="text-slate-400 group-hover:text-slate-200">Exit</span>
-                </button>
-              </div>
-
-              <div className="space-y-2.5 overflow-y-auto flex-1 pr-1">
-                {historyList.length === 0 ? (
-                  <div className="text-center text-slate-500 text-xs py-10 font-mono">
-                    No saved sheets yet.<br />Calculations save on Clear.
-                  </div>
-                ) : (
-                  historyList.map((item) => (
-                    <div
-                      key={item.id}
-                      onClick={() => restoreHistory(item)}
-                      className="p-3 bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/40 rounded-lg cursor-pointer transition group"
-                    >
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-mono text-slate-500">{item.timestamp}</span>
-                        <button
-                          type="button"
-                          onClick={(e) => deleteHistoryItem(item.id, e)}
-                          className="text-xs text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                      <div className="text-sm font-mono text-emerald-400 font-bold truncate">
-                        {item.totalDisplay}
-                      </div>
-                      <div className="mt-1.5" onClick={(e) => e.stopPropagation()}>
-                        {editingHistoryId === item.id ? (
-                          <div className="flex items-center gap-1.5">
-                            <input
-                              type="text"
-                              value={tempHistoryTag}
-                              onChange={(e) => setTempHistoryTag(e.target.value)}
-                              placeholder="add tag..."
-                              className="w-full bg-slate-950 border border-emerald-500/50 rounded-md px-2 py-0.5 text-xs font-mono text-white focus:outline-none"
-                              autoFocus
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleSaveHistoryTag(item.id);
-                                if (e.key === 'Escape') setEditingHistoryId(null);
-                              }}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleSaveHistoryTag(item.id)}
-                              className="text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-2 py-0.5 rounded font-mono font-semibold"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingHistoryId(item.id);
-                              setTempHistoryTag(item.title || '');
-                            }}
-                            className="group/tag flex items-center gap-1.5 text-xs font-mono text-left transition"
-                          >
-                            <svg
-                              className={`w-3 h-3 shrink-0 ${item.title ? 'text-emerald-400' : 'text-slate-500 group-hover/tag:text-slate-400'
-                                }`}
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
-                              />
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
-                            </svg>
-                            <span
-                              className={`truncate ${item.title
-                                ? 'text-white font-medium group-hover/tag:text-emerald-300'
-                                : 'text-slate-500 group-hover/tag:text-slate-300'
-                                }`}
-                            >
-                              {item.title || 'add tag'}
-                            </span>
-                            <span className="opacity-0 group-hover/tag:opacity-100 text-xs text-slate-400">✎</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Section C: Live Structured Receipt */}
         <aside
+          id="receipt-panel"
+          data-receipt-panel="true"
           className={`${
             mobileTab === 'receipt' ? 'flex w-full' : 'hidden'
-          } md:flex md:w-76 md:min-w-[290px] md:max-w-[315px] bg-[var(--surface)] p-3.5 sm:p-4 flex-col justify-between shrink-0 overflow-y-auto border-l-0 md:border-l border-[var(--border)] transition-colors duration-200`}
+          } md:flex md:w-76 md:min-w-[290px] md:max-w-[315px] bg-[var(--surface)] flex-col justify-between shrink-0 overflow-hidden border-l-0 md:border-l border-[var(--border)] transition-colors duration-200`}
         >
-          <div>
+          <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 min-h-0">
             <div className="flex justify-between items-center mb-3.5 pb-2.5 border-b border-[var(--border)]">
               <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider">
                 Live Receipt
@@ -2347,16 +2271,19 @@ export default function HomePage() {
           </div>
 
           {/* Bottom Action Footer */}
-          <div className="pt-3.5 border-t border-[var(--border)] dark:border-slate-800/80 space-y-2.5">
-            <div className="flex items-center gap-1.5">
-              {/* Copy Receipt Button with Reactive State */}
+          <div className="w-full shrink-0 pb-3 px-4 flex flex-col">
+            {/* Inset Divider Line */}
+            <div className="w-full h-px bg-slate-300 dark:bg-slate-800 mb-3" />
+
+            <div className="flex items-center gap-2 h-9 mb-2.5 w-full">
+              {/* Copy Button with Reactive State */}
               <button
                 type="button"
                 onClick={handleCopyReceipt}
                 disabled={!hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput)}
-                className={`flex-initial shrink-0 py-2 px-2 rounded-lg font-mono text-[11px] font-medium border transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] ${isCopied
+                className={`h-9 flex-initial shrink-0 px-3 rounded-xl font-mono text-[11px] font-medium tracking-tight border transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] ${isCopied
                   ? 'bg-emerald-950/80 border-emerald-500/80 text-emerald-300'
-                  : 'bg-[var(--surface-subtle)] hover:bg-slate-200/80 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-white border-[var(--border)] dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--surface-subtle)] disabled:hover:border-[var(--border)]'
+                  : 'bg-[#E4EAF1] hover:bg-[#D7E0EB] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-[#CBD5E1] dark:border-slate-700/80 text-[#334155] dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed'
                   }`}
                 title="Copy formatted markdown receipt to clipboard"
               >
@@ -2368,7 +2295,7 @@ export default function HomePage() {
                 ) : (
                   <>
                     <svg
-                      className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white shrink-0"
+                      className="w-3.5 h-3.5 text-[#334155] dark:text-slate-300 shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -2380,7 +2307,7 @@ export default function HomePage() {
                         d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="whitespace-nowrap">Copy Receipt</span>
+                    <span className="whitespace-nowrap">Copy</span>
                   </>
                 )}
               </button>
@@ -2390,11 +2317,11 @@ export default function HomePage() {
                 type="button"
                 onClick={() => setIsDownloadModalOpen(true)}
                 disabled={!hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput)}
-                className="flex-1 min-w-0 py-2 px-2.5 rounded-lg bg-[var(--surface-subtle)] hover:bg-slate-200/80 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-white font-mono text-[11px] font-medium border border-[var(--border)] dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[var(--surface-subtle)] disabled:hover:border-[var(--border)]"
+                className="h-9 flex-1 min-w-0 px-3 rounded-xl bg-[#E4EAF1] hover:bg-[#D7E0EB] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-[#334155] dark:text-slate-300 font-mono text-[11px] font-medium tracking-tight border border-[#CBD5E1] dark:border-slate-700/80 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Download Receipt (.txt / .csv) (⌘D)"
               >
                 <svg
-                  className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white shrink-0"
+                  className="w-3.5 h-3.5 text-[#334155] dark:text-slate-300 shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -2410,12 +2337,165 @@ export default function HomePage() {
               </button>
             </div>
 
-            <div className="text-[11px] font-mono text-slate-500 text-center">
-              Section C • Instant Calculation Ledger
+            <div className="h-4 flex items-center justify-center text-[11px] font-mono text-slate-500 text-center">
+              <span className="leading-none">Section C • Instant Calculation Ledger</span>
             </div>
           </div>
         </aside>
       </div>
+
+      {/* ──────────────────────────────────────────────────────────
+          CALCULATION HISTORY CENTERED MODAL
+         ────────────────────────────────────────────────────────── */}
+      {isHistoryOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Calculation History"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-150"
+          onClick={() => setIsHistoryOpen(false)}
+        >
+          <div
+            className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 text-slate-200 flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Layout */}
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+                  <svg
+                    className="w-4 h-4 text-emerald-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold font-mono text-white tracking-wide">
+                    Calculation History
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono">
+                    Saved sheet snapshots and totals
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsHistoryOpen(false)}
+                className="px-2.5 py-1 text-xs font-mono rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                aria-label="Close calculation history"
+              >
+                Esc
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-3 overflow-y-auto pr-1 flex-1">
+              {historyList.length === 0 ? (
+                <div className="text-center text-slate-400 text-xs py-10 font-mono">
+                  No saved sheets yet.<br />Calculations save on Clear.
+                </div>
+              ) : (
+                historyList.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => restoreHistory(item)}
+                    className="p-3.5 bg-slate-950/60 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl cursor-pointer transition group"
+                  >
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-xs font-mono text-slate-500">{item.timestamp}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-mono text-emerald-400 opacity-0 group-hover:opacity-100 transition">
+                          Restore
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => deleteHistoryItem(item.id, e)}
+                          className="text-xs text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition px-1.5 py-0.5 rounded hover:bg-rose-950/40"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-sm font-mono text-emerald-400 font-bold truncate">
+                      {item.totalDisplay}
+                    </div>
+                    <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                      {editingHistoryId === item.id ? (
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="text"
+                            value={tempHistoryTag}
+                            onChange={(e) => setTempHistoryTag(e.target.value)}
+                            placeholder="add tag..."
+                            className="w-full bg-slate-950 border border-emerald-500/50 rounded-md px-2 py-1 text-xs font-mono text-white focus:outline-none"
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleSaveHistoryTag(item.id);
+                              if (e.key === 'Escape') setEditingHistoryId(null);
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleSaveHistoryTag(item.id)}
+                            className="text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-md font-mono font-semibold transition shrink-0"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingHistoryId(item.id);
+                            setTempHistoryTag(item.title || '');
+                          }}
+                          className="group/tag flex items-center gap-1.5 text-xs font-mono text-left transition"
+                        >
+                          <svg
+                            className={`w-3.5 h-3.5 shrink-0 ${
+                              item.title ? 'text-emerald-400' : 'text-slate-500 group-hover/tag:text-slate-400'
+                            }`}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+                            />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+                          </svg>
+                          <span
+                            className={`truncate ${
+                              item.title
+                                ? 'text-white font-medium group-hover/tag:text-emerald-300'
+                                : 'text-slate-500 group-hover/tag:text-slate-300'
+                            }`}
+                          >
+                            {item.title || 'add tag'}
+                          </span>
+                          <span className="opacity-0 group-hover/tag:opacity-100 text-xs text-slate-400">✎</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Global Cmd + K Command Palette */}
       <CommandPalette

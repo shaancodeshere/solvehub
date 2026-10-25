@@ -69,19 +69,14 @@ export default function TemplatesModal({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] bg-[var(--surface)] dark:bg-slate-800 border border-[var(--border)] dark:border-slate-700 rounded text-slate-500 dark:text-slate-400">
-              ESC to close
-            </kbd>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 rounded-md hover:bg-[var(--surface)] dark:hover:bg-slate-800 transition"
-              aria-label="Close modal"
-            >
-              ✕
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-2.5 py-1 text-xs font-mono rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+            aria-label="Close templates modal"
+          >
+            Esc
+          </button>
         </div>
 
         {/* Card Grid */}

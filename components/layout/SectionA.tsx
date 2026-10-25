@@ -1,1 +1,1 @@
-export { default } from './AppSidebar';
+export { default, CanvasModeIcon, LibraryModeIcon, ShortcutsPaperclipIcon, ShortcutsBulbIcon } from './AppSidebar';

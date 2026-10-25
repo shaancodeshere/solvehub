@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { CanvasModeIcon, LibraryModeIcon } from '@/components/layout/AppSidebar';
 
 interface ShortcutsModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface ShortcutsModalProps {
 interface ShortcutItem {
   keys: string[];
   description: string;
+  icon?: React.ReactNode;
 }
 
 interface ShortcutGroup {
@@ -21,18 +23,26 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
   {
     title: 'Modes & Navigation',
     items: [
-      { keys: ['C'], description: 'Switch to Canvas Mode' },
-      { keys: ['L'], description: 'Switch to Library Mode' },
+      {
+        keys: ['C'],
+        description: 'Switch to Canvas Mode',
+        icon: <CanvasModeIcon className="w-3.5 h-3.5" />,
+      },
+      {
+        keys: ['L'],
+        description: 'Switch to Library Mode',
+        icon: <LibraryModeIcon className="w-3.5 h-3.5" />,
+      },
       { keys: ['/'], description: 'Search Calculators' },
       { keys: ['⌘', 'B'], description: 'Toggle Sidebar' },
-      { keys: ['H'], description: 'Toggle History Drawer' },
+      { keys: ['H'], description: 'Toggle Calculation History' },
       { keys: ['T'], description: 'Open Templates Modal' },
     ],
   },
   {
     title: 'Canvas & Sheets',
     items: [
-      { keys: ['⌘', 'N'], description: 'New Untitled Sheet' },
+      { keys: ['⌘', 'U'], description: 'New Sheet' },
       { keys: ['⌘', ']'], description: 'Next Canvas Sheet' },
       { keys: ['⌘', '['], description: 'Previous Canvas Sheet' },
       { keys: ['⌘', 'K'], description: 'Clear Sheet (when active)' },
@@ -48,6 +58,14 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
 ];
 
 export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps) {
+  const [isMac, setIsMac] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+      const isApple = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent || navigator.platform || '');
+      setIsMac(isApple);
+    }
+  }, []);
   // Close on Escape key
   useEffect(() => {
     if (!isOpen) return;
@@ -107,21 +125,14 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] bg-[var(--surface)] dark:bg-slate-800 border border-[var(--border)] dark:border-slate-700 rounded text-slate-500 dark:text-slate-400">
-              ESC to close
-            </kbd>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 rounded-md hover:bg-[var(--surface)] dark:hover:bg-slate-800 transition"
-              aria-label="Close modal"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-2.5 py-1 text-xs font-mono rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+            aria-label="Close modal"
+          >
+            Esc
+          </button>
         </div>
 
         {/* Shortcuts Content */}
@@ -139,18 +150,43 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
                     key={idx}
                     className="p-2.5 rounded-xl bg-[var(--surface-subtle)] dark:bg-slate-900/60 border border-[var(--border)] dark:border-slate-800/80 flex items-center justify-between text-xs"
                   >
-                    <span className="text-slate-700 dark:text-slate-300 font-sans font-medium text-[12px] truncate pr-2">
-                      {item.description}
-                    </span>
+                    <div className="flex items-center gap-2 min-w-0 pr-2">
+                      {item.icon && (
+                        <span className="text-emerald-500 dark:text-emerald-400 shrink-0">
+                          {item.icon}
+                        </span>
+                      )}
+                      <span className="text-slate-700 dark:text-slate-300 font-sans font-medium text-[12px] truncate">
+                        {item.description}
+                      </span>
+                    </div>
                     <div className="flex items-center gap-1 shrink-0 font-mono">
-                      {item.keys.map((k, kIdx) => (
-                        <kbd
-                          key={kIdx}
-                          className="min-w-[24px] h-6 px-1.5 rounded bg-[var(--surface)] dark:bg-slate-800 border border-[var(--border)] dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold flex items-center justify-center shadow-sm"
-                        >
-                          {k}
-                        </kbd>
-                      ))}
+                      {item.keys.map((k, kIdx) => {
+                        const isCmd = k === '⌘' && isMac;
+                        const isCtrl = k === '⌘' && !isMac;
+                        const displayKey = k === '⌘' ? (isMac ? '⌘' : 'Ctrl') : k;
+
+                        return (
+                          <kbd
+                            key={kIdx}
+                            className="min-w-[24px] h-6 px-1.5 rounded bg-[var(--surface)] dark:bg-slate-800 border border-[var(--border)] dark:border-slate-700 text-slate-800 dark:text-slate-200 flex items-center justify-center shadow-sm"
+                          >
+                            {isCmd ? (
+                              <span className="text-[16px] leading-none font-medium select-none -translate-y-[0.5px]">
+                                ⌘
+                              </span>
+                            ) : isCtrl ? (
+                              <span className="text-[11px] leading-none font-semibold">
+                                Ctrl
+                              </span>
+                            ) : (
+                              <span className="text-xs leading-none font-semibold">
+                                {displayKey}
+                              </span>
+                            )}
+                          </kbd>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
