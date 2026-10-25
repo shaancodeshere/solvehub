@@ -1732,8 +1732,8 @@ export default function HomePage() {
             mobileTab === 'receipt' ? 'flex w-full' : 'hidden'
           } md:flex md:w-76 md:min-w-[290px] md:max-w-[315px] bg-[var(--surface)] flex-col justify-between shrink-0 overflow-hidden border-l-0 md:border-l border-[var(--border)] transition-colors duration-200`}
         >
-          <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 min-h-0">
-            <div className="flex justify-between items-center mb-3.5 pb-2.5 border-b border-[var(--border)]">
+          <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 md:pt-5 lg:pt-4 min-h-0">
+            <div className="flex justify-between items-center md:min-h-[28px] lg:min-h-0 mb-3.5 pb-2.5 border-b border-[var(--border)]">
               <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider">
                 Live Receipt
               </span>

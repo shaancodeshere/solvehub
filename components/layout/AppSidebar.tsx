@@ -114,9 +114,9 @@ export default function AppSidebar() {
             : 'w-0 min-w-0 p-0 overflow-hidden border-none opacity-0'
         }`}
       >
-        <div className="w-full min-w-0 p-2.5 pb-2 lg:p-5 lg:pb-3 flex-1 overflow-y-auto">
+        <div className="w-full min-w-0 px-2.5 pt-5 pb-2 lg:p-5 lg:pb-3 flex-1 overflow-y-auto">
           {/* Brand Header */}
-          <div className="flex items-center justify-between gap-2 mb-6 md:mb-5 lg:mb-6">
+          <div className="flex items-center justify-between gap-2 md:min-h-[28px] lg:min-h-0 mb-6 md:mb-5 lg:mb-6">
             <Link
               href="/"
               className="flex items-center gap-2 group mx-auto lg:mx-0"
