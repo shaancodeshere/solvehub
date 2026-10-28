@@ -2,13 +2,14 @@
 
 import React from 'react';
 import { useSidebar } from './AppShell';
+import { SidebarToggleIcon } from './AppSidebar';
 
 export default function SidebarExpandButton() {
   const { isSidebarOpen, setIsSidebarOpen, setIsMobileDrawerOpen } = useSidebar();
 
   return (
     <>
-      {/* Mobile Menu Hamburger (<768px) */}
+      {/* Mobile Menu Sidebar Toggle (<768px) */}
       <button
         type="button"
         onClick={() => setIsMobileDrawerOpen(true)}
@@ -16,11 +17,7 @@ export default function SidebarExpandButton() {
         title="Open Navigation Menu"
         aria-label="Open Navigation Menu"
       >
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="4" x2="20" y1="12" y2="12" />
-          <line x1="4" x2="20" y1="6" y2="6" />
-          <line x1="4" x2="20" y1="18" y2="18" />
-        </svg>
+        <SidebarToggleIcon className="w-4 h-4" />
       </button>
 
       {/* Desktop / Tablet Sidebar Expand Button (when collapsed) */}
@@ -32,10 +29,7 @@ export default function SidebarExpandButton() {
           title="Expand Sidebar (⌘B)"
           aria-label="Expand Sidebar"
         >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect width="18" height="18" x="3" y="3" rx="2" />
-            <path d="M9 3v18" />
-          </svg>
+          <SidebarToggleIcon className="w-3.5 h-3.5" />
         </button>
       )}
     </>

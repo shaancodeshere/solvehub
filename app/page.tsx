@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { masterCategories } from '@/lib/categories';
@@ -13,7 +14,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import { CANVAS_TEMPLATES, CanvasTemplate } from '@/lib/canvasTemplates';
 import { useSidebar } from '@/components/layout/AppShell';
 import { matchesCalculator } from '@/lib/searchEngine';
-import { CanvasModeIcon, LibraryModeIcon } from '@/components/layout/AppSidebar';
+import { CanvasModeIcon, LibraryModeIcon, SidebarToggleIcon } from '@/components/layout/AppSidebar';
 
 export interface CanvasTab {
   id: string;
@@ -1406,17 +1407,17 @@ export default function HomePage() {
             title="Open Navigation Menu"
             aria-label="Open Navigation Menu"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="4" x2="20" y1="12" y2="12" />
-              <line x1="4" x2="20" y1="6" y2="6" />
-              <line x1="4" x2="20" y1="18" y2="18" />
-            </svg>
+            <SidebarToggleIcon className="w-4 h-4" />
           </button>
-          <div className="flex items-center gap-1.5 font-mono">
-            <span className="bg-emerald-500 text-slate-950 font-bold px-1.5 py-0.5 rounded text-xs">
-              S
-            </span>
-            <span className="font-bold text-sm text-slate-900 dark:text-white">
+          <div className="flex items-center gap-2">
+            <Image
+              src="/logo-mark.svg"
+              alt="SolveHub Logo"
+              width={20}
+              height={20}
+              className="w-5 h-5 shrink-0"
+            />
+            <span className="font-bold text-sm text-slate-900 dark:text-white font-mono">
               SolveHub
             </span>
           </div>
@@ -1468,21 +1469,6 @@ export default function HomePage() {
           {/* Top Bar: Quick Inserts & Controls */}
           <div className="flex items-center justify-between gap-2 sm:gap-3 mb-3.5 shrink-0 min-h-[28px]">
             <div className="flex items-center gap-1.5 text-xs font-mono min-w-0 overflow-x-auto scrollbar-none">
-              {!isSidebarOpen && (
-                <button
-                  type="button"
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="p-1.5 mr-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-transparent hover:bg-[#e2e8f0] dark:hover:bg-slate-800 transition hidden md:flex items-center justify-center border border-[var(--border)] dark:border-slate-700 shadow-sm shrink-0"
-                  title="Toggle Sidebar (⌘B)"
-                  aria-label="Toggle Sidebar"
-                >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect width="18" height="18" x="3" y="3" rx="2" />
-                    <path d="M9 3v18" />
-                  </svg>
-                </button>
-              )}
-
               <span className="text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold shrink-0">
                 Quick Inserts:
               </span>
