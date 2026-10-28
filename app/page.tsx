@@ -15,6 +15,9 @@ import { CANVAS_TEMPLATES, CanvasTemplate } from '@/lib/canvasTemplates';
 import { useSidebar } from '@/components/layout/AppShell';
 import { matchesCalculator } from '@/lib/searchEngine';
 import { CanvasModeIcon, LibraryModeIcon, SidebarToggleIcon } from '@/components/layout/AppSidebar';
+import { ShareLinkIcon, HistoryHourglassIcon, ClearTrashIcon } from '@/components/icons/ToolbarIcons';
+import LZString from 'lz-string';
+import { encodeCanvasState, decodeCanvasState } from '@/lib/urlSnapshot';
 
 export interface CanvasTab {
   id: string;
@@ -174,6 +177,27 @@ export default function HomePage() {
     script?: string;
   } | null>(null);
 
+  // Share URL Snapshot State
+  const [isSharedCopied, setIsSharedCopied] = useState(false);
+  const shareTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const showToast = (message: string) => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToastMessage(message);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastMessage(null);
+    }, 2200);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    };
+  }, []);
+
   // AI Hybrid Solver Tier 2 State
   const [aiResult, setAiResult] = useState<AiSolverResult | null>(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -186,9 +210,10 @@ export default function HomePage() {
 
   const canvasCode = activeTab ? activeTab.content : '';
   const canvasText = canvasCode;
-  const hasCanvasContent = canvasText.trim().length > 0;
+  const activeSheetText = canvasCode;
+  const hasCanvasContent = activeSheetText.trim().length > 0;
 
-  const setCanvasCode = (updater: string | ((prev: string) => string)) => {
+  const setActiveSheetText = (updater: string | ((prev: string) => string)) => {
     setTabs((prevTabs) => {
       const currentActiveId = activeTab?.id || prevTabs[0]?.id;
       return prevTabs.map((t) => {
@@ -200,32 +225,81 @@ export default function HomePage() {
       });
     });
   };
+  const setCanvasCode = setActiveSheetText;
 
-  // 1. Hydrate from LocalStorage on mount
+  // 1. Hydrate from URL Hash Snapshot (#c=...) or LocalStorage on mount
   useEffect(() => {
+    let hashDecompressed: string | null = null;
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash.startsWith('#c=')) {
+        const payload = hash.slice(3);
+        const decompressed = LZString.decompressFromEncodedURIComponent(payload);
+        if (decompressed) {
+          hashDecompressed = decompressed;
+        }
+      }
+    }
+
     try {
       const savedTabsData = localStorage.getItem('solvehub_canvas_tabs_v1');
-      if (savedTabsData) {
-        const parsed = JSON.parse(savedTabsData);
-        if (parsed && Array.isArray(parsed.tabs) && parsed.tabs.length > 0) {
-          setTabs(parsed.tabs);
-          if (parsed.activeTabId && parsed.tabs.some((t: CanvasTab) => t.id === parsed.activeTabId)) {
-            setActiveTabId(parsed.activeTabId);
+      if (hashDecompressed) {
+        // Hydrate active canvas with decoded snapshot
+        if (savedTabsData) {
+          const parsed = JSON.parse(savedTabsData);
+          if (parsed && Array.isArray(parsed.tabs) && parsed.tabs.length > 0) {
+            const activeId = parsed.activeTabId || parsed.tabs[0].id;
+            const updatedTabs = parsed.tabs.map((t: CanvasTab) =>
+              t.id === activeId ? { ...t, content: hashDecompressed! } : t
+            );
+            setTabs(updatedTabs);
+            setActiveTabId(activeId);
           } else {
-            setActiveTabId(parsed.tabs[0].id);
+            setTabs([
+              {
+                id: 'tab-1',
+                title: 'Shared Sheet',
+                content: hashDecompressed,
+                createdAt: Date.now(),
+              },
+            ]);
+            setActiveTabId('tab-1');
           }
-        }
-      } else {
-        const savedActive = localStorage.getItem('solvehub_active_canvas');
-        if (savedActive !== null) {
+        } else {
           setTabs([
             {
               id: 'tab-1',
-              title: 'Untitled Sheet',
-              content: savedActive,
+              title: 'Shared Sheet',
+              content: hashDecompressed,
               createdAt: Date.now(),
             },
           ]);
+          setActiveTabId('tab-1');
+        }
+        setActiveSheetText(hashDecompressed);
+      } else {
+        if (savedTabsData) {
+          const parsed = JSON.parse(savedTabsData);
+          if (parsed && Array.isArray(parsed.tabs) && parsed.tabs.length > 0) {
+            setTabs(parsed.tabs);
+            if (parsed.activeTabId && parsed.tabs.some((t: CanvasTab) => t.id === parsed.activeTabId)) {
+              setActiveTabId(parsed.activeTabId);
+            } else {
+              setActiveTabId(parsed.tabs[0].id);
+            }
+          }
+        } else {
+          const savedActive = localStorage.getItem('solvehub_active_canvas');
+          if (savedActive !== null) {
+            setTabs([
+              {
+                id: 'tab-1',
+                title: 'Untitled Sheet',
+                content: savedActive,
+                createdAt: Date.now(),
+              },
+            ]);
+          }
         }
       }
 
@@ -241,6 +315,24 @@ export default function HomePage() {
       // Ignore storage errors in restricted environments
     }
     setIsHydrated(true);
+  }, []);
+
+  // Listen for in-app hash updates (#c=...)
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (typeof window !== 'undefined') {
+        const hash = window.location.hash;
+        if (hash.startsWith('#c=')) {
+          const payload = hash.slice(3);
+          const decompressed = LZString.decompressFromEncodedURIComponent(payload);
+          if (decompressed) {
+            setActiveSheetText(decompressed);
+          }
+        }
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   // 2. Persist tabs array and activeTabId in localStorage ('solvehub_canvas_tabs_v1')
@@ -683,6 +775,43 @@ export default function HomePage() {
     setClearSheetTag('');
     setCanvasCode('');
     clearCalculatorOutputState();
+  };
+
+  // One-click Shareable URL Snapshot Handler (#c=...)
+  const handleShareClick = async () => {
+    if (!activeSheetText || !activeSheetText.trim()) return;
+
+    const compressed = LZString.compressToEncodedURIComponent(activeSheetText);
+    const shareUrl = `${window.location.origin}${window.location.pathname}#c=${compressed}`;
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        throw new Error('Clipboard API unavailable');
+      }
+    } catch {
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+
+    // Keep hash in address bar without causing router reload
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', `#c=${compressed}`);
+    }
+
+    setIsSharedCopied(true);
+    showToast('URL copied');
+    if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
+    shareTimeoutRef.current = setTimeout(() => {
+      setIsSharedCopied(false);
+    }, 2000);
   };
 
   const restoreHistory = (item: HistoryItem) => {
@@ -1549,33 +1678,78 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Controls: History & Clear */}
-            <div className="flex items-center gap-2 shrink-0">
+            {/* Controls: Share, History & Clear */}
+            <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+              <button
+                id="share-canvas-btn"
+                type="button"
+                disabled={!hasCanvasContent}
+                onClick={handleShareClick}
+                className={`text-xs font-mono p-1.5 md:px-2.5 md:py-1 rounded-md border transition flex items-center gap-1.5 shadow-sm group ${
+                  isSharedCopied
+                    ? 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 font-semibold'
+                    : hasCanvasContent
+                    ? 'cursor-pointer active:scale-95 bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-[var(--border)] dark:border-slate-700'
+                    : 'cursor-not-allowed opacity-40 bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-[var(--border)] dark:border-slate-800'
+                }`}
+                title={isSharedCopied ? 'Copied' : 'Share'}
+                aria-label="Share"
+              >
+                {isSharedCopied ? (
+                  <>
+                    <svg
+                      className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 animate-in zoom-in-75 duration-150"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span className="hidden md:inline">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <ShareLinkIcon className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition shrink-0" />
+                    <span className="hidden md:inline">Share</span>
+                  </>
+                )}
+              </button>
+
               <button
                 type="button"
                 onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-                className={`text-xs font-mono px-2.5 py-1 rounded-md border transition flex items-center gap-1.5 ${isHistoryOpen
+                className={`text-xs font-mono p-1.5 md:px-2.5 md:py-1 rounded-md border transition flex items-center gap-1.5 shadow-sm group ${isHistoryOpen
                   ? 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/40 dark:border-emerald-500/50 text-emerald-600 dark:text-emerald-300'
-                  : 'bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-[var(--border)] dark:border-slate-700'
+                  : 'bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-700'
                   }`}
+                title="History"
+                aria-label="History"
               >
-                <span>History</span>
+                <HistoryHourglassIcon className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white shrink-0" />
+                <span className="hidden md:inline">History</span>
                 {historyList.length > 0 && (
-                  <span className="text-xs bg-emerald-100 dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-300 dark:border-emerald-500/30">
+                  <span className="text-[10px] md:text-xs bg-emerald-100 dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-300 dark:border-emerald-500/30">
                     {historyList.length}
                   </span>
                 )}
               </button>
+
               <button
                 type="button"
                 disabled={!hasCanvasContent}
                 onClick={handleClearClick}
-                className={`text-xs font-mono px-2.5 py-1 rounded-md border transition ${hasCanvasContent
+                className={`text-xs font-mono p-1.5 md:px-2.5 md:py-1 rounded-md border transition flex items-center gap-1.5 shadow-sm group ${hasCanvasContent
                   ? 'cursor-pointer active:scale-95 bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-[var(--border)] dark:border-slate-700'
                   : 'cursor-not-allowed opacity-40 bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-[var(--border)] dark:border-slate-800'
                   }`}
+                title="Clear"
+                aria-label="Clear"
               >
-                Clear
+                <ClearTrashIcon className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white shrink-0" />
+                <span className="hidden md:inline">Clear</span>
               </button>
             </div>
           </div>
@@ -2276,7 +2450,7 @@ export default function HomePage() {
                 {isCopied ? (
                   <>
                     <span className="text-emerald-400 font-bold text-xs leading-none">✓</span>
-                    <span className="text-emerald-300 font-semibold whitespace-nowrap">Copied!</span>
+                    <span className="text-emerald-300 font-semibold whitespace-nowrap">Copied</span>
                   </>
                 ) : (
                   <>
@@ -2517,6 +2691,28 @@ export default function HomePage() {
         }}
         activeFormat={downloadFormat}
       />
+
+      {/* Floating Toast Feedback for Link Copied / Actions */}
+      {toastMessage && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900/95 dark:bg-slate-800/95 text-white shadow-2xl border border-slate-700/60 text-xs font-mono backdrop-blur-md animate-in fade-in slide-in-from-bottom-3 duration-200"
+        >
+          <svg
+            className="w-4 h-4 text-emerald-400 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span className="font-medium">{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }
