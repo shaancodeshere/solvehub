@@ -18,6 +18,9 @@ import { CanvasModeIcon, LibraryModeIcon, SidebarToggleIcon } from '@/components
 import { ShareLinkIcon, HistoryHourglassIcon, ClearTrashIcon } from '@/components/icons/ToolbarIcons';
 import LZString from 'lz-string';
 import { encodeCanvasState, decodeCanvasState } from '@/lib/urlSnapshot';
+import { toPng } from 'html-to-image';
+import { ExportReceiptCard } from '@/components/export/ExportReceiptCard';
+import { isTextReasoningOrError } from '@/lib/evaluator';
 
 export interface CanvasTab {
   id: string;
@@ -126,9 +129,14 @@ export default function HomePage() {
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [downloadFormat, setDownloadFormat] = useState<'txt' | 'csv'>('txt');
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [isDownloadDropdownOpen, setIsDownloadDropdownOpen] = useState(false);
+  const downloadDropdownRef = useRef<HTMLDivElement | null>(null);
   const [displayCurrency, setDisplayCurrency] = useState<string>('USD');
   const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
   const [showTemplatesMenu, setShowTemplatesMenu] = useState(false);
+  const [isExportingCard, setIsExportingCard] = useState(false);
+  const [isCardExported, setIsCardExported] = useState(false);
+  const exportCardRef = useRef<HTMLDivElement | null>(null);
 
   // Contextual Templates Modal State
   const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
@@ -495,11 +503,12 @@ export default function HomePage() {
   }, [canvasReceipt, isCalculatorOutputActive, calculatorOutput]);
 
   const hasReceiptItems = useMemo(() => {
-    return canvasReceipt.variables.length > 0 || Boolean(canvasReceipt.financingItems && canvasReceipt.financingItems.length > 0);
+    return canvasReceipt.variables.filter((v) => v.type !== 'summary').length > 0 || Boolean(canvasReceipt.financingItems && canvasReceipt.financingItems.length > 0);
   }, [canvasReceipt]);
 
   const totalReceiptItemCount = useMemo(() => {
-    return canvasReceipt.variables.length + (canvasReceipt.financingItems ? canvasReceipt.financingItems.length : 0);
+    const nonSummaryVars = canvasReceipt.breakdownItems || canvasReceipt.variables.filter((v) => v.type !== 'summary');
+    return nonSummaryVars.length + (canvasReceipt.financingItems ? canvasReceipt.financingItems.length : 0);
   }, [canvasReceipt]);
 
   // Natural Language & Word Problem Detection for AI Hybrid Solver
@@ -680,6 +689,29 @@ export default function HomePage() {
       return () => window.removeEventListener('click', handleOutsideClick);
     }
   }, [showCurrencyMenu, showTemplatesMenu]);
+
+  // Close download dropdown when clicking outside or pressing Escape
+  useEffect(() => {
+    if (!isDownloadDropdownOpen) return;
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (downloadDropdownRef.current && !downloadDropdownRef.current.contains(event.target as Node)) {
+        setIsDownloadDropdownOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDownloadDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDownloadDropdownOpen]);
 
 
   const searchResults = useMemo(() => {
@@ -916,7 +948,7 @@ export default function HomePage() {
   };
 
   const handleCopyReceipt = () => {
-    if (!hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput)) return;
+    if (!canvasCode.trim() && !hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput) && !aiResult) return;
 
     const sheetTitle = activeTab?.title || 'Canvas Sheet';
     const timestamp = new Date().toLocaleString([], {
@@ -1054,7 +1086,7 @@ export default function HomePage() {
   };
 
   const handleDownloadReceipt = (format: 'txt' | 'csv' = downloadFormat) => {
-    if (!hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput)) return;
+    if (!canvasCode.trim() && !hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput) && !aiResult) return;
 
     const sheetTitle = activeTab?.title || 'Canvas Sheet';
     const titleSlug = sheetTitle
@@ -1236,6 +1268,173 @@ export default function HomePage() {
       a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
+    }
+  };
+
+  // Export Receipt Card Items & Total calculation
+  const exportItems = useMemo(() => {
+    const rawText = canvasCode?.trim() || activeTab?.content?.trim() || '';
+
+    if (rawText) {
+      const parsed = rawText
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .map((line) => {
+          // 1. Match common patterns: "Label - ₹45,000", "Label: 45000", "Label = 45000", etc.
+          const match = line.match(
+            /^(.*?)\s*[-:=–—]\s*([₹$€£]?\s*[\d,]+(?:\.\d+)?.*)$/
+          );
+          if (match) {
+            const label = match[1].trim();
+            let value = match[2].trim();
+            const matchingVar = canvasReceipt.variables.find(
+              (v) => v.name.toLowerCase() === label.toLowerCase()
+            );
+            if (matchingVar && !/[₹$€£]/.test(value)) {
+              value = matchingVar.formattedValue;
+            }
+            return { label, value };
+          }
+
+          // 2. Fallback if no separator: check if line ends with a number/currency (e.g. "ticket 450", "rent $1,200")
+          const endMatch = line.match(
+            /^(.*?)\s+([₹$€£]?\s*[\d,]+(?:\.\d+)?)$/
+          );
+          if (endMatch) {
+            const label = endMatch[1].trim();
+            let value = endMatch[2].trim();
+            const matchingVar = canvasReceipt.variables.find(
+              (v) => v.name.toLowerCase() === label.toLowerCase()
+            );
+            if (matchingVar && !/[₹$€£]/.test(value)) {
+              value = matchingVar.formattedValue;
+            }
+            return { label, value };
+          }
+
+          // 3. Modifier / percentage lines: "tax 18%", "discount 10%", "vat 20%"
+          const pctMatch = line.match(/^(.*?)\s*[-:=–—]?\s*([+\-]?\s*\d+(?:\.\d+)?%)\s*$/i);
+          if (pctMatch) {
+            const rawLabel = pctMatch[1].trim();
+            const matchingVar = canvasReceipt.variables.find(
+              (v) =>
+                v.name.toLowerCase() === rawLabel.toLowerCase() ||
+                v.name.toLowerCase().includes(rawLabel.toLowerCase()) ||
+                (rawLabel.toLowerCase().includes('tax') && v.type === 'addition') ||
+                (rawLabel.toLowerCase().includes('discount') && v.type === 'deduction')
+            );
+            if (matchingVar) {
+              return { label: matchingVar.name, value: matchingVar.formattedValue };
+            }
+            return { label: rawLabel || line, value: pctMatch[2].trim() };
+          }
+
+          const matchingVar = canvasReceipt.variables.find(
+            (v) =>
+              v.name.toLowerCase() === line.toLowerCase() ||
+              (line.toLowerCase().includes('tax') && v.type === 'addition') ||
+              (line.toLowerCase().includes('discount') && v.type === 'deduction')
+          );
+          if (matchingVar) {
+            return { label: matchingVar.name, value: matchingVar.formattedValue };
+          }
+
+          return { label: line, value: '' };
+        });
+
+      if (parsed.length > 0) {
+        return parsed;
+      }
+    }
+
+    // Fallback: statement breakdown variables if raw canvas parsing was empty
+    const list: Array<{ label: string; value: string }> = [];
+
+    const nonSummaryVars = canvasReceipt.variables.filter(
+      (v) => v.type !== 'summary'
+    );
+    nonSummaryVars.forEach((v) => {
+      list.push({
+        label: v.name,
+        value: v.formattedValue,
+      });
+    });
+
+    if (canvasReceipt.financingItems && canvasReceipt.financingItems.length > 0) {
+      canvasReceipt.financingItems.forEach((f) => {
+        list.push({
+          label: f.name,
+          value: f.formattedValue,
+        });
+      });
+    }
+
+    if (list.length === 0 && isCalculatorOutputActive && calculatorOutput?.secondaryMetrics) {
+      calculatorOutput.secondaryMetrics.forEach((m: any) => {
+        list.push({
+          label: String(m.label || ''),
+          value: `${m.prefix || ''}${m.value}${m.suffix ? ` ${m.suffix}` : ''}`,
+        });
+      });
+    }
+
+    if (list.length === 0 && aiResult?.answer) {
+      list.push({
+        label: aiResult.title || 'Solution',
+        value: aiResult.answer,
+      });
+    }
+
+    return list;
+  }, [canvasCode, activeTab, canvasReceipt, isCalculatorOutputActive, calculatorOutput, aiResult]);
+
+  const exportTotalFormatted = useMemo(() => {
+    if (isCalculatorOutputActive && calculatorOutput?.primaryOutput?.value) {
+      return `${calculatorOutput.primaryOutput.prefix || ''}${calculatorOutput.primaryOutput.value}${calculatorOutput.primaryOutput.suffix || ''}`;
+    }
+    if (canvasReceipt.lastResult?.formattedValue) {
+      return canvasReceipt.lastResult.formattedValue;
+    }
+    if (aiResult?.answer) {
+      return aiResult.answer;
+    }
+    return '0';
+  }, [isCalculatorOutputActive, calculatorOutput, canvasReceipt, aiResult]);
+
+  const isActionsDisabled = useMemo(() => {
+    return !canvasCode.trim() && !hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput) && !aiResult;
+  }, [canvasCode, hasReceiptItems, isCalculatorOutputActive, calculatorOutput, aiResult]);
+
+  const handleExportCardPng = async () => {
+    if (!exportCardRef.current || isExportingCard) return;
+    if (!canvasCode.trim() && !hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput) && !aiResult) return;
+    setIsExportingCard(true);
+
+    try {
+      const sanitizedTitle = (activeTab?.title || 'sheet')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'sheet';
+      const timestamp = Date.now();
+      const filename = `solvehub-${sanitizedTitle}-${timestamp}.png`;
+
+      const dataUrl = await toPng(exportCardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+      });
+
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = dataUrl;
+      link.click();
+
+      setIsCardExported(true);
+      setTimeout(() => setIsCardExported(false), 2000);
+    } catch (err) {
+      console.error('Failed to export branded card PNG:', err);
+    } finally {
+      setIsExportingCard(false);
     }
   };
 
@@ -1920,8 +2119,8 @@ export default function HomePage() {
               </div>
             ) : aiResult ? (
               <div
-                className={`mb-4 py-2.5 px-3.5 rounded-xl border flex flex-col justify-center gap-1 relative shadow-md ${
-                  aiResult.error === 'RATE_LIMIT'
+                className={`mb-4 py-2.5 px-3.5 rounded-xl border flex flex-col justify-center gap-1 relative shadow-md transition-colors ${
+                  aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
                     ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-500/30 dark:border-amber-500/40'
                     : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40'
                 }`}
@@ -1929,7 +2128,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between gap-2">
                   <span
                     className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate ${
-                      aiResult.error === 'RATE_LIMIT'
+                      aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
                         ? 'text-amber-700 dark:text-amber-400'
                         : 'text-emerald-700 dark:text-emerald-400'
                     }`}
@@ -1939,7 +2138,7 @@ export default function HomePage() {
                   {aiResult.problemType && (
                     <span
                       className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
-                        aiResult.error === 'RATE_LIMIT'
+                        aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
                           ? 'text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-950/60 border-amber-500/30'
                           : 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/30'
                       }`}
@@ -1949,11 +2148,11 @@ export default function HomePage() {
                   )}
                 </div>
                 <div
-                  className={`text-xl sm:text-2xl font-bold font-mono tracking-tight break-all ${
-                    aiResult.error === 'RATE_LIMIT'
-                      ? 'text-amber-600 dark:text-amber-300 text-lg sm:text-xl'
-                      : 'text-slate-900 dark:text-white'
-                  }`}
+                  className={
+                    aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
+                      ? 'text-base md:text-lg font-medium text-amber-900 dark:text-amber-200/90 leading-relaxed break-words tracking-normal font-sans'
+                      : 'text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white font-mono break-words'
+                  }
                 >
                   {aiResult.answer}
                 </div>
@@ -2001,7 +2200,13 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight break-all text-slate-900 dark:text-white">
+                <div
+                  className={
+                    isTextReasoningOrError(calculatorOutput.primaryOutput.value)
+                      ? 'text-base md:text-lg font-medium text-amber-900 dark:text-amber-200/90 leading-relaxed break-words tracking-normal font-sans'
+                      : 'text-3xl md:text-4xl font-bold font-mono tracking-tight break-words text-slate-900 dark:text-white'
+                  }
+                >
                   {calculatorOutput.primaryOutput.prefix || ''}
                   {calculatorOutput.primaryOutput.value}
                   {calculatorOutput.primaryOutput.suffix || ''}
@@ -2018,12 +2223,18 @@ export default function HomePage() {
               <div
                 className={`mb-4 py-2.5 px-3.5 rounded-xl border transition-colors flex flex-col justify-center gap-1 relative shadow-md ${isHeroSplit
                   ? 'bg-purple-500/10 dark:bg-purple-950/40 border-purple-500/30 dark:border-purple-500/40'
-                  : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40'
+                  : isTextReasoningOrError(canvasReceipt.lastResult.formattedValue)
+                    ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-500/30 dark:border-amber-500/40'
+                    : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40'
                   }`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <span
-                    className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate ${isHeroSplit ? 'text-purple-700 dark:text-purple-300' : 'text-emerald-700 dark:text-emerald-400'
+                    className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate ${isHeroSplit
+                      ? 'text-purple-700 dark:text-purple-300'
+                      : isTextReasoningOrError(canvasReceipt.lastResult.formattedValue)
+                        ? 'text-amber-700 dark:text-amber-400'
+                        : 'text-emerald-700 dark:text-emerald-400'
                       }`}
                   >
                     {canvasReceipt.heroTitle || canvasReceipt.lastResult.name}
@@ -2066,8 +2277,13 @@ export default function HomePage() {
                 </div>
 
                 <div
-                  className={`text-xl sm:text-2xl font-bold font-mono tracking-tight break-all ${isHeroSplit ? 'text-purple-700 dark:text-purple-200' : 'text-slate-900 dark:text-white'
-                    }`}
+                  className={
+                    isTextReasoningOrError(canvasReceipt.lastResult.formattedValue)
+                      ? 'text-base md:text-lg font-medium text-amber-900 dark:text-amber-200/90 leading-relaxed break-words tracking-normal font-sans'
+                      : `text-3xl md:text-4xl font-bold font-mono tracking-tight break-words ${
+                          isHeroSplit ? 'text-purple-700 dark:text-purple-200' : 'text-slate-900 dark:text-white'
+                        }`
+                  }
                 >
                   {canvasReceipt.lastResult.formattedValue}
                 </div>
@@ -2103,18 +2319,18 @@ export default function HomePage() {
                   {aiResult && (
                     <div
                       className={`py-2.5 px-3 rounded-lg border transition shadow-sm mb-2 flex flex-col gap-1.5 ${
-                        aiResult.error === 'RATE_LIMIT'
+                        aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
                           ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-500/40 dark:border-amber-500/50'
                           : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/40 dark:border-emerald-500/50'
                       }`}
                     >
-                      <div className="flex justify-between items-center gap-2">
-                        <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex items-start gap-1.5 flex-1 min-w-0">
                           <span
-                            className={`text-xs font-mono font-bold leading-tight truncate ${
-                              aiResult.error === 'RATE_LIMIT'
-                                ? 'text-amber-600 dark:text-amber-400'
-                                : 'text-emerald-600 dark:text-emerald-400'
+                            className={`text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 break-words leading-snug ${
+                              aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
+                                ? 'text-amber-700 dark:text-amber-300'
+                                : ''
                             }`}
                           >
                             {aiResult.title}
@@ -2126,26 +2342,33 @@ export default function HomePage() {
                               )}`}
                               title="Open Full Calculator"
                               aria-label="Open Full Calculator"
-                              className="inline-flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/60 px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-emerald-500/30 hover:border-emerald-500/60"
+                              className="inline-flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/60 px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-emerald-500/30 hover:border-emerald-500/60 mt-0.5"
                             >
                               ↗
                             </Link>
                           )}
                         </div>
-                        <span
-                          className={`font-mono shrink-0 whitespace-nowrap text-right text-xs font-bold ${
-                            aiResult.error === 'RATE_LIMIT'
-                              ? 'text-amber-600 dark:text-amber-300'
-                              : 'text-slate-900 dark:text-white'
-                          }`}
-                        >
-                          {aiResult.answer}
-                        </span>
+                        {aiResult.answer && !isTextReasoningOrError(aiResult.answer) && (
+                          <span
+                            className={`font-mono shrink-0 whitespace-nowrap text-right text-xs font-bold pt-0.5 ${
+                              aiResult.error === 'RATE_LIMIT'
+                                ? 'text-amber-600 dark:text-amber-300'
+                                : 'text-slate-900 dark:text-white'
+                            }`}
+                          >
+                            {aiResult.answer}
+                          </span>
+                        )}
                       </div>
+                      {aiResult.answer && isTextReasoningOrError(aiResult.answer) && aiResult.answer !== aiResult.title && !aiResult.steps && (
+                        <div className="text-xs text-amber-700/90 dark:text-amber-200/90 leading-relaxed break-words font-sans pt-0.5">
+                          {aiResult.answer}
+                        </div>
+                      )}
                       {aiResult.steps && (
                         <div
                           className={`text-xs font-mono whitespace-pre-line leading-relaxed pt-1.5 border-t ${
-                            aiResult.error === 'RATE_LIMIT'
+                            aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
                               ? 'text-amber-700/90 dark:text-amber-300/80 border-amber-500/20'
                               : 'text-slate-400 dark:text-slate-400 border-emerald-500/20'
                           }`}
@@ -2431,20 +2654,24 @@ export default function HomePage() {
           </div>
 
           {/* Bottom Action Footer */}
-          <div className="w-full shrink-0 pb-3 px-4 flex flex-col">
+          <div className="w-full shrink-0 pb-4 pr-5 pl-4 flex flex-col relative z-20">
             {/* Inset Divider Line */}
             <div className="w-full h-px bg-slate-300 dark:bg-slate-800 mb-3" />
 
-            <div className="flex items-center gap-2 h-9 mb-2.5 w-full">
+            <div className="flex items-center gap-2 h-9 mb-2.5 w-full relative z-20">
               {/* Copy Button with Reactive State */}
               <button
                 type="button"
                 onClick={handleCopyReceipt}
-                disabled={!hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput)}
-                className={`h-9 flex-initial shrink-0 px-3 rounded-xl font-mono text-[11px] font-medium tracking-tight border transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] ${isCopied
+                disabled={isActionsDisabled}
+                className={`h-9 flex-1 min-w-0 px-2.5 rounded-xl font-mono text-[11px] font-medium tracking-tight border transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] ${
+                  isActionsDisabled
+                    ? 'opacity-50 cursor-not-allowed pointer-events-none'
+                    : 'cursor-pointer pointer-events-auto'
+                } ${isCopied
                   ? 'bg-emerald-950/80 border-emerald-500/80 text-emerald-300'
-                  : 'bg-[#E4EAF1] hover:bg-[#D7E0EB] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-[#CBD5E1] dark:border-slate-700/80 text-[#334155] dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed'
-                  }`}
+                  : 'bg-[#E4EAF1] hover:bg-[#D7E0EB] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-[#CBD5E1] dark:border-slate-700/80 text-[#334155] dark:text-slate-300'
+                }`}
                 title="Copy formatted markdown receipt to clipboard"
               >
                 {isCopied ? (
@@ -2472,29 +2699,62 @@ export default function HomePage() {
                 )}
               </button>
 
-              {/* Download Button */}
-              <button
-                type="button"
-                onClick={() => setIsDownloadModalOpen(true)}
-                disabled={!hasReceiptItems && (!isCalculatorOutputActive || !calculatorOutput)}
-                className="h-9 flex-1 min-w-0 px-3 rounded-xl bg-[#E4EAF1] hover:bg-[#D7E0EB] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-[#334155] dark:text-slate-300 font-mono text-[11px] font-medium tracking-tight border border-[#CBD5E1] dark:border-slate-700/80 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Download Receipt (.txt / .csv) (⌘D)"
-              >
-                <svg
-                  className="w-3.5 h-3.5 text-[#334155] dark:text-slate-300 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="1.75"
+              {/* Download Dropdown Popover */}
+              <div className="relative flex-1 min-w-0" ref={downloadDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsDownloadDropdownOpen((prev) => !prev)}
+                  disabled={isActionsDisabled}
+                  aria-expanded={isDownloadDropdownOpen}
+                  aria-haspopup="true"
+                  className={`h-9 w-full px-2.5 rounded-xl bg-[#E4EAF1] hover:bg-[#D7E0EB] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-[#334155] dark:text-slate-300 font-mono text-[11px] font-medium tracking-tight border border-[#CBD5E1] dark:border-slate-700/80 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] ${
+                    isActionsDisabled
+                      ? 'opacity-50 cursor-not-allowed pointer-events-none'
+                      : 'cursor-pointer pointer-events-auto'
+                  } ${isDownloadDropdownOpen ? 'ring-1 ring-emerald-500/50' : ''}`}
+                  title="Download / Export options"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
-                <span className="whitespace-nowrap">Download</span>
-              </button>
+                  <svg
+                    className="w-3.5 h-3.5 text-[#334155] dark:text-slate-300 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
+                  </svg>
+                  <span className="whitespace-nowrap truncate">Download</span>
+                  <span className={`text-[10px] transition-transform duration-150 ${isDownloadDropdownOpen ? 'rotate-180' : ''}`}>▾</span>
+                </button>
+
+                {isDownloadDropdownOpen && (
+                  <div className="absolute right-0 bottom-full mb-1.5 w-full min-w-[124px] rounded-lg border border-slate-700/80 bg-[#111722] p-1 shadow-2xl backdrop-blur-md z-50 animate-in fade-in zoom-in-95 duration-100">
+                    {(['CSV', 'TXT', 'PNG'] as const).map((format) => (
+                      <button
+                        key={format}
+                        type="button"
+                        onClick={() => {
+                          if (format === 'CSV') handleDownloadReceipt('csv');
+                          else if (format === 'TXT') handleDownloadReceipt('txt');
+                          else if (format === 'PNG') handleExportCardPng();
+                          setIsDownloadDropdownOpen(false);
+                        }}
+                        disabled={format === 'PNG' && isExportingCard}
+                        className="group flex w-full items-center gap-2 rounded px-2.5 py-1.5 text-left font-mono text-xs text-slate-300 transition-colors hover:bg-slate-800/80 hover:text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 shadow-[0_0_6px_rgba(52,211,153,0.9)] shrink-0" />
+                        <span className="font-medium tracking-wide">
+                          {format === 'PNG' && isExportingCard ? 'Exporting...' : format}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="h-4 flex items-center justify-center text-[11px] font-mono text-slate-500 text-center">
@@ -2713,6 +2973,19 @@ export default function HomePage() {
           <span className="font-medium">{toastMessage}</span>
         </div>
       )}
+
+      {/* Off-screen Export Receipt Card for PNG capture */}
+      <div className="fixed -left-[9999px] top-0 pointer-events-none -z-50" aria-hidden="true">
+        <ExportReceiptCard
+          ref={exportCardRef}
+          sheetTitle={activeTab?.title || 'Canvas Sheet'}
+          items={exportItems}
+          activeSheetText={canvasCode}
+          rawCanvasText={canvasCode}
+          formattedTotal={exportTotalFormatted}
+          totalFormatted={exportTotalFormatted}
+        />
+      </div>
     </div>
   );
 }

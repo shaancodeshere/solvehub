@@ -30,6 +30,7 @@ export interface EvaluatedVariable {
 
 export interface CanvasExecutionResult {
     variables: EvaluatedVariable[];
+    breakdownItems?: EvaluatedVariable[];
     financingItems: EvaluatedVariable[];
     lastResult: EvaluatedVariable | null;
     hasErrors: boolean;
@@ -694,9 +695,9 @@ export function evaluateLine(
     // 6. Deductions / Discounts
     const isParameterNameDiscount = /\b(discount\s*rate|discount\s*factor|payoff|takeoff)\b/i.test(lower);
     const isDiscount = !isParameterNameDiscount && (
-        /^(discount|coupon|rebate|markdown|less)\s*[:=]?\s*[\d.]+%?$/i.test(clean) ||
+        /^(discount|coupon|rebate|markdown|less)\s*[-:=–—]?\s*[\d.]+%?$/i.test(clean) ||
         /\b\d+(?:\.\d+)?%\s*(?:off|discount)\b/i.test(clean) ||
-        /^(?:less\s+)?(?:discount|coupon)\s+\d+/i.test(clean)
+        /^(?:less\s+)?(?:discount|coupon)\s*[-:=–—]?\s*\d+/i.test(clean)
     );
     if (isDiscount) {
         const pctMatch = lower.match(/(\d+(?:\.\d+)?)%/);
@@ -726,8 +727,8 @@ export function evaluateLine(
     // 7. Additions / Tax / Surcharge
     const isParameterNameTax = /\b(property\s*tax|income\s*tax|annual|interest|monthly|rate|apr)\b/i.test(lower);
     const isTax = !isParameterNameTax && (
-        /^(tax|sales\s*tax|vat|gst|tip|service\s*charge|gratuity)\s*[:=]?\s*[\d.]+%?$/i.test(clean) ||
-        /^(?:add\s+)?(?:tax|tip|fee)\s+\d+/i.test(clean)
+        /^(tax|sales\s*tax|vat|gst|tip|service\s*charge|gratuity)\s*[-:=–—]?\s*[\d.]+%?$/i.test(clean) ||
+        /^(?:add\s+)?(?:tax|tip|fee)\s*[-:=–—]?\s*\d+/i.test(clean)
     );
     if (isTax) {
         const pctMatch = lower.match(/(\d+(?:\.\d+)?)%/);
@@ -756,13 +757,18 @@ export function evaluateLine(
             };
         }
 
+        const calculatedTax = pctMatch && currentCartSubtotal > 0 ? (currentCartSubtotal * val) / 100 : val;
+        const formattedVal = pctMatch
+            ? (currentCartSubtotal > 0 ? `+${formatAmount(calculatedTax, lineCurrency || sessionCurrency)}` : '')
+            : `+${formatAmount(val, lineCurrency || sessionCurrency)}`;
+
         return {
             id: `tax-${lineNumber}`,
             lineNumber,
             name: pctMatch ? (isTip ? `Tip (${pctMatch[1]}%)` : `Tax (${pctMatch[1]}%)`) : (isTip ? 'Tip' : 'Tax'),
             expression: rawTrimmed,
-            value: val,
-            formattedValue: '',
+            value: pctMatch && currentCartSubtotal > 0 ? calculatedTax : val,
+            formattedValue: formattedVal,
             isError: false,
             type: 'addition',
             currency: sessionCurrency,
@@ -816,13 +822,77 @@ export function evaluateLine(
         }
     }
 
-    // 9. Standard Base Line Items: "ticket 450", "flight: 350 + 50", "rent: 1200"
-    const kvMatch = clean.match(/^([a-zA-Z0-9_\s()[\]/%-]+?)(?:\s*[:=]\s*|\s+)(.+)$/);
-    if (kvMatch) {
+    // 9. Standard Base Line Items: Prioritize splitting [Label] and [Numeric Value]
+    // Strip separating hyphens (-), en-dashes (–), em-dashes (—), colons (:), and equals signs (=)
+    const lineRegex = /^(.*?)(?:\s*[-:=–—]\s*|\s+)([₹$€£]?\s*[\d,]+(?:\.\d+)?)\s*$/;
+    const lineMatch = clean.match(lineRegex);
+
+    if (lineMatch && lineMatch[1].trim().length > 0) {
+        const label = lineMatch[1].trim();
+        const numClean = lineMatch[2].replace(/[$€£₹¥]/g, '').replace(/,/g, '').trim();
+        const val = parseFloat(numClean);
+        if (!isNaN(val)) {
+            const normKey = label.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_');
+            scope[normKey] = val;
+            if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(label)) {
+                scope[label] = val;
+            }
+            if (val > 0) scope['_lastAmount'] = val;
+
+            return {
+                id: `base-${lineNumber}`,
+                lineNumber,
+                name: label,
+                expression: lineMatch[2].trim(),
+                value: val,
+                formattedValue: formatAmount(val, lineCurrency || sessionCurrency),
+                isError: false,
+                type: 'base',
+                note,
+                currency: lineCurrency || sessionCurrency,
+            };
+        }
+    }
+
+    // 9b. Separator-based mathematical expression: "travel - 200 * 2", "flight: 350 + 50", "bonus = 1000 + 500"
+    const sepExprMatch = clean.match(/^(.*?)\s*[-:=–—]\s*(.+)$/);
+    if (sepExprMatch && sepExprMatch[1].trim().length > 0) {
+        const label = sepExprMatch[1].trim();
+        const expr = sepExprMatch[2].trim();
+        try {
+            const val = evaluateExpression(expr, scope);
+            const normKey = label.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_');
+            scope[normKey] = val;
+            if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(label)) {
+                scope[label] = val;
+            }
+            if (val > 0) scope['_lastAmount'] = val;
+            return {
+                id: `base-${lineNumber}`,
+                lineNumber,
+                name: label,
+                expression: expr,
+                value: val,
+                formattedValue: formatAmount(val, lineCurrency || sessionCurrency),
+                isError: false,
+                type: 'base',
+                note,
+                currency: lineCurrency || sessionCurrency,
+            };
+        } catch {
+            // Not a valid math expression, fall through
+        }
+    }
+
+    // 9c. Space-separated label and expression: "ticket (200 + 50)", "rent 1200"
+    const kvMatch = clean.match(/^([a-zA-Z0-9_\s()[\]/%]+?)\s+([0-9(].+)$/);
+    if (kvMatch && kvMatch[1].trim().length > 0) {
         const label = kvMatch[1].trim();
         const expr = kvMatch[2].trim();
         try {
             const val = evaluateExpression(expr, scope);
+            const normKey = label.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_');
+            scope[normKey] = val;
             if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(label)) {
                 scope[label] = val;
             }
@@ -1131,8 +1201,10 @@ export function executeCanvasScript(rawText: string, displayCurrency: string = '
             d.formattedValue = `-${formatAmount(d.value || 0, d.currency || sessionCurrency)}`;
             d.expression = `-${formatAmount(d.value || 0, d.currency || sessionCurrency)}`;
         } else {
-            const isPct = d.name.includes('%');
-            const actualVal = isPct ? (rawBaseSubtotal * (d.value || 0)) / 100 : (d.value || 0);
+            const pctMatch = d.name.match(/(\d+(?:\.\d+)?)%/);
+            const isPct = Boolean(pctMatch);
+            const rate = pctMatch ? parseFloat(pctMatch[1]) : (d.value || 0);
+            const actualVal = isPct ? (rawBaseSubtotal * rate) / 100 : (d.value || 0);
             evaluatedDiscountSum += actualVal;
             d.value = -actualVal;
             d.formattedValue = `-${formatAmount(actualVal, d.currency || sessionCurrency)}`;
@@ -1150,8 +1222,10 @@ export function executeCanvasScript(rawText: string, displayCurrency: string = '
             t.formattedValue = `+${formatAmount(t.value || 0, t.currency || sessionCurrency)}`;
             t.expression = `+${formatAmount(t.value || 0, t.currency || sessionCurrency)}`;
         } else {
-            const isPct = t.name.includes('%');
-            const actualVal = isPct ? (discountedSubtotal * (t.value || 0)) / 100 : (t.value || 0);
+            const pctMatch = t.name.match(/(\d+(?:\.\d+)?)%/);
+            const isPct = Boolean(pctMatch);
+            const rate = pctMatch ? parseFloat(pctMatch[1]) : (t.value || 0);
+            const actualVal = isPct ? (discountedSubtotal * rate) / 100 : (t.value || 0);
             evaluatedTaxSum += actualVal;
             t.value = actualVal;
             t.formattedValue = `+${formatAmount(actualVal, t.currency || sessionCurrency)}`;
@@ -1230,8 +1304,11 @@ export function executeCanvasScript(rawText: string, displayCurrency: string = '
         portfolioMetrics = [];
     }
 
+    const breakdownItems = orderedList.filter((v) => v.type !== 'summary');
+
     return {
         variables: orderedList,
+        breakdownItems,
         financingItems,
         lastResult: lastHighlight,
         hasErrors: orderedList.some((v) => v.isError) || financingItems.some((f) => f.isError),
