@@ -105,7 +105,7 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
     return (
       <div
         ref={ref}
-        className="w-[480px] min-h-[700px] h-auto p-8 relative flex flex-col justify-between bg-white text-neutral-900 select-none"
+        className="w-[480px] h-auto p-8 relative flex flex-col bg-white text-neutral-900 select-none"
         style={{
           backgroundColor: '#ffffff',
           color: '#171717',
@@ -114,7 +114,7 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
         }}
       >
         {/* Top Header Section */}
-        <div>
+        <div className="mb-6">
           {/* Centered SolveHub Brand Lockup */}
           <div className="flex items-center justify-center gap-3">
             <img
@@ -148,21 +148,18 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
           </div>
         </div>
 
-        {/* Ledger Body with Continuous Vertical Separator */}
-        <div className="relative border-t border-neutral-300 my-5 pt-4 flex-1 flex flex-col justify-between min-h-[220px]">
-          {/* Continuous vertical line spanning from top border down through statement total */}
+        {/* Horizontal Rule */}
+        <div className="w-full border-t border-neutral-300 mb-4" />
+
+        {/* Ledger Items Container */}
+        <div className="relative mb-6">
+          {/* Full vertical dividing line spanning only the rendered rows */}
           <div
-            className="absolute right-[130px] -top-2.5 bottom-0 w-[1px] bg-neutral-300 pointer-events-none"
+            className="absolute right-[130px] top-0 bottom-0 w-[1px] bg-neutral-300 pointer-events-none"
             style={{ backgroundColor: '#d4d4d4', width: '1px' }}
           />
 
-          <div className="grid grid-cols-[1fr_auto] gap-x-6 relative">
-            {/* Full vertical dividing line spanning from top border down to Statement Total */}
-            <div
-              className="absolute right-[130px] top-0 bottom-0 w-[1px] bg-neutral-300"
-              style={{ backgroundColor: '#d4d4d4', width: '1px' }}
-            />
-
+          <div className="grid grid-cols-[1fr_auto] gap-x-6">
             {/* Render all line items */}
             <div className="space-y-3.5 pr-6">
               {parsedItems.length === 0 ? (
@@ -198,40 +195,37 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
               )}
             </div>
           </div>
-
-          {/* Statement Total Anchor */}
-          <div className="grid grid-cols-[1fr_auto] gap-x-6 pt-6 mt-6 border-t border-neutral-200">
-            <span className="text-base font-bold text-neutral-900">
-              Statement Total
-            </span>
-            <span className="text-base font-bold text-neutral-950 font-mono text-right w-[130px]">
-              {formattedTotal}
-            </span>
-          </div>
         </div>
 
-        {/* Footer Anchor */}
-        <div className="w-full mt-8 flex flex-col justify-end">
-          {/* Bottom crowd artwork container */}
-          <div className="w-full relative overflow-hidden h-[140px] flex items-end">
-            <img
-              src="/export-crowd.png"
-              alt="SolveHub Community Crowd"
-              crossOrigin="anonymous"
-              className="w-full absolute bottom-0 left-0"
-            />
-          </div>
+        {/* Statement Total Anchor */}
+        <div className="grid grid-cols-[1fr_auto] gap-x-6 pt-4 border-t border-neutral-200 mb-8">
+          <span className="text-base font-bold text-neutral-900">
+            Statement Total
+          </span>
+          <span className="text-base font-bold text-neutral-950 font-mono text-right w-[130px]">
+            {formattedTotal}
+          </span>
+        </div>
 
-          {/* Hairline divider with centered badge */}
-          <div className="relative mt-4">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-neutral-300" />
-            </div>
-            <div className="relative flex justify-center">
-              <span className="bg-white px-2 text-[11px] font-mono text-neutral-600">
-                calculated on solvehub.app
-              </span>
-            </div>
+        {/* Bottom Crowd Artwork Container */}
+        <div className="w-full relative overflow-hidden h-[140px] flex items-end">
+          <img
+            src="/export-crowd.png"
+            alt="SolveHub Community Crowd"
+            crossOrigin="anonymous"
+            className="w-full absolute bottom-0 left-0"
+          />
+        </div>
+
+        {/* Hairline Divider with Centered Badge */}
+        <div className="relative mt-4">
+          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <div className="w-full border-t border-neutral-300" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-2 text-[11px] font-mono text-neutral-600">
+              calculated on solvehub.app
+            </span>
           </div>
         </div>
       </div>
