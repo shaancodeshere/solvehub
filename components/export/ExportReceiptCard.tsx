@@ -105,43 +105,43 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
     return (
       <div
         ref={ref}
-        className="w-[480px] h-auto p-8 relative flex flex-col bg-white text-neutral-900 select-none"
+        className="w-[480px] h-auto p-8 relative flex flex-col bg-[#D9D9D9] text-black select-none"
         style={{
-          backgroundColor: '#ffffff',
-          color: '#171717',
+          backgroundColor: '#D9D9D9',
+          color: '#000000',
           fontFamily:
             'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         }}
       >
         {/* Top Header Section */}
         <div className="mb-6">
-          {/* Centered SolveHub Brand Lockup */}
-          <div className="flex items-center justify-center gap-3">
+          {/* Top-Right SolveHub Brand Lockup */}
+          <div className="flex items-center justify-end gap-2 text-black font-mono">
+            <span className="text-xl font-bold tracking-tight text-black font-sans">
+              solvhub
+            </span>
+            <div
+              className="w-[1px] h-5 bg-black"
+              style={{ backgroundColor: '#000000', width: '1px' }}
+            />
             <img
               src="/logo-mark.svg"
               alt="SolveHub Logo"
-              className="w-7 h-7 object-contain"
+              className="w-5 h-5 object-contain brightness-0"
               crossOrigin="anonymous"
             />
-            <div
-              className="w-[1px] h-6 bg-neutral-300"
-              style={{ backgroundColor: '#d4d4d4', width: '1px' }}
-            />
-            <span className="text-2xl font-bold tracking-tight text-neutral-950 font-sans">
-              solvehub
-            </span>
           </div>
 
-          {/* Dynamic Date & Sheet Metadata */}
-          <div className="mt-8 space-y-2">
-            <div className="text-xs font-medium text-neutral-600">
+          {/* Dynamic Date & Sheet Metadata (Shifted Upwards) */}
+          <div className="mt-5 space-y-2">
+            <div className="text-xs font-bold text-black">
               {formattedDate}
             </div>
             <div>
-              <span className="text-xs text-neutral-500 font-medium block mb-0.5">
+              <span className="text-xs font-bold text-black block mb-0.5">
                 Sheet:
               </span>
-              <h2 className="text-base font-bold text-neutral-900 tracking-tight leading-tight">
+              <h2 className="text-base font-bold text-black tracking-tight leading-tight">
                 {sheetTitle || 'Untitled Calculation'}
               </h2>
             </div>
@@ -149,28 +149,28 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
         </div>
 
         {/* Horizontal Rule */}
-        <div className="w-full border-t border-neutral-300 mb-4" />
+        <div className="w-full border-t border-black mb-4" />
 
         {/* Ledger Items Container */}
         <div className="relative mb-6">
           {/* Full vertical dividing line spanning only the rendered rows */}
           <div
-            className="absolute right-[130px] top-0 bottom-0 w-[1px] bg-neutral-300 pointer-events-none"
-            style={{ backgroundColor: '#d4d4d4', width: '1px' }}
+            className="absolute right-[130px] top-0 bottom-0 w-[1px] bg-black pointer-events-none"
+            style={{ backgroundColor: '#000000', width: '1px' }}
           />
 
           <div className="grid grid-cols-[1fr_auto] gap-x-6">
             {/* Render all line items */}
             <div className="space-y-3.5 pr-6">
               {parsedItems.length === 0 ? (
-                <div className="text-sm font-medium text-neutral-400 italic">
+                <div className="text-sm font-medium text-neutral-600 italic">
                   No line items recorded
                 </div>
               ) : (
                 parsedItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="text-sm font-medium text-neutral-800 leading-snug break-words"
+                    className="text-sm font-bold text-black leading-snug break-words"
                   >
                     {item.label}
                   </div>
@@ -180,14 +180,14 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
 
             <div className="space-y-3.5 pl-6 text-right w-[130px]">
               {parsedItems.length === 0 ? (
-                <div className="text-sm font-semibold text-neutral-400 font-mono">
+                <div className="text-sm font-bold text-neutral-600 font-mono">
                   -
                 </div>
               ) : (
                 parsedItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="text-sm font-semibold text-neutral-900 font-mono"
+                    className="text-sm font-bold text-black font-mono"
                   >
                     {item.value}
                   </div>
@@ -198,11 +198,11 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
         </div>
 
         {/* Statement Total Anchor */}
-        <div className="grid grid-cols-[1fr_auto] gap-x-6 pt-4 border-t border-neutral-200 mb-8">
-          <span className="text-base font-bold text-neutral-900">
+        <div className="grid grid-cols-[1fr_auto] gap-x-6 pt-4 border-t border-neutral-400 mb-8">
+          <span className="text-base font-bold text-black">
             Statement Total
           </span>
-          <span className="text-base font-bold text-neutral-950 font-mono text-right w-[130px]">
+          <span className="text-base font-bold text-black font-mono text-right w-[130px]">
             {formattedTotal}
           </span>
         </div>
@@ -220,10 +220,13 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
         {/* Hairline Divider with Centered Badge */}
         <div className="relative mt-4">
           <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <div className="w-full border-t border-neutral-300" />
+            <div className="w-full border-t border-neutral-400" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-white px-2 text-[11px] font-mono text-neutral-600">
+            <span
+              className="bg-[#D9D9D9] px-2 text-[11px] font-mono text-neutral-800"
+              style={{ backgroundColor: '#D9D9D9', color: '#262626' }}
+            >
               calculated on solvehub.app
             </span>
           </div>
