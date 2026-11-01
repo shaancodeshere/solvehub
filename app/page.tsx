@@ -1280,7 +1280,20 @@ export default function HomePage() {
         .split('\n')
         .map((line) => line.trim())
         .filter((line) => line.length > 0)
-        .map((line) => {
+        .filter((line) => !/^(?:total|statement\s+total)\b/i.test(line))
+        .map((line, idx) => {
+          // 0. Standalone number or currency amount (e.g. "7,898", "7898", "₹7,898")
+          const standaloneNumMatch = line.match(/^([₹$€£]?\s*[\d,]+(?:\.\d+)?)\s*$/);
+          if (standaloneNumMatch) {
+            const matchedVar = canvasReceipt.variables.find(
+              (v) => v.name.toLowerCase() === `item ${idx + 1}`.toLowerCase()
+            );
+            return {
+              label: matchedVar?.name || `Item ${idx + 1}`,
+              value: matchedVar?.formattedValue || standaloneNumMatch[1].trim(),
+            };
+          }
+
           // 1. Match common patterns: "Label - ₹45,000", "Label: 45000", "Label = 45000", etc.
           const match = line.match(
             /^(.*?)\s*[-:=–—]\s*([₹$€£]?\s*[\d,]+(?:\.\d+)?.*)$/
@@ -1392,6 +1405,10 @@ export default function HomePage() {
   const exportTotalFormatted = useMemo(() => {
     if (isCalculatorOutputActive && calculatorOutput?.primaryOutput?.value) {
       return `${calculatorOutput.primaryOutput.prefix || ''}${calculatorOutput.primaryOutput.value}${calculatorOutput.primaryOutput.suffix || ''}`;
+    }
+    const summaryVar = canvasReceipt.variables.find((v) => v.type === 'summary');
+    if (summaryVar?.formattedValue) {
+      return summaryVar.formattedValue;
     }
     if (canvasReceipt.lastResult?.formattedValue) {
       return canvasReceipt.lastResult.formattedValue;
@@ -2097,7 +2114,7 @@ export default function HomePage() {
                 Live Receipt
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-[var(--border)] dark:border-slate-700 uppercase font-semibold">
-                {totalReceiptItemCount} Items
+                {totalReceiptItemCount} {totalReceiptItemCount === 1 ? 'ITEM' : 'ITEMS'}
               </span>
             </div>
 

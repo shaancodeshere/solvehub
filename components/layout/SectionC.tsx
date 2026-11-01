@@ -46,7 +46,18 @@ export default function SectionC() {
                 .split('\n')
                 .map((line) => line.trim())
                 .filter((line) => line.length > 0)
-                .map((line) => {
+                .filter((line) => !/^(?:total|statement\s+total)\b/i.test(line))
+                .map((line, idx) => {
+                    const standaloneNumMatch = line.match(/^([₹$€£]?\s*[\d,]+(?:\.\d+)?)\s*$/);
+                    if (standaloneNumMatch) {
+                        const matchedVar = receipt.variables.find(
+                            (v) => v.name.toLowerCase() === `item ${idx + 1}`.toLowerCase()
+                        );
+                        return {
+                            label: matchedVar?.name || `Item ${idx + 1}`,
+                            value: matchedVar?.formattedValue || standaloneNumMatch[1].trim(),
+                        };
+                    }
                     const match = line.match(
                         /^(.*?)\s*[-:=–—]\s*([₹$€£]?\s*[\d,]+(?:\.\d+)?.*)$/
                     );
@@ -246,6 +257,9 @@ export default function SectionC() {
                             Live
                         </span>
                     </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-neutral-900 text-neutral-400 border border-neutral-800 uppercase font-semibold">
+                        {receipt.variables.length} {receipt.variables.length === 1 ? 'ITEM' : 'ITEMS'}
+                    </span>
                 </div>
 
                 {/* Live Variable Tokens */}

@@ -1152,6 +1152,9 @@ export function executeCanvasScript(rawText: string, displayCurrency: string = '
             ? statementTotalAtTotal
             : (runningCartSubtotal > 0 ? runningCartSubtotal : getCurrentStatementTotal());
 
+        scope['total'] = availableSubtotal;
+        scope['subtotal'] = availableSubtotal;
+
         // Evaluate line using unified evaluator
         const item = evaluateLine(rawLine, scope, i, sessionCurrency, availableSubtotal);
         if (!item) {
@@ -1238,8 +1241,12 @@ export function executeCanvasScript(rawText: string, displayCurrency: string = '
     // Build Ordered Template: Base -> Discounts -> Taxes -> Total -> Split
     const orderedList: EvaluatedVariable[] = [...baseItems, ...discountItems, ...taxItems];
 
-    // Insert TOTAL Card
-    if (userWroteTotal || discountItems.length > 0 || taxItems.length > 0 || splitModifier || (baseItems.length > 0 && financingItems.length > 0)) {
+    // Insert TOTAL Card: auto-accumulate from line 2 without requiring explicit "total"
+    const hasMultipleItems = baseItems.length >= 2;
+    const hasModifiers = discountItems.length > 0 || taxItems.length > 0 || splitModifier !== null;
+    const shouldShowTotal = userWroteTotal || hasMultipleItems || hasModifiers || (baseItems.length > 0 && financingItems.length > 0);
+
+    if (shouldShowTotal) {
         orderedList.push({
             id: 'template-total',
             lineNumber: -1,
@@ -1276,9 +1283,23 @@ export function executeCanvasScript(rawText: string, displayCurrency: string = '
     if (splitModifier && splitResult) {
         heroTitle = splitResult.name.toUpperCase();
         lastHighlight = splitResult;
-    } else if (userWroteTotal || baseItems.length > 0) {
+    } else if (userWroteTotal || hasMultipleItems || hasModifiers) {
         heroTitle = 'STATEMENT TOTAL';
-        lastHighlight = orderedList.find((v) => v.type === 'summary') || (orderedList.length > 0 ? orderedList[orderedList.length - 1] : null);
+        lastHighlight = orderedList.find((v) => v.type === 'summary') || {
+            id: 'template-total',
+            lineNumber: -1,
+            name: 'Statement Total',
+            expression: `${baseItems.length} items consolidated`,
+            value: finalTotal,
+            formattedValue: formatAmount(finalTotal, sessionCurrency),
+            isError: false,
+            type: 'summary',
+            currency: sessionCurrency,
+        };
+    } else if (baseItems.length === 1) {
+        // Threshold Rule: 1 line displays that single item's amount
+        heroTitle = 'STATEMENT TOTAL';
+        lastHighlight = baseItems[0];
     } else if (financingItems.length > 0) {
         const firstFin = financingItems[0];
         heroTitle = (firstFin.name || 'MONTHLY EMI').toUpperCase();
@@ -1323,6 +1344,6 @@ export function executeCanvasScript(rawText: string, displayCurrency: string = '
         portfolioMetrics,
         customMetrics,
         hasInvestmentEngine,
-        hasTotal: userWroteTotal,
+        hasTotal: userWroteTotal || hasMultipleItems || hasModifiers,
     };
 }

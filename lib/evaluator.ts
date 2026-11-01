@@ -108,6 +108,24 @@ export function evaluateScratchpad(text: string): {
             continue;
         }
 
+        // 2b. Standalone number or currency amount (e.g. "7,898", "7898", "$7,898")
+        const standaloneNumMatch = trimmed.match(/^([₹$€£]?\s*[\d,]+(?:\.\d+)?)\s*$/);
+        if (standaloneNumMatch) {
+            const numClean = standaloneNumMatch[1].replace(/[$€£₹¥]/g, '').replace(/,/g, '').trim();
+            const evaluated = parseFloat(numClean);
+            if (!isNaN(evaluated)) {
+                const autoName = `Item ${variables.length + 1}`;
+                context[normalizeKey(autoName)] = evaluated;
+                variables.push({
+                    name: autoName,
+                    value: evaluated,
+                    rawExpression: standaloneNumMatch[1].trim(),
+                    formattedValue: formatCurrencyOrNumber(evaluated),
+                });
+                continue;
+            }
+        }
+
         // 3. Prioritized Line Sanitizer: [Label] and [Numeric Value]
         const lineRegex = /^(.*?)(?:\s*[-:=–—]\s*|\s+)([₹$€£]?\s*[\d,]+(?:\.\d+)?)\s*$/;
         const lineMatch = trimmed.match(lineRegex);

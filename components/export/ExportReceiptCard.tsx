@@ -50,10 +50,20 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
         const lines = effectiveCanvasText
           .split('\n')
           .map((line) => line.trim())
-          .filter((line) => line.length > 0);
+          .filter((line) => line.length > 0)
+          .filter((line) => !/^(?:total|statement\s+total)\b/i.test(line));
 
         if (lines.length > 0) {
-          return lines.map((line) => {
+          return lines.map((line, idx) => {
+            // Standalone number or currency amount (e.g. "7,898" or "₹7,898" or "7898")
+            const standaloneNumMatch = line.match(/^([₹$€£]?\s*[\d,]+(?:\.\d+)?)\s*$/);
+            if (standaloneNumMatch) {
+              const matchedItem = items?.find((it, i) => i === idx || (it.label || it.name || '').toLowerCase() === `item ${idx + 1}`.toLowerCase());
+              return {
+                label: matchedItem?.label || matchedItem?.name || `Item ${idx + 1}`,
+                value: matchedItem?.value || matchedItem?.formattedValue || standaloneNumMatch[1].trim(),
+              };
+            }
             // Match common patterns: "Label - ₹45,000", "Label: 45000", "Label = 45000", etc.
             const match = line.match(
               /^(.*?)\s*[-:=–—]\s*([₹$€£]?\s*[\d,]+(?:\.\d+)?.*)$/
@@ -93,14 +103,31 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
 
       // 2. If items prop is passed (e.g. from parsed lines or statement breakdown), use it
       if (items && items.length > 0) {
-        return items.map((item) => ({
-          label: item.label || item.name || '',
-          value: item.value || item.formattedValue || '',
-        }));
+        return items
+          .filter((item) => !/^(?:total|statement\s+total)\b/i.test(item.label || item.name || ''))
+          .map((item) => ({
+            label: item.label || item.name || '',
+            value: item.value || item.formattedValue || '',
+          }));
       }
 
       return [];
     }, [effectiveCanvasText, items]);
+
+    const finalDisplayTotal = useMemo(() => {
+      if (formattedTotal && formattedTotal !== '0') return formattedTotal;
+      // Fallback: auto-accumulate sum of parsed items
+      let sum = 0;
+      let symbol = '$';
+      for (const item of parsedItems) {
+        const valStr = String(item.value || '');
+        const symMatch = valStr.match(/^[₹$€£]/);
+        if (symMatch) symbol = symMatch[0];
+        const num = parseFloat(valStr.replace(/[^0-9.-]/g, ''));
+        if (!isNaN(num)) sum += num;
+      }
+      return sum > 0 ? `${symbol}${sum.toLocaleString('en-US', { maximumFractionDigits: 2 })}` : (formattedTotal || '0');
+    }, [formattedTotal, parsedItems]);
 
     return (
       <div
@@ -203,7 +230,7 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
             Statement Total
           </span>
           <span className="text-base font-bold text-black font-mono text-right w-[130px]">
-            {formattedTotal}
+            {finalDisplayTotal}
           </span>
         </div>
 
