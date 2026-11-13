@@ -23,7 +23,7 @@ export default function ThemeToggle({ className }: ThemeToggleProps) {
   };
 
   const defaultClasses =
-    'w-8 h-8 rounded-xl flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-white transition-all active:scale-95 cursor-pointer';
+    'w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] transition-all active:scale-95 cursor-pointer';
 
   return (
     <button

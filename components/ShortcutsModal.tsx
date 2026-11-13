@@ -103,23 +103,23 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl bg-[var(--surface)] dark:bg-[#161b22] border border-[var(--border)] dark:border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden font-mono flex flex-col max-h-[90vh] my-auto transition-colors animate-in zoom-in-95 duration-150"
+        className="w-full max-w-2xl bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-2xl overflow-hidden font-mono flex flex-col max-h-[90vh] my-auto transition-colors animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border)] dark:border-slate-800 flex items-center justify-between bg-[var(--surface-subtle)] dark:bg-slate-900/60">
+        <div className="px-6 py-4 border-b border-[var(--border)] flex items-center justify-between bg-[var(--surface-subtle)]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 dark:bg-emerald-950/80 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] flex items-center justify-center shrink-0">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75">
                 <rect x="2" y="4" width="20" height="16" rx="2.5" />
                 <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8" />
               </svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-wide">
+              <h2 className="text-base font-bold text-[var(--foreground)] tracking-wide">
                 Keyboard Shortcuts
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5">
+              <p className="text-xs text-[var(--muted)] font-sans mt-0.5">
                 Unified 1-key and 2-key controls for maximum speed
               </p>
             </div>
@@ -128,7 +128,7 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
           <button
             type="button"
             onClick={onClose}
-            className="px-2.5 py-1 text-xs font-mono rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+            className="px-2.5 py-1 text-xs font-mono rounded-lg bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition cursor-pointer"
             aria-label="Close modal"
           >
             Esc
@@ -139,8 +139,8 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
         <div className="p-6 overflow-y-auto space-y-6">
           {SHORTCUT_GROUPS.map((group) => (
             <div key={group.title} className="space-y-2.5">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-mono flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)] font-mono flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1c5f27] dark:bg-[#cff060]"></span>
                 <span>{group.title}</span>
               </h3>
 
@@ -148,15 +148,15 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
                 {group.items.map((item, idx) => (
                   <div
                     key={idx}
-                    className="p-2.5 rounded-xl bg-[var(--surface-subtle)] dark:bg-slate-900/60 border border-[var(--border)] dark:border-slate-800/80 flex items-center justify-between text-xs"
+                    className="p-2.5 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-between text-xs"
                   >
                     <div className="flex items-center gap-2 min-w-0 pr-2">
                       {item.icon && (
-                        <span className="text-emerald-500 dark:text-emerald-400 shrink-0">
+                        <span className="text-[var(--foreground)] shrink-0">
                           {item.icon}
                         </span>
                       )}
-                      <span className="text-slate-700 dark:text-slate-300 font-sans font-medium text-[12px] truncate">
+                      <span className="text-[var(--foreground)] font-sans font-medium text-[12px] truncate">
                         {item.description}
                       </span>
                     </div>
@@ -169,7 +169,7 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
                         return (
                           <kbd
                             key={kIdx}
-                            className="min-w-[24px] h-6 px-1.5 rounded bg-[var(--surface)] dark:bg-slate-800 border border-[var(--border)] dark:border-slate-700 text-slate-800 dark:text-slate-200 flex items-center justify-center shadow-sm"
+                            className="min-w-[24px] h-6 px-1.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground)] flex items-center justify-center shadow-sm"
                           >
                             {isCmd ? (
                               <span className="text-[16px] leading-none font-medium select-none -translate-y-[0.5px]">
@@ -196,7 +196,7 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3.5 border-t border-[var(--border)] dark:border-slate-800 bg-[var(--surface-subtle)] dark:bg-slate-900/40 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-mono">
+        <div className="px-6 py-3.5 border-t border-[var(--border)] bg-[var(--surface-subtle)] flex items-center justify-between text-xs text-[var(--muted)] font-mono">
           <span>Single keys active when not typing</span>
           <span>Mac (⌘) & Win/Linux (Ctrl) compatible</span>
         </div>

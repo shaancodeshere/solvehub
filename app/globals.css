@@ -4,38 +4,53 @@
 
 @layer base {
   :root {
-    --background: #eef2f6;
-    --surface: #f3f6f9;
-    --surface-subtle: #e2e8f0;
-    --border: #cbd5e1;
-    --foreground: #0f172a;
-    --muted: #475569;
-    --accent: #10b981;
-    --canvas-dot: rgba(71, 85, 105, 0.24);
+    --background: #cff060;
+    --surface: #c2e552;
+    --surface-subtle: rgba(28, 95, 39, 0.06);
+    --border: rgba(28, 95, 39, 0.22);
+    --foreground: #1c5f27;
+    --muted: rgba(28, 95, 39, 0.7);
+    --muted-olive: #3d7a37;
+    --muted-secondary: #3d7a37;
+    --accent: #1c5f27;
+    --canvas-dot: rgba(28, 95, 39, 0.22);
+    --primary-action-bg: #1c5f27;
+    --primary-action-fg: #cff060;
     color-scheme: light;
   }
 
   .dark {
-    --background: #0b0f17;
-    --surface: #121824;
-    --surface-subtle: #1a2234;
-    --border: #1f293d;
-    --foreground: #f1f5f9;
-    --muted: #94a3b8;
-    --accent: #10b981;
-    --canvas-dot: rgba(56, 189, 248, 0.18);
+    --background: #1c5f27;
+    --surface: #164d1f;
+    --surface-subtle: rgba(207, 240, 96, 0.07);
+    --border: rgba(207, 240, 96, 0.22);
+    --foreground: #cff060;
+    --muted: rgba(207, 240, 96, 0.7);
+    --muted-sage: #9ec74b;
+    --muted-secondary: #9ec74b;
+    --accent: #cff060;
+    --canvas-dot: rgba(207, 240, 96, 0.22);
+    --primary-action-bg: #cff060;
+    --primary-action-fg: #1c5f27;
     color-scheme: dark;
   }
 }
 
 @theme inline {
+  --color-acid-lime: #cff060;
+  --color-deep-green: #1c5f27;
+  --color-muted-olive: #3d7a37;
+  --color-muted-sage: #9ec74b;
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-subtle: var(--surface-subtle);
   --color-border: var(--border);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+  --color-muted-secondary: var(--muted-secondary);
   --color-accent: var(--accent);
+  --color-primary-action-bg: var(--primary-action-bg);
+  --color-primary-action-fg: var(--primary-action-fg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

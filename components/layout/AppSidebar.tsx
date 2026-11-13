@@ -4,7 +4,6 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { allCalculators } from '@/lib/calculators';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useSidebar } from './AppShell';
 
@@ -122,7 +121,7 @@ export default function AppSidebar() {
           - Expanded: Snug calibrated 208px sidebar (w-52)
          ────────────────────────────────────────────────────────── */}
       <aside
-        className={`border-r border-[var(--border)] bg-[var(--surface)] flex flex-col justify-between shrink-0 select-none hidden md:flex transition-all duration-250 ease-out ${
+        className={`border-r border-[var(--border)] bg-[var(--background)] flex flex-col justify-between shrink-0 select-none hidden md:flex transition-all duration-250 ease-out ${
           isCollapsed
             ? 'w-14 min-w-[56px] max-w-[56px]'
             : 'w-52 min-w-[208px] max-w-[208px]'
@@ -143,7 +142,7 @@ export default function AppSidebar() {
               <button
                 type="button"
                 onClick={() => setIsSidebarOpen(true)}
-                className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-[#e2e8f0] dark:hover:bg-slate-800 transition-all duration-250 group cursor-pointer"
+                className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-[var(--surface-subtle)] transition-all duration-250 group cursor-pointer"
                 title="Expand sidebar"
                 aria-label="Expand sidebar"
               >
@@ -186,7 +185,7 @@ export default function AppSidebar() {
                 <button
                   type="button"
                   onClick={() => setIsSidebarOpen(false)}
-                  className="w-7 h-7 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-transparent hover:bg-[#e2e8f0] dark:hover:bg-slate-800 transition flex items-center justify-center shrink-0 cursor-pointer"
+                  className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] bg-transparent hover:bg-[var(--surface-subtle)] transition flex items-center justify-center shrink-0 cursor-pointer"
                   title="Collapse Sidebar (⌘B)"
                   aria-label="Collapse Sidebar"
                 >
@@ -200,7 +199,7 @@ export default function AppSidebar() {
           <div className="space-y-4">
             <div>
               {!isCollapsed && (
-                <span className="text-slate-500 uppercase tracking-wider mb-2.5 text-xs font-semibold font-mono block">
+                <span className="text-[var(--muted)] uppercase tracking-wider mb-2.5 text-xs font-semibold font-mono block">
                   Modes
                 </span>
               )}
@@ -213,13 +212,13 @@ export default function AppSidebar() {
                     isCollapsed
                       ? `w-9 h-9 mx-auto rounded-xl flex items-center justify-center relative transition-all duration-200 ${
                           isCanvas
-                            ? 'bg-emerald-500/10 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-sm border border-emerald-500/20 dark:border-transparent'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/50 border border-transparent'
+                            ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] font-semibold shadow-sm border border-[var(--border)]'
+                            : 'text-[var(--foreground)] opacity-75 hover:opacity-100 hover:bg-[var(--surface-subtle)] border border-transparent'
                         }`
                       : `w-full px-2.5 py-2 rounded-lg text-sm font-medium font-mono transition flex items-center justify-between ${
                           isCanvas
-                            ? 'bg-emerald-500/10 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-sm border border-emerald-500/20 dark:border-transparent'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/50'
+                            ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] font-semibold shadow-sm border border-[var(--border)]'
+                            : 'text-[var(--foreground)] opacity-75 hover:opacity-100 hover:bg-[var(--surface-subtle)]'
                         }`
                   }
                 >
@@ -231,8 +230,8 @@ export default function AppSidebar() {
                     <span
                       className={
                         isCollapsed
-                          ? 'absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-in fade-in duration-200'
-                          : 'w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0 animate-in fade-in duration-200'
+                          ? 'absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#cff060] dark:bg-[#1c5f27] animate-in fade-in duration-200'
+                          : 'w-2 h-2 rounded-full bg-[#cff060] dark:bg-[#1c5f27] shrink-0 animate-in fade-in duration-200'
                       }
                     />
                   )}
@@ -246,13 +245,13 @@ export default function AppSidebar() {
                     isCollapsed
                       ? `w-9 h-9 mx-auto rounded-xl flex items-center justify-center relative transition-all duration-200 ${
                           isLibrary
-                            ? 'bg-emerald-500/10 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-sm border border-emerald-500/20 dark:border-transparent'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/50 border border-transparent'
+                            ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] font-semibold shadow-sm border border-[var(--border)]'
+                            : 'text-[var(--foreground)] opacity-75 hover:opacity-100 hover:bg-[var(--surface-subtle)] border border-transparent'
                         }`
                       : `w-full px-2.5 py-2 rounded-lg text-sm font-medium font-mono transition flex items-center justify-between ${
                           isLibrary
-                            ? 'bg-emerald-500/10 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-sm border border-emerald-500/20 dark:border-transparent'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/50'
+                            ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] font-semibold shadow-sm border border-[var(--border)]'
+                            : 'text-[var(--foreground)] opacity-75 hover:opacity-100 hover:bg-[var(--surface-subtle)]'
                         }`
                   }
                 >
@@ -264,8 +263,8 @@ export default function AppSidebar() {
                     <span
                       className={
                         isCollapsed
-                          ? 'absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-in fade-in duration-200'
-                          : 'w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0 animate-in fade-in duration-200'
+                          ? 'absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#cff060] dark:bg-[#1c5f27] animate-in fade-in duration-200'
+                          : 'w-2 h-2 rounded-full bg-[#cff060] dark:bg-[#1c5f27] shrink-0 animate-in fade-in duration-200'
                       }
                     />
                   )}
@@ -276,7 +275,7 @@ export default function AppSidebar() {
             {/* Global Command Palette Trigger */}
             <div>
               {!isCollapsed && (
-                <span className="text-slate-500 uppercase tracking-wider mb-2 text-xs font-semibold font-mono block">
+                <span className="text-[var(--muted)] uppercase tracking-wider mb-2 text-xs font-semibold font-mono block">
                   Command Palette
                 </span>
               )}
@@ -285,20 +284,20 @@ export default function AppSidebar() {
                 onClick={() => setIsCommandPaletteOpen(true)}
                 className={
                   isCollapsed
-                    ? 'w-9 h-9 mx-auto rounded-xl flex items-center justify-center bg-[var(--surface-subtle)] dark:bg-slate-900/80 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 transition shadow-sm group cursor-pointer'
-                    : 'w-full px-2.5 py-2 rounded-lg text-xs font-mono bg-[var(--surface-subtle)] dark:bg-slate-900/80 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 transition flex items-center justify-between group shadow-sm cursor-pointer'
+                    ? 'w-9 h-9 mx-auto rounded-xl flex items-center justify-center bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition shadow-sm group cursor-pointer'
+                    : 'w-full px-2.5 py-2 rounded-lg text-xs font-mono bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition flex items-center justify-between group shadow-sm cursor-pointer'
                 }
                 title="Search"
                 aria-label="Search calculators"
               >
                 <span className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-[var(--muted)] group-hover:text-[var(--foreground)] transition shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   {!isCollapsed && <span>Search</span>}
                 </span>
                 {!isCollapsed && (
-                  <kbd className="text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">
+                  <kbd className="text-[10px] bg-[var(--surface-subtle)] text-[var(--muted)] px-1.5 py-0.5 rounded border border-[var(--border)]">
                     /
                   </kbd>
                 )}
@@ -314,7 +313,7 @@ export default function AppSidebar() {
           }`}
         >
           {/* Inset Divider Line */}
-          <div className="w-full h-px bg-slate-300 dark:bg-slate-800 mb-3" />
+          <div className="w-full h-px bg-[var(--border)] mb-3" />
 
           {isCollapsed ? (
             /* Collapsed Rail (w-14): Vertically stacked centered icons */
@@ -322,13 +321,13 @@ export default function AppSidebar() {
               <button
                 type="button"
                 onClick={() => setIsShortcutsModalOpen(true)}
-                className="h-9 w-9 rounded-xl flex items-center justify-center bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 shadow-sm transition-all active:scale-95 cursor-pointer"
+                className="h-9 w-9 rounded-xl flex items-center justify-center bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] shadow-sm transition-all active:scale-95 cursor-pointer"
                 title="Keyboard Shortcuts"
                 aria-label="Keyboard Shortcuts"
               >
-                <ShortcutsKeypadIcon className="w-4 h-4 text-[#334155] dark:text-slate-300 shrink-0" />
+                <ShortcutsKeypadIcon className="w-4 h-4 text-[var(--foreground)] shrink-0" />
               </button>
-              <ThemeToggle className="h-9 w-9 rounded-xl flex items-center justify-center bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 shadow-sm transition-all active:scale-95 cursor-pointer" />
+              <ThemeToggle className="h-9 w-9 rounded-xl flex items-center justify-center bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] shadow-sm transition-all active:scale-95 cursor-pointer" />
             </div>
           ) : (
             /* Expanded Sidebar (w-52): Full Horizontal Controls & Meta */
@@ -337,18 +336,18 @@ export default function AppSidebar() {
                 <button
                   type="button"
                   onClick={() => setIsShortcutsModalOpen(true)}
-                  className="flex-1 h-9 px-3 flex items-center justify-center gap-1.5 rounded-xl bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 font-mono text-[11px] font-medium tracking-tight whitespace-nowrap shadow-sm active:scale-[0.98] transition-all cursor-pointer"
+                  className="flex-1 h-9 px-3 flex items-center justify-center gap-1.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] font-mono text-[11px] font-medium tracking-tight whitespace-nowrap shadow-sm active:scale-[0.98] transition-all cursor-pointer"
                   title="Keyboard Shortcuts"
                 >
-                  <ShortcutsKeypadIcon className="w-4 h-4 text-[#334155] dark:text-slate-300 shrink-0" />
+                  <ShortcutsKeypadIcon className="w-4 h-4 text-[var(--foreground)] shrink-0" />
                   <span>Shortcuts</span>
                 </button>
-                <div className="w-px h-5 bg-slate-300 dark:bg-slate-800 select-none shrink-0" />
-                <ThemeToggle className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 shadow-sm transition-all active:scale-95 cursor-pointer" />
+                <div className="w-px h-5 bg-[var(--border)] select-none shrink-0" />
+                <ThemeToggle className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] shadow-sm transition-all active:scale-95 cursor-pointer" />
               </div>
 
-              <div className="h-4 flex items-center gap-2 text-[11px] font-mono text-slate-500">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+              <div className="h-4 flex items-center gap-2 text-[11px] font-mono text-[var(--muted)]">
+                <span className="w-2 h-2 rounded-full bg-[#1c5f27] dark:bg-[#cff060] shrink-0"></span>
                 <span className="truncate leading-none">Canonical Ledger Active</span>
               </div>
             </>
@@ -371,7 +370,7 @@ export default function AppSidebar() {
           />
 
           {/* Drawer Content */}
-          <div className="relative w-72 max-w-[85vw] h-full bg-[var(--surface)] border-r border-[var(--border)] p-5 pb-6 flex flex-col justify-between shadow-2xl z-10 animate-in slide-in-from-left duration-200">
+          <div className="relative w-72 max-w-[85vw] h-full bg-[var(--background)] border-r border-[var(--border)] p-5 pb-6 flex flex-col justify-between shadow-2xl z-10 animate-in slide-in-from-left duration-200">
             <div>
               {/* Brand Header & Close */}
               <div className="flex items-center justify-between gap-3 mb-6 pb-3 border-b border-[var(--border)]">
@@ -397,11 +396,10 @@ export default function AppSidebar() {
                     className="h-6 w-auto shrink-0 dark:brightness-0 dark:invert select-none"
                   />
                 </Link>
-
                 <button
                   type="button"
                   onClick={() => setIsMobileDrawerOpen(false)}
-                  className="w-7 h-7 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-[var(--surface-subtle)] transition flex items-center justify-center shrink-0"
+                  className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-subtle)] transition flex items-center justify-center shrink-0"
                   aria-label="Close navigation menu"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -414,17 +412,17 @@ export default function AppSidebar() {
               {/* Modes */}
               <div className="space-y-4">
                 <div>
-                  <span className="text-slate-500 uppercase tracking-wider block mb-2.5 text-xs font-semibold font-mono">
+                  <span className="text-[var(--muted)] uppercase tracking-wider block mb-2.5 text-xs font-semibold font-mono">
                     Modes
                   </span>
                   <div className="space-y-1.5">
                     <Link
                       href="/"
                       onClick={() => setIsMobileDrawerOpen(false)}
-                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium font-mono transition flex items-center justify-between ${
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold font-mono transition flex items-center justify-between ${
                         isCanvas
-                          ? 'bg-emerald-500/10 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-sm border border-emerald-500/20'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-[var(--surface-subtle)]'
+                          ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] shadow-sm border border-[var(--border)]'
+                          : 'text-[var(--foreground)] opacity-75 hover:opacity-100 hover:bg-[var(--surface-subtle)]'
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
@@ -432,17 +430,17 @@ export default function AppSidebar() {
                         <span>Canvas</span>
                       </div>
                       {isCanvas && (
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0"></span>
+                        <span className="w-2 h-2 rounded-full bg-[#cff060] dark:bg-[#1c5f27] shrink-0"></span>
                       )}
                     </Link>
 
                     <Link
                       href="/library"
                       onClick={() => setIsMobileDrawerOpen(false)}
-                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium font-mono transition flex items-center justify-between ${
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold font-mono transition flex items-center justify-between ${
                         isLibrary
-                          ? 'bg-emerald-500/10 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-sm border border-emerald-500/20'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-[var(--surface-subtle)]'
+                          ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] shadow-sm border border-[var(--border)]'
+                          : 'text-[var(--foreground)] opacity-75 hover:opacity-100 hover:bg-[var(--surface-subtle)]'
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
@@ -450,7 +448,7 @@ export default function AppSidebar() {
                         <span>Library</span>
                       </div>
                       {isLibrary && (
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0"></span>
+                        <span className="w-2 h-2 rounded-full bg-[#cff060] dark:bg-[#1c5f27] shrink-0"></span>
                       )}
                     </Link>
                   </div>
@@ -458,7 +456,7 @@ export default function AppSidebar() {
 
                 {/* Command Palette Trigger */}
                 <div>
-                  <span className="text-slate-500 uppercase tracking-wider block mb-2 text-xs font-semibold font-mono">
+                  <span className="text-[var(--muted)] uppercase tracking-wider block mb-2 text-xs font-semibold font-mono">
                     Command Palette
                   </span>
                   <button
@@ -467,15 +465,15 @@ export default function AppSidebar() {
                       setIsMobileDrawerOpen(false);
                       setIsCommandPaletteOpen(true);
                     }}
-                    className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-mono bg-[var(--surface-subtle)] text-slate-700 dark:text-slate-300 border border-[var(--border)] transition flex items-center justify-between shadow-sm active:scale-95"
+                    className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-mono bg-[var(--surface)] text-[var(--foreground)] border border-[var(--border)] transition flex items-center justify-between shadow-sm active:scale-95"
                   >
                     <span className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                       <span>Search calculators</span>
                     </span>
-                    <kbd className="text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">
+                    <kbd className="text-[10px] bg-[var(--surface-subtle)] text-[var(--muted)] px-1.5 py-0.5 rounded border border-[var(--border)]">
                       /
                     </kbd>
                   </button>
@@ -486,7 +484,7 @@ export default function AppSidebar() {
             {/* Footer */}
             <div className="shrink-0 pb-3 px-4 flex flex-col">
               {/* Inset Divider Line */}
-              <div className="w-full h-px bg-slate-300 dark:bg-slate-800 mb-3" />
+              <div className="w-full h-px bg-[var(--border)] mb-3" />
 
               <div className="flex items-center gap-2 h-9 mb-2.5 w-full">
                 <button
@@ -495,18 +493,18 @@ export default function AppSidebar() {
                     setIsMobileDrawerOpen(false);
                     setIsShortcutsModalOpen(true);
                   }}
-                  className="flex-1 h-9 px-3.5 flex items-center justify-center gap-2 rounded-xl bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 font-mono text-[11px] font-medium tracking-tight whitespace-nowrap shadow-sm active:scale-[0.98] transition-all cursor-pointer"
+                  className="flex-1 h-9 px-3.5 flex items-center justify-center gap-2 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] font-mono text-[11px] font-medium tracking-tight whitespace-nowrap shadow-sm active:scale-[0.98] transition-all cursor-pointer"
                   title="Keyboard Shortcuts"
                 >
-                  <ShortcutsKeypadIcon className="w-4 h-4 text-[#334155] dark:text-slate-300 shrink-0" />
+                  <ShortcutsKeypadIcon className="w-4 h-4 text-[var(--foreground)] shrink-0" />
                   <span>Shortcuts</span>
                 </button>
-                <div className="w-px h-5 bg-slate-300 dark:bg-slate-800 select-none shrink-0" />
-                <ThemeToggle className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-[#E4EAF1] hover:bg-[#D7E0EB] border border-[#CBD5E1] text-[#334155] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 dark:border-slate-700/80 dark:text-slate-300 shadow-sm transition-all active:scale-95 cursor-pointer" />
+                <div className="w-px h-5 bg-[var(--border)] select-none shrink-0" />
+                <ThemeToggle className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] shadow-sm transition-all active:scale-95 cursor-pointer" />
               </div>
 
-              <div className="h-4 flex items-center gap-2 text-[11px] font-mono text-slate-500">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+              <div className="h-4 flex items-center gap-2 text-[11px] font-mono text-[var(--muted)]">
+                <span className="w-2 h-2 rounded-full bg-[#1c5f27] dark:bg-[#cff060] shrink-0"></span>
                 <span className="leading-none">Canonical Ledger Active</span>
               </div>
             </div>

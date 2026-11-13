@@ -247,37 +247,37 @@ export default function SectionC() {
     };
 
     return (
-        <aside className="w-full md:w-76 md:min-w-[290px] md:max-w-[315px] h-full border-l border-neutral-800 bg-neutral-950 p-4 flex flex-col justify-between text-neutral-200 select-none">
+        <aside className="w-full md:w-76 md:min-w-[290px] md:max-w-[315px] h-full border-l border-[var(--border)] bg-[var(--background)] p-4 flex flex-col justify-between text-[var(--foreground)] select-none">
             <div className="flex flex-col gap-6">
                 {/* Panel Header */}
-                <div className="flex items-center justify-between border-b border-neutral-800/80 pb-3.5 px-1">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-3.5 px-1">
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold tracking-wide text-neutral-200">Live Receipt</span>
-                        <span className="text-xs font-mono uppercase bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-lg">
+                        <span className="text-sm font-semibold tracking-wide text-[var(--foreground)]">Live Receipt</span>
+                        <span className="text-xs font-mono uppercase bg-[var(--surface)] text-[var(--foreground)] border border-[var(--border)] px-2 py-0.5 rounded-lg">
                             Live
                         </span>
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-neutral-900 text-neutral-400 border border-neutral-800 uppercase font-semibold">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--surface)] text-[var(--muted)] border border-[var(--border)] uppercase font-semibold">
                         {receipt.variables.length} {receipt.variables.length === 1 ? 'ITEM' : 'ITEMS'}
                     </span>
                 </div>
 
                 {/* Live Variable Tokens */}
                 <div className="flex flex-col gap-2.5">
-                    <div className="text-xs font-mono uppercase tracking-wider text-neutral-400 px-1 font-semibold">
+                    <div className="text-xs font-mono uppercase tracking-wider text-[var(--muted)] px-1 font-semibold">
                         Registered Variables
                     </div>
                     <div className="space-y-2 font-mono text-sm max-h-56 overflow-y-auto pr-1">
                         {receipt.variables.length === 0 ? (
-                            <div className="text-sm text-neutral-500 italic px-1 py-4 text-center">No variables declared</div>
+                            <div className="text-sm text-[var(--muted)] italic px-1 py-4 text-center">No variables declared</div>
                         ) : (
                             receipt.variables.map((v, idx) => (
                                 <div
                                     key={idx}
-                                    className="flex items-center justify-between p-2.5 rounded-xl bg-neutral-900 border border-neutral-800/60 gap-2"
+                                    className="flex items-center justify-between p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] gap-2 shadow-sm"
                                 >
-                                    <span className="text-neutral-300 text-sm font-semibold line-clamp-2 break-words max-w-[180px]">{v.name}</span>
-                                    <span className={`font-semibold shrink-0 ${v.isError ? 'text-rose-400' : 'text-neutral-200'}`}>
+                                    <span className="text-[var(--foreground)] text-sm font-semibold line-clamp-2 break-words max-w-[180px]">{v.name}</span>
+                                    <span className={`font-semibold shrink-0 ${v.isError ? 'text-rose-500' : 'text-[var(--foreground)]'}`}>
                                         {v.formattedValue}
                                     </span>
                                 </div>
@@ -288,31 +288,25 @@ export default function SectionC() {
 
                 {/* Receipt Total Calculation Card */}
                 <div className="flex flex-col gap-2.5">
-                    <div className="text-xs font-mono uppercase tracking-wider text-neutral-400 px-1 font-semibold">
+                    <div className="text-xs font-mono uppercase tracking-wider text-[var(--muted)] px-1 font-semibold">
                         Output Summary
                     </div>
-                    <div className={`p-4 rounded-xl flex flex-col gap-2 shadow-lg transition-colors ${
-                        isHeroReasoningOrError
-                            ? 'bg-amber-500/10 border border-amber-500/30'
-                            : 'bg-neutral-900/90 border border-emerald-500/30'
-                    }`}>
-                        <span className={`text-xs font-mono uppercase tracking-wide truncate ${
-                            isHeroReasoningOrError ? 'text-amber-400' : 'text-emerald-400'
-                        }`}>
+                    <div className={`p-4 rounded-xl flex flex-col gap-2 shadow-lg transition-colors bg-[var(--surface)] border border-[var(--border)]`}>
+                        <span className="text-xs font-mono uppercase tracking-wide truncate text-[var(--muted)]">
                             {receipt.primaryVariable}
                         </span>
                         <span className={
                             isHeroReasoningOrError
-                                ? 'text-base md:text-lg font-medium text-amber-200/90 leading-relaxed break-words tracking-normal font-sans'
-                                : 'text-3xl md:text-4xl font-bold tracking-tight text-white font-mono break-words'
+                                ? 'text-base md:text-lg font-medium text-[var(--foreground)] leading-relaxed break-words tracking-normal font-sans'
+                                : 'text-3xl md:text-4xl font-bold tracking-tight text-[var(--foreground)] font-mono break-words'
                         }>
                             {receipt.primaryValue}
                         </span>
                         {receipt.secondaryMetrics && receipt.secondaryMetrics.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-2 mt-1.5 border-t border-neutral-800/60 pt-2.5">
+                            <div className="flex flex-wrap items-center gap-2 mt-1.5 border-t border-[var(--border)] pt-2.5">
                                 {receipt.secondaryMetrics.map((metric, i) => (
-                                    <span key={i} className="text-xs text-neutral-400 font-mono">
-                                        {metric.label}: <strong className="text-neutral-200">{metric.value}</strong>
+                                    <span key={i} className="text-xs text-[var(--muted)] font-mono">
+                                        {metric.label}: <strong className="text-[var(--foreground)]">{metric.value}</strong>
                                     </span>
                                 ))}
                             </div>
@@ -322,22 +316,22 @@ export default function SectionC() {
             </div>
 
             {/* Footer Toolbar: Clean 2-button [ Copy ] [ Download ▾ ] */}
-            <div className="border-t border-neutral-800/80 pt-3.5 pb-2 px-1 flex flex-col gap-2.5 relative z-20">
+            <div className="border-t border-[var(--border)] pt-3.5 pb-2 px-1 flex flex-col gap-2.5 relative z-20">
                 <div className="flex items-center gap-2 w-full">
                     <button
                         type="button"
                         onClick={handleCopyReceipt}
-                        className="h-9 flex-1 min-w-0 px-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800/80 text-neutral-300 hover:text-white font-mono text-[11px] font-medium tracking-tight border border-neutral-800 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] cursor-pointer"
+                        className="h-9 flex-1 min-w-0 px-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] font-mono text-[11px] font-medium tracking-tight border border-[var(--border)] transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] cursor-pointer"
                         title="Copy formatted calculation receipt"
                     >
                         {copied ? (
                             <>
-                                <span className="text-emerald-400 font-bold text-xs leading-none">✓</span>
-                                <span className="text-emerald-400 font-semibold whitespace-nowrap">Copied</span>
+                                <span className="text-[var(--foreground)] font-bold text-xs leading-none">✓</span>
+                                <span className="text-[var(--foreground)] font-semibold whitespace-nowrap">Copied</span>
                             </>
                         ) : (
                             <>
-                                <svg className="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75">
+                                <svg className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                 </svg>
                                 <span className="whitespace-nowrap">Copy</span>
@@ -351,12 +345,12 @@ export default function SectionC() {
                             onClick={() => setIsDownloadOpen((prev) => !prev)}
                             aria-expanded={isDownloadOpen}
                             aria-haspopup="true"
-                            className={`h-9 w-full px-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800/80 text-neutral-300 hover:text-white font-mono text-[11px] font-medium tracking-tight border border-neutral-800 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] cursor-pointer ${
-                                isDownloadOpen ? 'ring-1 ring-emerald-500/50' : ''
+                            className={`h-9 w-full px-2.5 rounded-xl bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] font-mono text-[11px] font-medium tracking-tight border border-[var(--border)] transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] cursor-pointer ${
+                                isDownloadOpen ? 'ring-2 ring-[var(--border)]' : ''
                             }`}
                             title="Download / Export options"
                         >
-                            <svg className="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75">
+                            <svg className="w-3.5 h-3.5 text-current shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
                             <span className="whitespace-nowrap truncate">Download</span>
@@ -364,7 +358,7 @@ export default function SectionC() {
                         </button>
 
                         {isDownloadOpen && (
-                            <div className="absolute right-0 bottom-full mb-1.5 w-full min-w-[124px] rounded-lg border border-slate-700/80 bg-[#111722] p-1 shadow-2xl backdrop-blur-md z-50 animate-in fade-in zoom-in-95 duration-100">
+                            <div className="absolute right-0 bottom-full mb-1.5 w-full min-w-[124px] rounded-lg border border-[var(--border)] bg-[var(--surface)] p-1 shadow-2xl backdrop-blur-md z-50 animate-in fade-in zoom-in-95 duration-100">
                                 {(['CSV', 'TXT', 'PNG'] as const).map((format) => (
                                     <button
                                         key={format}
@@ -376,9 +370,9 @@ export default function SectionC() {
                                             setIsDownloadOpen(false);
                                         }}
                                         disabled={format === 'PNG' && isExportingCard}
-                                        className="group flex w-full items-center gap-2 rounded px-2.5 py-1.5 text-left font-mono text-xs text-slate-300 transition-colors hover:bg-slate-800/80 hover:text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="group flex w-full items-center gap-2 rounded px-2.5 py-1.5 text-left font-mono text-xs text-[var(--foreground)] transition-colors hover:bg-[var(--surface-subtle)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 shadow-[0_0_6px_rgba(52,211,153,0.9)] shrink-0" />
+                                        <span className="h-1.5 w-1.5 rounded-full bg-[#1c5f27] dark:bg-[#cff060] opacity-0 transition-opacity group-hover:opacity-100 shrink-0" />
                                         <span className="font-medium tracking-wide">
                                             {format === 'PNG' && isExportingCard ? 'Exporting...' : format}
                                         </span>
@@ -390,7 +384,7 @@ export default function SectionC() {
                 </div>
 
                 {/* Footer Meta */}
-                <div className="flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-mono">
                     <span>Section C</span>
                     <span>Active</span>
                 </div>

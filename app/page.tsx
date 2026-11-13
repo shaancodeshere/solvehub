@@ -1743,12 +1743,12 @@ export default function HomePage() {
           - Hamburger menu opens off-canvas Section A navigation drawer
           - Sleek segmented toggle: [ Canvas | Live Receipt ]
          ────────────────────────────────────────────────────────── */}
-      <header className="md:hidden flex items-center justify-between px-3 py-2 bg-[var(--surface)] border-b border-[var(--border)] shrink-0 z-10 transition-colors duration-200">
+      <header className="md:hidden flex items-center justify-between px-3 py-2 bg-[var(--background)] border-b border-[var(--border)] shrink-0 z-10 transition-colors duration-200">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setIsMobileDrawerOpen(true)}
-            className="p-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-[var(--surface-subtle)] dark:bg-slate-800 border border-[var(--border)] dark:border-slate-700 transition flex items-center justify-center shadow-sm"
+            className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] transition flex items-center justify-center shadow-sm"
             title="Open Navigation Menu"
             aria-label="Open Navigation Menu"
           >
@@ -1762,21 +1762,21 @@ export default function HomePage() {
               height={20}
               className="w-5 h-5 shrink-0"
             />
-            <span className="font-bold text-sm text-slate-900 dark:text-white font-mono">
+            <span className="font-bold text-sm text-[var(--foreground)] font-mono">
               SolveHub
             </span>
           </div>
         </div>
 
         {/* Segmented View Bar: [ Canvas | Live Receipt ] */}
-        <div className="flex items-center p-0.5 rounded-lg bg-[var(--surface-subtle)] dark:bg-slate-900/90 border border-[var(--border)] dark:border-slate-800 font-mono text-xs shadow-inner">
+        <div className="flex items-center p-0.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] font-mono text-xs shadow-inner">
           <button
             type="button"
             onClick={() => setMobileTab('canvas')}
             className={`px-3 py-1 rounded-md font-semibold transition flex items-center gap-1.5 ${
               mobileTab === 'canvas'
-                ? 'bg-[var(--surface)] dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm border border-[var(--border)] dark:border-slate-700'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] shadow-sm border border-[var(--border)]'
+                : 'text-[var(--muted)] hover:text-[var(--foreground)]'
             }`}
           >
             <CanvasModeIcon className="w-3.5 h-3.5 shrink-0" />
@@ -1787,13 +1787,13 @@ export default function HomePage() {
             onClick={() => setMobileTab('receipt')}
             className={`px-3 py-1 rounded-md font-semibold transition flex items-center gap-1.5 ${
               mobileTab === 'receipt'
-                ? 'bg-[var(--surface)] dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm border border-[var(--border)] dark:border-slate-700'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] shadow-sm border border-[var(--border)]'
+                : 'text-[var(--muted)] hover:text-[var(--foreground)]'
             }`}
           >
             <span>Live Receipt</span>
             {totalReceiptItemCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold">
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-[rgba(28,95,39,0.15)] dark:bg-[rgba(207,240,96,0.15)] text-[var(--foreground)] font-bold">
                 {totalReceiptItemCount}
               </span>
             )}
@@ -1814,14 +1814,14 @@ export default function HomePage() {
           {/* Top Bar: Quick Inserts & Controls */}
           <div className="flex items-center justify-between gap-2 sm:gap-3 mb-3.5 shrink-0 min-h-[28px]">
             <div className="flex items-center gap-1.5 text-xs font-mono min-w-0 overflow-x-auto scrollbar-none">
-              <span className="text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold shrink-0">
+              <span className="text-[var(--muted)] text-xs uppercase tracking-wider font-semibold shrink-0">
                 Quick Inserts:
               </span>
 
               <button
                 type="button"
                 onClick={() => appendSyntax('total')}
-                className="px-2.5 py-1 rounded-md bg-[#e2e8f0] dark:bg-slate-800 hover:bg-[#d0d9e2] dark:hover:bg-slate-700 text-emerald-500 dark:text-emerald-400 border border-[#cbd5e1] dark:border-slate-700 transition text-xs font-mono shrink-0"
+                className="px-2.5 py-1 rounded-md bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition text-xs font-mono shrink-0 font-medium cursor-pointer"
               >
                 + total
               </button>
@@ -1829,7 +1829,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => appendSyntax('discount 10%')}
-                className="px-2.5 py-1 rounded-md bg-[#e2e8f0] dark:bg-slate-800 hover:bg-[#d0d9e2] dark:hover:bg-slate-700 text-amber-500 dark:text-amber-400 border border-[#cbd5e1] dark:border-slate-700 transition text-xs font-mono shrink-0"
+                className="px-2.5 py-1 rounded-md bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition text-xs font-mono shrink-0 font-medium cursor-pointer"
               >
                 + discount
               </button>
@@ -1837,7 +1837,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => appendSyntax('tax 18%')}
-                className="px-2.5 py-1 rounded-md bg-[#e2e8f0] dark:bg-slate-800 hover:bg-[#d0d9e2] dark:hover:bg-slate-700 text-cyan-500 dark:text-cyan-400 border border-[#cbd5e1] dark:border-slate-700 transition text-xs font-mono shrink-0"
+                className="px-2.5 py-1 rounded-md bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition text-xs font-mono shrink-0 font-medium cursor-pointer"
               >
                 + tax
               </button>
@@ -1847,33 +1847,33 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setShowSplitInput(true)}
-                  className="px-2.5 py-1 rounded-md bg-[#e2e8f0] dark:bg-slate-800 hover:bg-[#d0d9e2] dark:hover:bg-slate-700 text-purple-500 dark:text-purple-400 border border-[#cbd5e1] dark:border-slate-700 transition text-xs font-mono shrink-0"
+                  className="px-2.5 py-1 rounded-md bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition text-xs font-mono shrink-0 font-medium cursor-pointer"
                 >
                   + split bill
                 </button>
               ) : (
-                <div className="flex items-center gap-1.5 bg-[#e2e8f0] dark:bg-slate-800 px-2 py-0.5 rounded-md border border-[#cbd5e1] dark:border-purple-500/40 shrink-0">
-                  <span className="text-xs text-purple-600 dark:text-purple-400 font-mono">People:</span>
+                <div className="flex items-center gap-1.5 bg-[var(--surface)] px-2 py-0.5 rounded-md border border-[var(--border)] shrink-0">
+                  <span className="text-xs text-[var(--muted)] font-mono">People:</span>
                   <input
                     type="number"
                     min={1}
                     max={99}
                     value={splitCount}
                     onChange={(e) => setSplitCount(parseInt(e.target.value, 10) || 1)}
-                    className="w-10 bg-[#f3f6f9] dark:bg-slate-950 text-center text-xs text-slate-900 dark:text-white border border-[#cbd5e1] dark:border-slate-700 rounded px-1 py-0.5 focus:outline-none focus:border-purple-400 font-mono"
+                    className="w-10 bg-[var(--background)] text-center text-xs text-[var(--foreground)] border border-[var(--border)] rounded px-1 py-0.5 focus:outline-none font-mono"
                     autoFocus
                   />
                   <button
                     type="button"
                     onClick={handleApplySplit}
-                    className="bg-purple-600 hover:bg-purple-500 text-white text-xs px-2 py-0.5 rounded font-semibold transition"
+                    className="bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] text-xs px-2 py-0.5 rounded font-semibold transition cursor-pointer"
                   >
                     Insert
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowSplitInput(false)}
-                    className="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white text-xs px-1"
+                    className="text-[var(--muted)] hover:text-[var(--foreground)] text-xs px-1 cursor-pointer"
                   >
                     ✕
                   </button>
@@ -1881,13 +1881,13 @@ export default function HomePage() {
               )}
 
               {/* Vertical divider line */}
-              <span className="text-slate-400 dark:text-slate-700 text-xs select-none shrink-0">|</span>
+              <span className="text-[var(--border)] text-xs select-none shrink-0">|</span>
 
               {/* Pre-Built Canvas Templates Button */}
               <button
                 type="button"
                 onClick={() => setIsTemplatesModalOpen(true)}
-                className="px-2.5 py-1 text-xs font-mono rounded bg-[var(--surface-subtle)] hover:bg-[#d0d9e2] dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-700 transition flex items-center gap-1.5 shadow-sm shrink-0"
+                className="px-2.5 py-1 text-xs font-mono rounded bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition flex items-center gap-1.5 shadow-sm shrink-0 cursor-pointer"
                 title="Browse Calculation Recipe Templates"
               >
                 + templates
@@ -1903,10 +1903,10 @@ export default function HomePage() {
                 onClick={handleShareClick}
                 className={`text-xs font-mono p-1.5 md:px-2.5 md:py-1 rounded-md border transition flex items-center gap-1.5 shadow-sm group ${
                   isSharedCopied
-                    ? 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 font-semibold'
+                    ? 'bg-[rgba(28,95,39,0.15)] dark:bg-[rgba(207,240,96,0.15)] border-[var(--border)] text-[var(--foreground)] font-semibold'
                     : hasCanvasContent
-                    ? 'cursor-pointer active:scale-95 bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-[var(--border)] dark:border-slate-700'
-                    : 'cursor-not-allowed opacity-40 bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-[var(--border)] dark:border-slate-800'
+                    ? 'cursor-pointer active:scale-95 bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border-[var(--border)]'
+                    : 'cursor-not-allowed opacity-40 bg-[var(--surface)] text-[var(--muted)] border-[var(--border)]'
                 }`}
                 title={isSharedCopied ? 'Copied' : 'Share'}
                 aria-label="Share"
@@ -1914,7 +1914,7 @@ export default function HomePage() {
                 {isSharedCopied ? (
                   <>
                     <svg
-                      className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 animate-in zoom-in-75 duration-150"
+                      className="w-3.5 h-3.5 text-[var(--foreground)] shrink-0 animate-in zoom-in-75 duration-150"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -1928,7 +1928,7 @@ export default function HomePage() {
                   </>
                 ) : (
                   <>
-                    <ShareLinkIcon className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition shrink-0" />
+                    <ShareLinkIcon className="w-3.5 h-3.5 text-[var(--muted)] group-hover:text-[var(--foreground)] transition shrink-0" />
                     <span className="hidden md:inline">Share</span>
                   </>
                 )}
@@ -1938,16 +1938,16 @@ export default function HomePage() {
                 type="button"
                 onClick={() => setIsHistoryOpen(!isHistoryOpen)}
                 className={`text-xs font-mono p-1.5 md:px-2.5 md:py-1 rounded-md border transition flex items-center gap-1.5 shadow-sm group ${isHistoryOpen
-                  ? 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/40 dark:border-emerald-500/50 text-emerald-600 dark:text-emerald-300'
-                  : 'bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-700'
+                  ? 'bg-[var(--surface-subtle)] border-[var(--border)] text-[var(--foreground)] font-semibold'
+                  : 'bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)]'
                   }`}
                 title="History"
                 aria-label="History"
               >
-                <HistoryHourglassIcon className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white shrink-0" />
+                <HistoryHourglassIcon className="w-3.5 h-3.5 text-[var(--muted)] group-hover:text-[var(--foreground)] shrink-0" />
                 <span className="hidden md:inline">History</span>
                 {historyList.length > 0 && (
-                  <span className="text-[10px] md:text-xs bg-emerald-100 dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.2 rounded border border-emerald-300 dark:border-emerald-500/30">
+                  <span className="text-[10px] md:text-xs bg-[var(--surface-subtle)] text-[var(--foreground)] px-1.5 py-0.2 rounded border border-[var(--border)]">
                     {historyList.length}
                   </span>
                 )}
@@ -1958,13 +1958,13 @@ export default function HomePage() {
                 disabled={!hasCanvasContent}
                 onClick={handleClearClick}
                 className={`text-xs font-mono p-1.5 md:px-2.5 md:py-1 rounded-md border transition flex items-center gap-1.5 shadow-sm group ${hasCanvasContent
-                  ? 'cursor-pointer active:scale-95 bg-[var(--surface-subtle)] dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-[var(--border)] dark:border-slate-700'
-                  : 'cursor-not-allowed opacity-40 bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-[var(--border)] dark:border-slate-800'
+                  ? 'cursor-pointer active:scale-95 bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border-[var(--border)]'
+                  : 'cursor-not-allowed opacity-40 bg-[var(--surface)] text-[var(--muted)] border-[var(--border)]'
                   }`}
                 title="Clear"
                 aria-label="Clear"
               >
-                <ClearTrashIcon className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white shrink-0" />
+                <ClearTrashIcon className="w-3.5 h-3.5 text-[var(--muted)] group-hover:text-[var(--foreground)] shrink-0" />
                 <span className="hidden md:inline">Clear</span>
               </button>
             </div>
@@ -1988,13 +1988,13 @@ export default function HomePage() {
                       onClick={() => setActiveTabId(tab.id)}
                       onDoubleClick={() => startRenameTab(tab)}
                       className={`group flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium transition-all cursor-pointer border select-none shrink-0 ${isActive
-                        ? 'bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-900 dark:text-white border-emerald-500/50 shadow-sm'
-                        : 'bg-slate-200/50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/50 border-[var(--border)] dark:border-slate-800'
+                        ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] border-[var(--border)] shadow-sm font-semibold'
+                        : 'bg-[var(--surface)] text-[var(--foreground)] opacity-75 hover:opacity-100 hover:bg-[var(--surface-subtle)] border-[var(--border)]'
                         }`}
                     >
                       {/* Active Tab Indicator */}
                       <span
-                        className={`w-1.5 h-1.5 rounded-full transition-colors shrink-0 ${isActive ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-transparent'
+                        className={`w-1.5 h-1.5 rounded-full transition-colors shrink-0 ${isActive ? 'bg-[#cff060] dark:bg-[#1c5f27]' : 'bg-transparent'
                           }`}
                       />
 
@@ -2009,7 +2009,7 @@ export default function HomePage() {
                             if (e.key === 'Enter') saveRenameTab(tab.id);
                             if (e.key === 'Escape') setEditingTabId(null);
                           }}
-                          className="w-24 bg-slate-950 border border-emerald-500 rounded px-1.5 py-0.5 text-[11px] font-mono text-white focus:outline-none"
+                          className="w-24 bg-[var(--surface)] border border-[var(--border)] rounded px-1.5 py-0.5 text-[11px] font-mono text-[var(--foreground)] focus:outline-none"
                           autoFocus
                           onClick={(e) => e.stopPropagation()}
                         />
@@ -2025,7 +2025,7 @@ export default function HomePage() {
                           type="button"
                           onClick={(e) => handleCloseTab(tab.id, e)}
                           title="Close Sheet"
-                          className="text-slate-500 hover:text-rose-400 opacity-60 hover:opacity-100 transition text-[11px] ml-0.5 shrink-0"
+                          className="text-[var(--muted)] hover:text-rose-500 opacity-60 hover:opacity-100 transition text-[11px] ml-0.5 shrink-0"
                         >
                           ✕
                         </button>
@@ -2041,7 +2041,7 @@ export default function HomePage() {
                   type="button"
                   onClick={handleScrollTabsNext}
                   title="Scroll to next sheet"
-                  className="w-5 h-5 p-1 flex items-center justify-center rounded-md bg-[var(--surface-subtle)] dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-[var(--border)] dark:border-slate-700 transition shadow-sm shrink-0"
+                  className="w-5 h-5 p-1 flex items-center justify-center rounded-md bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition shadow-sm shrink-0"
                 >
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -2054,21 +2054,21 @@ export default function HomePage() {
                 type="button"
                 onClick={handleNewTab}
                 title="New Sheet (⌘U / Ctrl+U)"
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--surface-subtle)] dark:bg-slate-900/60 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-dashed border-[var(--border)] dark:border-slate-700 hover:border-emerald-500/50 transition text-[11px] font-mono shrink-0"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-dashed border-[var(--border)] transition text-[11px] font-mono shrink-0"
               >
-                <span className="text-emerald-500 dark:text-emerald-400 font-bold">+</span>
+                <span className="font-bold">+</span>
                 <span className="whitespace-nowrap">New Sheet</span>
               </button>
             </div>
 
-            <div className="text-xs font-mono text-slate-500 shrink-0">
+            <div className="text-xs font-mono text-[var(--muted)] shrink-0">
               Sheet {tabs.findIndex((t) => t.id === activeTabId) + 1} of {tabs.length}
             </div>
           </div>
 
           {/* Technical Dot-Grid Canvas Notepad */}
           <div
-            className="relative flex-1 w-full rounded-xl border border-[var(--border)] overflow-hidden bg-[var(--surface)] shadow-xl flex flex-col transition-colors duration-200"
+            className="relative flex-1 w-full rounded-xl border border-[var(--border)] overflow-hidden bg-[var(--background)] shadow-xl flex flex-col transition-colors duration-200"
             style={{
               backgroundImage: 'radial-gradient(circle, var(--canvas-dot) 1px, transparent 1px)',
               backgroundSize: '16px 24px',
@@ -2085,7 +2085,7 @@ export default function HomePage() {
                 }
               }}
               placeholder="Start Calculating"
-              className="w-full flex-1 bg-transparent border-none text-xs font-mono leading-[24px] text-emerald-500 dark:text-emerald-400 focus:outline-none placeholder-slate-400 dark:placeholder-slate-600 resize-none selection:bg-emerald-500/20 p-4"
+              className="w-full flex-1 bg-transparent border-none text-xs font-mono leading-[24px] text-[var(--foreground)] focus:outline-none placeholder-[var(--muted)] resize-none selection:bg-[rgba(28,95,39,0.2)] dark:selection:bg-[rgba(207,240,96,0.2)] p-4"
               style={{
                 lineHeight: '24px',
                 fontSize: '12px',
@@ -2094,7 +2094,7 @@ export default function HomePage() {
             />
           </div>
 
-          <div className="h-4 flex items-center justify-between text-[11px] font-mono text-slate-500 shrink-0 mt-2.5">
+          <div className="h-4 flex items-center justify-between text-[11px] font-mono text-[var(--muted)] shrink-0 mt-2.5">
             <span className="leading-none">Section B • Zero-Friction Input</span>
             <span className="leading-none">Lines: {canvasCode.split('\n').length}</span>
           </div>
@@ -2106,59 +2106,47 @@ export default function HomePage() {
           data-receipt-panel="true"
           className={`${
             mobileTab === 'receipt' ? 'flex w-full' : 'hidden'
-          } md:flex md:w-76 md:min-w-[290px] md:max-w-[315px] bg-[var(--surface)] flex-col justify-between shrink-0 overflow-hidden border-l-0 md:border-l border-[var(--border)] transition-colors duration-200`}
+          } md:flex md:w-76 md:min-w-[290px] md:max-w-[315px] bg-[var(--background)] flex-col justify-between shrink-0 overflow-hidden border-l-0 md:border-l border-[var(--border)] transition-colors duration-200`}
         >
           <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 md:pt-5 lg:pt-4 min-h-0">
             <div className="flex justify-between items-center md:min-h-[28px] lg:min-h-0 mb-3.5 pb-2.5 border-b border-[var(--border)]">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider">
+              <span className="text-xs font-mono text-[var(--foreground)] font-semibold uppercase tracking-wider">
                 Live Receipt
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--surface-subtle)] dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-[var(--border)] dark:border-slate-700 uppercase font-semibold">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[var(--surface)] text-[var(--muted)] border border-[var(--border)] uppercase font-semibold">
                 {totalReceiptItemCount} {totalReceiptItemCount === 1 ? 'ITEM' : 'ITEMS'}
               </span>
             </div>
 
             {/* Top Hero Output Display */}
             {isAiLoading ? (
-              <div className="mb-4 py-2.5 px-3.5 rounded-xl border bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40 flex flex-col justify-center gap-1 relative shadow-md animate-pulse">
+              <div className="mb-4 py-2.5 px-3.5 rounded-xl border bg-[var(--surface)] border-[var(--border)] flex flex-col justify-center gap-1 relative shadow-md animate-pulse">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-mono uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 font-semibold truncate">
+                  <span className="text-[10px] font-mono uppercase tracking-wider block text-[var(--muted)] font-semibold truncate">
                     AI Quantitative Solver
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 font-semibold">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-[10px] font-mono text-[var(--foreground)] flex items-center gap-1.5 font-semibold">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#1c5f27] dark:bg-[#cff060] animate-ping" />
                     Solving...
                   </span>
                 </div>
-                <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-slate-400 dark:text-slate-300">
+                <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[var(--muted)]">
                   Solving...
                 </div>
               </div>
             ) : aiResult ? (
               <div
-                className={`mb-4 py-2.5 px-3.5 rounded-xl border flex flex-col justify-center gap-1 relative shadow-md transition-colors ${
-                  aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
-                    ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-500/30 dark:border-amber-500/40'
-                    : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40'
-                }`}
+                className={`mb-4 py-2.5 px-3.5 rounded-xl border flex flex-col justify-center gap-1 relative shadow-md transition-colors bg-[var(--surface)] border-[var(--border)]`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <span
-                    className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate ${
-                      aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
-                        ? 'text-amber-700 dark:text-amber-400'
-                        : 'text-emerald-700 dark:text-emerald-400'
-                    }`}
+                    className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate text-[var(--muted)]`}
                   >
                     {aiResult.title || 'AI Quantitative Solution'}
                   </span>
                   {aiResult.problemType && (
                     <span
-                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
-                        aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
-                          ? 'text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-950/60 border-amber-500/30'
-                          : 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/30'
-                      }`}
+                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded border border-[var(--border)] bg-[var(--surface-subtle)] text-[var(--foreground)]`}
                     >
                       {aiResult.problemType}
                     </span>
@@ -2167,17 +2155,17 @@ export default function HomePage() {
                 <div
                   className={
                     aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
-                      ? 'text-base md:text-lg font-medium text-amber-900 dark:text-amber-200/90 leading-relaxed break-words tracking-normal font-sans'
-                      : 'text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white font-mono break-words'
+                      ? 'text-base md:text-lg font-medium text-[var(--foreground)] leading-relaxed break-words tracking-normal font-sans'
+                      : 'text-3xl md:text-4xl font-bold tracking-tight text-[var(--foreground)] font-mono break-words'
                   }
                 >
                   {aiResult.answer}
                 </div>
               </div>
             ) : isCalculatorOutputActive && calculatorOutput?.primaryOutput ? (
-              <div className="mb-4 py-2.5 px-3.5 rounded-xl border bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40 flex flex-col justify-center gap-1 relative shadow-md">
+              <div className="mb-4 py-2.5 px-3.5 rounded-xl border bg-[var(--surface)] border-[var(--border)] flex flex-col justify-center gap-1 relative shadow-md">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-mono uppercase tracking-wider block text-emerald-700 dark:text-emerald-400 font-semibold truncate">
+                  <span className="text-[10px] font-mono uppercase tracking-wider block text-[var(--muted)] font-semibold truncate">
                     {calculatorOutput.primaryOutput.label}
                   </span>
 
@@ -2186,15 +2174,15 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setShowCurrencyMenu((prev) => !prev)}
-                      className="flex items-center gap-1 py-0.5 px-2 rounded-full bg-[var(--surface-subtle)] dark:bg-slate-900/90 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-[11px] font-mono text-emerald-600 dark:text-emerald-400 border border-[var(--border)] dark:border-slate-700/80 hover:border-emerald-500/50 transition cursor-pointer shadow-sm active:scale-95"
+                      className="flex items-center gap-1 py-0.5 px-2 rounded-full bg-[var(--surface-subtle)] hover:bg-[var(--surface)] text-[11px] font-mono text-[var(--foreground)] border border-[var(--border)] transition cursor-pointer shadow-sm active:scale-95"
                       title="Toggle currency conversion"
                     >
                       <span className="font-semibold">{displayCurrency}</span>
-                      <span className="text-[10px] text-slate-400">▾</span>
+                      <span className="text-[10px] text-[var(--muted)]">▾</span>
                     </button>
 
                     {showCurrencyMenu && (
-                      <div className="absolute right-0 top-full mt-1.5 w-36 bg-[var(--surface)] dark:bg-[#0e131b] border border-[var(--border)] dark:border-slate-700 rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
+                      <div className="absolute right-0 top-full mt-1.5 w-36 bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
                         {Object.entries(BENCHMARK_RATES).map(([code, info]) => (
                           <button
                             key={code}
@@ -2203,13 +2191,13 @@ export default function HomePage() {
                               setDisplayCurrency(code);
                               setShowCurrencyMenu(false);
                             }}
-                            className={`w-full text-left px-3 py-1.5 flex items-center justify-between text-xs hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/80 transition ${displayCurrency === code
-                              ? 'text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-950/40'
-                              : 'text-slate-700 dark:text-slate-300'
+                            className={`w-full text-left px-3 py-1.5 flex items-center justify-between text-xs hover:bg-[var(--surface-subtle)] transition ${displayCurrency === code
+                              ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] font-semibold'
+                              : 'text-[var(--foreground)]'
                               }`}
                           >
                             <span>{info.label}</span>
-                            {displayCurrency === code && <span className="text-emerald-600 dark:text-emerald-400 text-xs">✓</span>}
+                            {displayCurrency === code && <span className="text-xs">✓</span>}
                           </button>
                         ))}
                       </div>
@@ -2220,8 +2208,8 @@ export default function HomePage() {
                 <div
                   className={
                     isTextReasoningOrError(calculatorOutput.primaryOutput.value)
-                      ? 'text-base md:text-lg font-medium text-amber-900 dark:text-amber-200/90 leading-relaxed break-words tracking-normal font-sans'
-                      : 'text-3xl md:text-4xl font-bold font-mono tracking-tight break-words text-slate-900 dark:text-white'
+                      ? 'text-base md:text-lg font-medium text-[var(--foreground)] leading-relaxed break-words tracking-normal font-sans'
+                      : 'text-3xl md:text-4xl font-bold font-mono tracking-tight break-words text-[var(--foreground)]'
                   }
                 >
                   {calculatorOutput.primaryOutput.prefix || ''}
@@ -2231,28 +2219,18 @@ export default function HomePage() {
 
                 {/* Converted Currency Sub-Value */}
                 {convertedHeroAmount && getCurrencyCodeFromSymbol(calculatorOutput.primaryOutput.prefix || '$') !== displayCurrency && (
-                  <div className="text-[11px] sm:text-xs font-mono text-emerald-300 font-medium tracking-tight">
+                  <div className="text-[11px] sm:text-xs font-mono text-[var(--muted)] font-medium tracking-tight">
                     {convertedHeroAmount}
                   </div>
                 )}
               </div>
             ) : canvasReceipt.lastResult && !canvasReceipt.lastResult.isError ? (
               <div
-                className={`mb-4 py-2.5 px-3.5 rounded-xl border transition-colors flex flex-col justify-center gap-1 relative shadow-md ${isHeroSplit
-                  ? 'bg-purple-500/10 dark:bg-purple-950/40 border-purple-500/30 dark:border-purple-500/40'
-                  : isTextReasoningOrError(canvasReceipt.lastResult.formattedValue)
-                    ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-500/30 dark:border-amber-500/40'
-                    : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/30 dark:border-emerald-500/40'
-                  }`}
+                className={`mb-4 py-2.5 px-3.5 rounded-xl border transition-colors flex flex-col justify-center gap-1 relative shadow-md bg-[var(--surface)] border-[var(--border)]`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <span
-                    className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate ${isHeroSplit
-                      ? 'text-purple-700 dark:text-purple-300'
-                      : isTextReasoningOrError(canvasReceipt.lastResult.formattedValue)
-                        ? 'text-amber-700 dark:text-amber-400'
-                        : 'text-emerald-700 dark:text-emerald-400'
-                      }`}
+                    className={`text-[10px] font-mono uppercase tracking-wider block font-semibold truncate text-[var(--muted)]`}
                   >
                     {canvasReceipt.heroTitle || canvasReceipt.lastResult.name}
                   </span>
@@ -2262,15 +2240,15 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setShowCurrencyMenu((prev) => !prev)}
-                      className="flex items-center gap-1 py-0.5 px-2 rounded-full bg-[var(--surface-subtle)] dark:bg-slate-900/90 hover:bg-slate-200/80 dark:hover:bg-slate-800 text-[11px] font-mono text-emerald-600 dark:text-emerald-400 border border-[var(--border)] dark:border-slate-700/80 hover:border-emerald-500/50 transition cursor-pointer shadow-sm active:scale-95"
+                      className="flex items-center gap-1 py-0.5 px-2 rounded-full bg-[var(--surface-subtle)] hover:bg-[var(--surface)] text-[11px] font-mono text-[var(--foreground)] border border-[var(--border)] transition cursor-pointer shadow-sm active:scale-95"
                       title="Toggle currency conversion"
                     >
                       <span className="font-semibold">{displayCurrency}</span>
-                      <span className="text-[10px] text-slate-400">▾</span>
+                      <span className="text-[10px] text-[var(--muted)]">▾</span>
                     </button>
 
                     {showCurrencyMenu && (
-                      <div className="absolute right-0 top-full mt-1.5 w-36 bg-[var(--surface)] dark:bg-[#0e131b] border border-[var(--border)] dark:border-slate-700 rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
+                      <div className="absolute right-0 top-full mt-1.5 w-36 bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-2xl py-1 z-40 font-mono text-xs">
                         {Object.entries(BENCHMARK_RATES).map(([code, info]) => (
                           <button
                             key={code}
@@ -2279,13 +2257,13 @@ export default function HomePage() {
                               setDisplayCurrency(code);
                               setShowCurrencyMenu(false);
                             }}
-                            className={`w-full text-left px-3 py-1.5 flex items-center justify-between text-xs hover:bg-[var(--surface-subtle)] dark:hover:bg-slate-800/80 transition ${displayCurrency === code
-                              ? 'text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40'
-                              : 'text-slate-700 dark:text-slate-300'
+                            className={`w-full text-left px-3 py-1.5 flex items-center justify-between text-xs hover:bg-[var(--surface-subtle)] transition ${displayCurrency === code
+                              ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] font-semibold'
+                              : 'text-[var(--foreground)]'
                               }`}
                           >
                             <span>{info.label}</span>
-                            {displayCurrency === code && <span className="text-emerald-600 dark:text-emerald-400 text-xs">✓</span>}
+                            {displayCurrency === code && <span className="text-xs">✓</span>}
                           </button>
                         ))}
                       </div>
@@ -2296,10 +2274,8 @@ export default function HomePage() {
                 <div
                   className={
                     isTextReasoningOrError(canvasReceipt.lastResult.formattedValue)
-                      ? 'text-base md:text-lg font-medium text-amber-900 dark:text-amber-200/90 leading-relaxed break-words tracking-normal font-sans'
-                      : `text-3xl md:text-4xl font-bold font-mono tracking-tight break-words ${
-                          isHeroSplit ? 'text-purple-700 dark:text-purple-200' : 'text-slate-900 dark:text-white'
-                        }`
+                      ? 'text-base md:text-lg font-medium text-[var(--foreground)] leading-relaxed break-words tracking-normal font-sans'
+                      : 'text-3xl md:text-4xl font-bold font-mono tracking-tight break-words text-[var(--foreground)]'
                   }
                 >
                   {canvasReceipt.lastResult.formattedValue}
@@ -2307,7 +2283,7 @@ export default function HomePage() {
 
                 {/* Converted Currency Sub-Value */}
                 {convertedHeroAmount && getCurrencyCodeFromSymbol(canvasReceipt.detectedCurrency || '$') !== displayCurrency && (
-                  <div className="text-[11px] sm:text-xs font-mono text-emerald-300 font-medium tracking-tight">
+                  <div className="text-[11px] sm:text-xs font-mono text-[var(--muted)] font-medium tracking-tight">
                     {convertedHeroAmount}
                   </div>
                 )}
@@ -2317,38 +2293,30 @@ export default function HomePage() {
             {/* Canonical Statement Breakdown */}
             <div className="space-y-1.5 font-mono">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold block">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-semibold block">
                   Statement Breakdown
                 </span>
-                <span className="text-[10px] font-mono tracking-wider text-slate-500">Auto-Reordered</span>
+                <span className="text-[10px] font-mono tracking-wider text-[var(--muted)]">Auto-Reordered</span>
               </div>
 
               {isAiLoading && !hasReceiptItems ? (
-                <div className="py-4 px-3 text-center border border-dashed border-emerald-500/30 dark:border-emerald-500/40 rounded-lg bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 text-xs font-mono animate-pulse">
+                <div className="py-4 px-3 text-center border border-dashed border-[var(--border)] rounded-lg bg-[var(--surface-subtle)] text-[var(--foreground)] text-xs font-mono animate-pulse">
                   Analyzing problem and calculating step-by-step deduction...
                 </div>
               ) : !hasReceiptItems && !aiResult ? (
-                <div className="p-4 text-center border border-dashed border-slate-800 rounded-lg text-slate-500 text-xs">
+                <div className="p-4 text-center border border-dashed border-[var(--border)] rounded-lg text-[var(--muted)] text-xs">
                   Type items in Section B (e.g. ticket 450).
                 </div>
               ) : (
                 <>
                   {aiResult && (
                     <div
-                      className={`py-2.5 px-3 rounded-lg border transition shadow-sm mb-2 flex flex-col gap-1.5 ${
-                        aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
-                          ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-500/40 dark:border-amber-500/50'
-                          : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/40 dark:border-emerald-500/50'
-                      }`}
+                      className={`py-2.5 px-3 rounded-lg border transition shadow-sm mb-2 flex flex-col gap-1.5 bg-[var(--surface)] border-[var(--border)]`}
                     >
                       <div className="flex justify-between items-start gap-2">
                         <div className="flex items-start gap-1.5 flex-1 min-w-0">
                           <span
-                            className={`text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 break-words leading-snug ${
-                              aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
-                                ? 'text-amber-700 dark:text-amber-300'
-                                : ''
-                            }`}
+                            className={`text-sm font-semibold text-[var(--foreground)] line-clamp-2 break-words leading-snug`}
                           >
                             {aiResult.title}
                           </span>
@@ -2359,7 +2327,7 @@ export default function HomePage() {
                               )}`}
                               title="Open Full Calculator"
                               aria-label="Open Full Calculator"
-                              className="inline-flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/60 px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-emerald-500/30 hover:border-emerald-500/60 mt-0.5"
+                              className="inline-flex items-center justify-center text-[var(--foreground)] hover:bg-[var(--surface-subtle)] px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-[var(--border)] mt-0.5"
                             >
                               ↗
                             </Link>
@@ -2367,28 +2335,20 @@ export default function HomePage() {
                         </div>
                         {aiResult.answer && !isTextReasoningOrError(aiResult.answer) && (
                           <span
-                            className={`font-mono shrink-0 whitespace-nowrap text-right text-xs font-bold pt-0.5 ${
-                              aiResult.error === 'RATE_LIMIT'
-                                ? 'text-amber-600 dark:text-amber-300'
-                                : 'text-slate-900 dark:text-white'
-                            }`}
+                            className={`font-mono shrink-0 whitespace-nowrap text-right text-xs font-bold pt-0.5 text-[var(--foreground)]`}
                           >
                             {aiResult.answer}
                           </span>
                         )}
                       </div>
                       {aiResult.answer && isTextReasoningOrError(aiResult.answer) && aiResult.answer !== aiResult.title && !aiResult.steps && (
-                        <div className="text-xs text-amber-700/90 dark:text-amber-200/90 leading-relaxed break-words font-sans pt-0.5">
+                        <div className="text-xs text-[var(--muted)] leading-relaxed break-words font-sans pt-0.5">
                           {aiResult.answer}
                         </div>
                       )}
                       {aiResult.steps && (
                         <div
-                          className={`text-xs font-mono whitespace-pre-line leading-relaxed pt-1.5 border-t ${
-                            aiResult.error === 'RATE_LIMIT' || isTextReasoningOrError(aiResult.answer)
-                              ? 'text-amber-700/90 dark:text-amber-300/80 border-amber-500/20'
-                              : 'text-slate-400 dark:text-slate-400 border-emerald-500/20'
-                          }`}
+                          className={`text-xs font-mono whitespace-pre-line leading-relaxed pt-1.5 border-t text-[var(--muted)] border-[var(--border)]`}
                         >
                           {aiResult.steps}
                         </div>
@@ -2407,30 +2367,26 @@ export default function HomePage() {
                     <div
                       key={v.id}
                       className={`py-1.5 px-2.5 rounded-lg border transition flex flex-col gap-0.5 ${v.isError
-                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'
+                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'
                         : isSummary
-                          ? 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/40 dark:border-emerald-500/50 font-semibold'
+                          ? 'bg-[rgba(28,95,39,0.14)] dark:bg-[rgba(207,240,96,0.14)] border-[var(--border)] font-semibold'
                           : isModifier
-                            ? 'bg-purple-500/10 dark:bg-purple-950/30 border-purple-500/30 dark:border-purple-500/40 text-purple-700 dark:text-purple-200'
+                            ? 'bg-[var(--surface)] border-[var(--border)] text-[var(--foreground)]'
                             : isDeduction
-                              ? 'bg-amber-500/10 dark:bg-amber-950/20 border-amber-500/30'
+                              ? 'bg-[var(--surface)] border-[var(--border)]'
                               : isTax
-                                ? 'bg-cyan-500/10 dark:bg-cyan-950/20 border-cyan-500/30'
-                                : 'bg-[var(--surface-subtle)] dark:bg-slate-900/60 border-[var(--border)] dark:border-slate-800/80 text-slate-700 dark:text-slate-300'
+                                ? 'bg-[var(--surface)] border-[var(--border)]'
+                                : 'bg-[var(--surface)] border-[var(--border)] text-[var(--foreground)]'
                         }`}
                     >
                       <div className="flex justify-between items-center gap-2">
                         <div className="flex items-center gap-1.5 flex-1 min-w-0">
                           <span
-                            className={`text-xs font-mono font-medium leading-tight ${isDeduction
-                              ? 'text-amber-500 dark:text-amber-400'
-                              : isTax
-                                ? 'text-cyan-500 dark:text-cyan-400'
-                                : isSummary
-                                  ? 'text-emerald-500 dark:text-emerald-400 font-bold'
-                                  : isModifier
-                                    ? 'text-purple-500 dark:text-purple-300'
-                                    : 'text-slate-700 dark:text-slate-300'
+                            className={`text-xs font-mono font-medium leading-tight ${isSummary
+                              ? 'text-[var(--foreground)] font-bold'
+                              : isDeduction || isTax
+                                ? 'text-[var(--muted)]'
+                                : 'text-[var(--foreground)]'
                               }`}
                           >
                             {v.name}
@@ -2451,23 +2407,14 @@ export default function HomePage() {
                                 }`}
                               title="Open Full Calculator"
                               aria-label="Open Full Calculator"
-                              className="inline-flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/60 px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-emerald-500/30 hover:border-emerald-500/60"
+                              className="inline-flex items-center justify-center text-[var(--foreground)] hover:bg-[var(--surface-subtle)] px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-[var(--border)]"
                             >
                               ↗
                             </Link>
                           )}
                         </div>
                         <span
-                          className={`font-mono shrink-0 whitespace-nowrap text-right ${isSummary ? 'text-sm font-bold text-emerald-600 dark:text-emerald-400' : 'text-xs font-medium'} ${isDeduction
-                            ? 'text-amber-600 dark:text-amber-400'
-                            : isTax
-                              ? 'text-cyan-600 dark:text-cyan-400'
-                              : isSummary
-                                ? ''
-                                : isModifier
-                                  ? 'text-purple-600 dark:text-purple-300'
-                                  : 'text-slate-900 dark:text-white'
-                            }`}
+                          className={`font-mono shrink-0 whitespace-nowrap text-right ${isSummary ? 'text-sm font-bold text-[var(--foreground)]' : 'text-xs font-semibold text-[var(--foreground)]'}`}
                         >
                           {v.formattedValue}
                         </span>
@@ -2483,7 +2430,7 @@ export default function HomePage() {
                                 value={tempNoteText}
                                 onChange={(e) => setTempNoteText(e.target.value)}
                                 placeholder="Add or edit note..."
-                                className="w-full bg-slate-950 border border-emerald-500/50 rounded px-1.5 py-0.5 text-[10px] text-white focus:outline-none font-mono"
+                                className="w-full bg-[var(--background)] border border-[var(--border)] rounded px-1.5 py-0.5 text-[10px] text-[var(--foreground)] focus:outline-none font-mono"
                                 autoFocus
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') handleSaveNote(v);
@@ -2493,7 +2440,7 @@ export default function HomePage() {
                               <button
                                 type="button"
                                 onClick={() => handleSaveNote(v)}
-                                className="text-[10px] bg-emerald-700 hover:bg-emerald-600 text-white px-1.5 py-0.5 rounded font-semibold"
+                                className="text-[10px] bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] px-1.5 py-0.5 rounded font-semibold"
                               >
                                 Save
                               </button>
@@ -2506,10 +2453,10 @@ export default function HomePage() {
                                 setTempNoteText(v.note || '');
                               }}
                               title="Click to edit note"
-                              className="group/note text-[10px] text-emerald-300 bg-emerald-950/40 hover:bg-emerald-900/40 px-1.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1 transition"
+                              className="group/note text-[10px] text-[var(--muted)] bg-[var(--surface-subtle)] hover:bg-[var(--surface)] px-1.5 py-0.5 rounded border border-[var(--border)] flex items-center gap-1 transition"
                             >
                               <svg
-                                className="w-2.5 h-2.5 text-emerald-400 shrink-0"
+                                className="w-2.5 h-2.5 text-[var(--foreground)] shrink-0"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -2523,7 +2470,7 @@ export default function HomePage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
                               </svg>
                               <span>{v.note}</span>
-                              <span className="opacity-0 group-hover/note:opacity-100 text-[10px] text-slate-400 ml-0.5">✎</span>
+                              <span className="opacity-0 group-hover/note:opacity-100 text-[10px] text-[var(--muted)] ml-0.5">✎</span>
                             </button>
                           ) : (
                             <button
@@ -2532,7 +2479,7 @@ export default function HomePage() {
                                 setEditingNoteId(v.id);
                                 setTempNoteText('');
                               }}
-                              className="text-[10px] text-slate-500 hover:text-slate-300 font-mono transition"
+                              className="text-[10px] text-[var(--muted)] hover:text-[var(--foreground)] font-mono transition"
                             >
                               + add note
                             </button>
@@ -2549,20 +2496,17 @@ export default function HomePage() {
 
             {/* Dedicated Financing Breakdown Card (Beneath Cart Total) */}
             {canvasReceipt.financingItems && canvasReceipt.financingItems.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-[var(--border)] dark:border-slate-800/80 space-y-2 font-mono">
+              <div className="mt-3 pt-3 border-t border-[var(--border)] space-y-2 font-mono">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-indigo-500 dark:text-indigo-400 font-semibold block">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-semibold block">
                     Financing & Payment Plan
                   </span>
-                  <span className="text-[10px] text-slate-500 font-mono">Debt Facility</span>
+                  <span className="text-[10px] text-[var(--muted)] font-mono">Debt Facility</span>
                 </div>
                 {canvasReceipt.financingItems.map((f) => (
                   <div
                     key={f.id}
-                    className={`p-3 rounded-xl border transition flex flex-col gap-2.5 ${f.isError
-                      ? 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'
-                      : 'bg-indigo-500/10 dark:bg-indigo-950/40 border-indigo-500/30 dark:border-indigo-500/40 text-slate-800 dark:text-slate-200 shadow-sm'
-                      }`}
+                    className={`p-3 rounded-xl border transition flex flex-col gap-2.5 bg-[var(--surface)] border-[var(--border)] text-[var(--foreground)] shadow-sm`}
                   >
                     {f.isError ? (
                       <div className="text-xs text-rose-600 dark:text-rose-400 font-medium">
@@ -2572,7 +2516,7 @@ export default function HomePage() {
                       <>
                         <div className="flex justify-between items-start gap-2">
                           <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                            <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-300 leading-tight">
+                            <span className="text-xs font-semibold text-[var(--foreground)] leading-tight">
                               {f.name}
                             </span>
                             {f.calculatorSlug && (
@@ -2591,41 +2535,41 @@ export default function HomePage() {
                                   }`}
                                 title="Open Full Calculator"
                                 aria-label="Open Full Calculator"
-                                className="inline-flex items-center justify-center text-indigo-500 hover:text-indigo-400 hover:bg-indigo-950/60 px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-indigo-500/30 hover:border-indigo-500/60"
+                                className="inline-flex items-center justify-center text-[var(--foreground)] hover:bg-[var(--surface-subtle)] px-1 py-0.5 rounded transition text-[11px] font-bold leading-none shrink-0 border border-[var(--border)]"
                               >
                                 ↗
                               </Link>
                             )}
                           </div>
-                          <span className="text-sm font-bold text-indigo-600 dark:text-indigo-300 shrink-0 whitespace-nowrap">
+                          <span className="text-sm font-bold text-[var(--foreground)] shrink-0 whitespace-nowrap">
                             {f.formattedValue}
                           </span>
                         </div>
 
                         {/* Financing Details Grid */}
                         {f.financingDetails && (
-                          <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-indigo-500/20 text-[11px]">
+                          <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[var(--border)] text-[11px]">
                             <div className="flex flex-col">
-                              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Loan Principal</span>
-                              <span className="font-semibold text-slate-900 dark:text-slate-200">
+                              <span className="text-[10px] text-[var(--muted)] uppercase tracking-wider">Loan Principal</span>
+                              <span className="font-semibold text-[var(--foreground)]">
                                 {formatAmount(f.financingDetails.principal, f.currency)}
                               </span>
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Total Repaid</span>
-                              <span className="font-semibold text-slate-900 dark:text-slate-200">
+                              <span className="text-[10px] text-[var(--muted)] uppercase tracking-wider">Total Repaid</span>
+                              <span className="font-semibold text-[var(--foreground)]">
                                 {formatAmount(f.financingDetails.totalRepaid, f.currency)}
                               </span>
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Total Interest</span>
-                              <span className="font-semibold text-amber-600 dark:text-amber-400">
+                              <span className="text-[10px] text-[var(--muted)] uppercase tracking-wider">Total Interest</span>
+                              <span className="font-semibold text-[var(--foreground)]">
                                 +{formatAmount(f.financingDetails.totalInterest, f.currency)}
                               </span>
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Terms</span>
-                              <span className="font-semibold text-slate-900 dark:text-slate-200">
+                              <span className="text-[10px] text-[var(--muted)] uppercase tracking-wider">Terms</span>
+                              <span className="font-semibold text-[var(--foreground)]">
                                 {f.financingDetails.rate}% • {f.financingDetails.tenureLabel}
                               </span>
                             </div>
@@ -2640,12 +2584,12 @@ export default function HomePage() {
 
             {/* Dedicated Calculation Metrics Block */}
             {secondaryMetricsToDisplay.length > 0 && (
-              <div className="mt-4 pt-3 border-t border-[var(--border)] dark:border-slate-800/80 space-y-1.5 font-mono">
+              <div className="mt-4 pt-3 border-t border-[var(--border)] space-y-1.5 font-mono">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold block">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] font-semibold block">
                     Calculation Metrics
                   </span>
-                  <span className="text-[10px] text-emerald-500 font-mono">
+                  <span className="text-[10px] text-[var(--foreground)] font-mono font-medium">
                     {canvasReceipt.hasInvestmentEngine ? 'Portfolio Engine' : isCalculatorOutputActive ? 'Library Linked' : 'Active Tool'}
                   </span>
                 </div>
@@ -2653,12 +2597,12 @@ export default function HomePage() {
                   {secondaryMetricsToDisplay.map((metric, idx) => (
                     <div
                       key={idx}
-                      className="py-1.5 px-2.5 rounded-lg border border-[var(--border)] dark:border-slate-800/80 bg-[var(--surface-subtle)] dark:bg-slate-900/60 flex justify-between items-center gap-2 text-xs"
+                      className="py-1.5 px-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] flex justify-between items-center gap-2 text-xs"
                     >
-                      <span className="text-slate-600 dark:text-slate-400 flex-1 min-w-0 pr-1 truncate text-xs">
+                      <span className="text-[var(--muted)] flex-1 min-w-0 pr-1 truncate text-xs">
                         {metric.label}
                       </span>
-                      <span className="font-semibold text-slate-900 dark:text-slate-200 shrink-0 text-right whitespace-nowrap text-xs">
+                      <span className="font-semibold text-[var(--foreground)] shrink-0 text-right whitespace-nowrap text-xs">
                         {metric.prefix || ''}
                         {metric.value}
                         {metric.suffix ? ` ${metric.suffix}` : ''}
@@ -2673,7 +2617,7 @@ export default function HomePage() {
           {/* Bottom Action Footer */}
           <div className="w-full shrink-0 pb-4 pr-5 pl-4 flex flex-col relative z-20">
             {/* Inset Divider Line */}
-            <div className="w-full h-px bg-slate-300 dark:bg-slate-800 mb-3" />
+            <div className="w-full h-px bg-[var(--border)] mb-3" />
 
             <div className="flex items-center gap-2 h-9 mb-2.5 w-full relative z-20">
               {/* Copy Button with Reactive State */}
@@ -2686,20 +2630,20 @@ export default function HomePage() {
                     ? 'opacity-50 cursor-not-allowed pointer-events-none'
                     : 'cursor-pointer pointer-events-auto'
                 } ${isCopied
-                  ? 'bg-emerald-950/80 border-emerald-500/80 text-emerald-300'
-                  : 'bg-[#E4EAF1] hover:bg-[#D7E0EB] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-[#CBD5E1] dark:border-slate-700/80 text-[#334155] dark:text-slate-300'
+                  ? 'bg-[rgba(28,95,39,0.2)] dark:bg-[rgba(207,240,96,0.2)] border-[var(--border)] text-[var(--foreground)]'
+                  : 'bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)]'
                 }`}
                 title="Copy formatted markdown receipt to clipboard"
               >
                 {isCopied ? (
                   <>
-                    <span className="text-emerald-400 font-bold text-xs leading-none">✓</span>
-                    <span className="text-emerald-300 font-semibold whitespace-nowrap">Copied</span>
+                    <span className="text-[var(--foreground)] font-bold text-xs leading-none">✓</span>
+                    <span className="text-[var(--foreground)] font-semibold whitespace-nowrap">Copied</span>
                   </>
                 ) : (
                   <>
                     <svg
-                      className="w-3.5 h-3.5 text-[#334155] dark:text-slate-300 shrink-0"
+                      className="w-3.5 h-3.5 text-[var(--muted)] shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -2724,15 +2668,15 @@ export default function HomePage() {
                   disabled={isActionsDisabled}
                   aria-expanded={isDownloadDropdownOpen}
                   aria-haspopup="true"
-                  className={`h-9 w-full px-2.5 rounded-xl bg-[#E4EAF1] hover:bg-[#D7E0EB] dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-[#334155] dark:text-slate-300 font-mono text-[11px] font-medium tracking-tight border border-[#CBD5E1] dark:border-slate-700/80 transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] ${
+                  className={`h-9 w-full px-2.5 rounded-xl bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] font-mono text-[11px] font-medium tracking-tight border border-[var(--border)] transition flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] ${
                     isActionsDisabled
                       ? 'opacity-50 cursor-not-allowed pointer-events-none'
                       : 'cursor-pointer pointer-events-auto'
-                  } ${isDownloadDropdownOpen ? 'ring-1 ring-emerald-500/50' : ''}`}
+                  } ${isDownloadDropdownOpen ? 'ring-2 ring-[var(--border)]' : ''}`}
                   title="Download / Export options"
                 >
                   <svg
-                    className="w-3.5 h-3.5 text-[#334155] dark:text-slate-300 shrink-0"
+                    className="w-3.5 h-3.5 text-current shrink-0"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -2749,7 +2693,7 @@ export default function HomePage() {
                 </button>
 
                 {isDownloadDropdownOpen && (
-                  <div className="absolute right-0 bottom-full mb-1.5 w-full min-w-[124px] rounded-lg border border-slate-700/80 bg-[#111722] p-1 shadow-2xl backdrop-blur-md z-50 animate-in fade-in zoom-in-95 duration-100">
+                  <div className="absolute right-0 bottom-full mb-1.5 w-full min-w-[124px] rounded-lg border border-[var(--border)] bg-[var(--surface)] p-1 shadow-2xl backdrop-blur-md z-50 animate-in fade-in zoom-in-95 duration-100">
                     {(['CSV', 'TXT', 'PNG'] as const).map((format) => (
                       <button
                         key={format}
@@ -2761,9 +2705,9 @@ export default function HomePage() {
                           setIsDownloadDropdownOpen(false);
                         }}
                         disabled={format === 'PNG' && isExportingCard}
-                        className="group flex w-full items-center gap-2 rounded px-2.5 py-1.5 text-left font-mono text-xs text-slate-300 transition-colors hover:bg-slate-800/80 hover:text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="group flex w-full items-center gap-2 rounded px-2.5 py-1.5 text-left font-mono text-xs text-[var(--foreground)] transition-colors hover:bg-[var(--surface-subtle)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 shadow-[0_0_6px_rgba(52,211,153,0.9)] shrink-0" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#1c5f27] dark:bg-[#cff060] opacity-0 transition-opacity group-hover:opacity-100 shrink-0" />
                         <span className="font-medium tracking-wide">
                           {format === 'PNG' && isExportingCard ? 'Exporting...' : format}
                         </span>
@@ -2774,7 +2718,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="h-4 flex items-center justify-center text-[11px] font-mono text-slate-500 text-center">
+            <div className="h-4 flex items-center justify-center text-[11px] font-mono text-[var(--muted)] text-center">
               <span className="leading-none">Section C • Instant Calculation Ledger</span>
             </div>
           </div>
@@ -2793,15 +2737,15 @@ export default function HomePage() {
           onClick={() => setIsHistoryOpen(false)}
         >
           <div
-            className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 text-slate-200 flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-150"
+            className="w-full max-w-lg rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-2xl p-6 text-[var(--foreground)] flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Layout */}
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--border)]">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] flex items-center justify-center shrink-0">
                   <svg
-                    className="w-4 h-4 text-emerald-400"
+                    className="w-4 h-4 text-[var(--foreground)]"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -2815,10 +2759,10 @@ export default function HomePage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-base font-bold font-mono text-white tracking-wide">
+                  <h3 className="text-base font-bold font-mono text-[var(--foreground)] tracking-wide">
                     Calculation History
                   </h3>
-                  <p className="text-xs text-slate-400 font-mono">
+                  <p className="text-xs text-[var(--muted)] font-mono">
                     Saved sheet snapshots and totals
                   </p>
                 </div>
@@ -2827,7 +2771,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => setIsHistoryOpen(false)}
-                className="px-2.5 py-1 text-xs font-mono rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                className="px-2.5 py-1 text-xs font-mono rounded-lg bg-[var(--surface)] hover:bg-[var(--surface-subtle)] text-[var(--foreground)] border border-[var(--border)] transition cursor-pointer"
                 aria-label="Close calculation history"
               >
                 Esc
@@ -2837,7 +2781,7 @@ export default function HomePage() {
             {/* Content */}
             <div className="space-y-3 overflow-y-auto pr-1 flex-1">
               {historyList.length === 0 ? (
-                <div className="text-center text-slate-400 text-xs py-10 font-mono">
+                <div className="text-center text-[var(--muted)] text-xs py-10 font-mono">
                   No saved sheets yet.<br />Calculations save on Clear.
                 </div>
               ) : (
@@ -2845,24 +2789,24 @@ export default function HomePage() {
                   <div
                     key={item.id}
                     onClick={() => restoreHistory(item)}
-                    className="p-3.5 bg-slate-950/60 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl cursor-pointer transition group"
+                    className="p-3.5 bg-[var(--surface-subtle)] hover:bg-[var(--surface)] border border-[var(--border)] rounded-xl cursor-pointer transition group"
                   >
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs font-mono text-slate-500">{item.timestamp}</span>
+                      <span className="text-xs font-mono text-[var(--muted)]">{item.timestamp}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-mono text-emerald-400 opacity-0 group-hover:opacity-100 transition">
+                        <span className="text-[11px] font-mono text-[var(--foreground)] opacity-0 group-hover:opacity-100 transition">
                           Restore
                         </span>
                         <button
                           type="button"
                           onClick={(e) => deleteHistoryItem(item.id, e)}
-                          className="text-xs text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition px-1.5 py-0.5 rounded hover:bg-rose-950/40"
+                          className="text-xs text-[var(--muted)] hover:text-rose-500 opacity-0 group-hover:opacity-100 transition px-1.5 py-0.5 rounded"
                         >
                           Delete
                         </button>
                       </div>
                     </div>
-                    <div className="text-sm font-mono text-emerald-400 font-bold truncate">
+                    <div className="text-sm font-mono text-[var(--foreground)] font-bold truncate">
                       {item.totalDisplay}
                     </div>
                     <div className="mt-2" onClick={(e) => e.stopPropagation()}>
@@ -2873,7 +2817,7 @@ export default function HomePage() {
                             value={tempHistoryTag}
                             onChange={(e) => setTempHistoryTag(e.target.value)}
                             placeholder="add tag..."
-                            className="w-full bg-slate-950 border border-emerald-500/50 rounded-md px-2 py-1 text-xs font-mono text-white focus:outline-none"
+                            className="w-full bg-[var(--background)] border border-[var(--border)] rounded-md px-2 py-1 text-xs font-mono text-[var(--foreground)] focus:outline-none"
                             autoFocus
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') handleSaveHistoryTag(item.id);
@@ -2883,7 +2827,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => handleSaveHistoryTag(item.id)}
-                            className="text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-md font-mono font-semibold transition shrink-0"
+                            className="text-xs bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] px-2.5 py-1 rounded-md font-mono font-semibold transition shrink-0"
                           >
                             Save
                           </button>
@@ -2899,7 +2843,7 @@ export default function HomePage() {
                         >
                           <svg
                             className={`w-3.5 h-3.5 shrink-0 ${
-                              item.title ? 'text-emerald-400' : 'text-slate-500 group-hover/tag:text-slate-400'
+                              item.title ? 'text-[var(--foreground)]' : 'text-[var(--muted)] group-hover/tag:text-[var(--foreground)]'
                             }`}
                             fill="none"
                             viewBox="0 0 24 24"
@@ -2916,13 +2860,13 @@ export default function HomePage() {
                           <span
                             className={`truncate ${
                               item.title
-                                ? 'text-white font-medium group-hover/tag:text-emerald-300'
-                                : 'text-slate-500 group-hover/tag:text-slate-300'
+                                ? 'text-[var(--foreground)] font-medium'
+                                : 'text-[var(--muted)] group-hover/tag:text-[var(--foreground)]'
                             }`}
                           >
                             {item.title || 'add tag'}
                           </span>
-                          <span className="opacity-0 group-hover/tag:opacity-100 text-xs text-slate-400">✎</span>
+                          <span className="opacity-0 group-hover/tag:opacity-100 text-xs text-[var(--muted)]">✎</span>
                         </button>
                       )}
                     </div>
