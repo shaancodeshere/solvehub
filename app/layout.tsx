@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import AppShell from "@/components/layout/AppShell";
+import BootLoader from "@/components/BootLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,8 +31,16 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(sessionStorage.getItem('solvehub_booted')){document.documentElement.classList.add('solvehub-booted');}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="h-full w-full overflow-hidden bg-[var(--background)] text-[var(--foreground)] transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <BootLoader />
           <AppShell>
             {children}
           </AppShell>

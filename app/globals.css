@@ -77,3 +77,7 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.solvehub-booted #solvehub-bootloader {
+  display: none !important;
+}
