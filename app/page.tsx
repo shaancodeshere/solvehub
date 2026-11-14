@@ -1756,11 +1756,18 @@ export default function HomePage() {
           </button>
           <div className="flex items-center gap-2">
             <Image
+              src="/logo-mark-light.svg"
+              alt="SolveHub Logo"
+              width={20}
+              height={20}
+              className="block dark:hidden w-5 h-5 shrink-0"
+            />
+            <Image
               src="/logo-mark.svg"
               alt="SolveHub Logo"
               width={20}
               height={20}
-              className="w-5 h-5 shrink-0"
+              className="hidden dark:block w-5 h-5 shrink-0"
             />
             <span className="font-bold text-sm text-[var(--foreground)] font-mono">
               SolveHub

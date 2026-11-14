@@ -147,12 +147,20 @@ export default function AppSidebar() {
                 aria-label="Expand sidebar"
               >
                 <Image
+                  src="/logo-mark-light.svg"
+                  alt="SolveHub Logo Mark"
+                  width={28}
+                  height={28}
+                  priority
+                  className="block dark:hidden w-7 h-7 shrink-0 transition-transform duration-250 ease-out group-hover:scale-110"
+                />
+                <Image
                   src="/logo-mark.svg"
                   alt="SolveHub Logo Mark"
                   width={28}
                   height={28}
                   priority
-                  className="w-7 h-7 shrink-0 transition-transform duration-250 ease-out group-hover:scale-110"
+                  className="hidden dark:block w-7 h-7 shrink-0 transition-transform duration-250 ease-out group-hover:scale-110"
                 />
               </button>
             ) : (
@@ -163,12 +171,20 @@ export default function AppSidebar() {
                   title="SolveHub Home"
                 >
                   <Image
+                    src="/logo-mark-light.svg"
+                    alt="SolveHub Logo Mark"
+                    width={28}
+                    height={28}
+                    priority
+                    className="block dark:hidden w-7 h-7 shrink-0 transition-transform duration-250 ease-out group-hover:scale-105"
+                  />
+                  <Image
                     src="/logo-mark.svg"
                     alt="SolveHub Logo Mark"
                     width={28}
                     height={28}
                     priority
-                    className="w-7 h-7 shrink-0 transition-transform duration-250 ease-out group-hover:scale-105"
+                    className="hidden dark:block w-7 h-7 shrink-0 transition-transform duration-250 ease-out group-hover:scale-105"
                   />
                   <div className="flex items-center ml-3">
                     <Image
@@ -381,11 +397,18 @@ export default function AppSidebar() {
                   title="SolveHub Home"
                 >
                   <Image
+                    src="/logo-mark-light.svg"
+                    alt="SolveHub Logo Mark"
+                    width={28}
+                    height={28}
+                    className="block dark:hidden w-7 h-7 shrink-0 transition-transform duration-250 group-hover:scale-105"
+                  />
+                  <Image
                     src="/logo-mark.svg"
                     alt="SolveHub Logo Mark"
                     width={28}
                     height={28}
-                    className="w-7 h-7 shrink-0 transition-transform duration-250 group-hover:scale-105"
+                    className="hidden dark:block w-7 h-7 shrink-0 transition-transform duration-250 group-hover:scale-105"
                   />
                   <Image
                     src="/logo-text.svg"
