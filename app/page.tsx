@@ -21,6 +21,7 @@ import { encodeCanvasState, decodeCanvasState } from '@/lib/urlSnapshot';
 import { toPng } from 'html-to-image';
 import { ExportReceiptCard } from '@/components/export/ExportReceiptCard';
 import { isTextReasoningOrError } from '@/lib/evaluator';
+import { useTheme } from 'next-themes';
 
 export interface CanvasTab {
   id: string;
@@ -53,7 +54,28 @@ interface AiSolverResult {
 // In-Memory Client Cache (0ms instant response for previously queried questions)
 const clientSolveCache = new Map<string, AiSolverResult>();
 
-const DEFAULT_CANVAS_TEXT = `ticket 450`;
+const DEFAULT_CANVAS_TEXT = ``;
+
+const DEFAULT_STARTER_TABS: CanvasTab[] = [
+  {
+    id: 'tab-1',
+    title: 'Start Calculating',
+    content: '',
+    createdAt: 1,
+  },
+  {
+    id: 'tab-2',
+    title: 'Client Quote',
+    content: `Brand Identity System 2400\nNext.js Web Development 3850\nUI/UX Component Library 1200\nCloud Hosting (Annual) 448`,
+    createdAt: 2,
+  },
+  {
+    id: 'tab-3',
+    title: 'Monthly Burn',
+    content: `Workspace Lease 45000\nTeam Retainers 120000\nSoftware & Cloud 18500\nMarketing & Outreach 24000`,
+    createdAt: 3,
+  },
+];
 
 const BENCHMARK_RATES: Record<string, { rateFromUSD: number; symbol: string; label: string }> = {
   USD: { rateFromUSD: 1.0, symbol: '$', label: 'USD' },
@@ -159,17 +181,12 @@ export default function HomePage() {
   const modalInputRef = useRef<HTMLInputElement>(null);
 
   // Multi-Tab Canvas Workspace State
-  const [tabs, setTabs] = useState<CanvasTab[]>([
-    {
-      id: 'tab-1',
-      title: 'Untitled Sheet',
-      content: DEFAULT_CANVAS_TEXT,
-      createdAt: 1,
-    },
-  ]);
+  const [tabs, setTabs] = useState<CanvasTab[]>(DEFAULT_STARTER_TABS);
   const [activeTabId, setActiveTabId] = useState<string>('tab-1');
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [tempTabTitle, setTempTabTitle] = useState('');
+
+  const { resolvedTheme } = useTheme();
 
   // Active note being edited in Section C
   // Inline tag editing in History Drawer
@@ -1524,6 +1541,8 @@ export default function HomePage() {
             const nextTab = prevTabs[nextIndex];
             if (nextTab) {
               setActiveTabId(nextTab.id);
+              setCalculatorOutput(null);
+              setAiResult(null);
             }
             return prevTabs;
           });
@@ -1540,6 +1559,8 @@ export default function HomePage() {
             const prevTab = prevTabs[prevIndex];
             if (prevTab) {
               setActiveTabId(prevTab.id);
+              setCalculatorOutput(null);
+              setAiResult(null);
             }
             return prevTabs;
           });
@@ -1992,7 +2013,11 @@ export default function HomePage() {
                     <div
                       key={tab.id}
                       data-active-tab={isActive}
-                      onClick={() => setActiveTabId(tab.id)}
+                      onClick={() => {
+                        setActiveTabId(tab.id);
+                        setCalculatorOutput(null);
+                        setAiResult(null);
+                      }}
                       onDoubleClick={() => startRenameTab(tab)}
                       className={`group flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium transition-all cursor-pointer border select-none shrink-0 ${isActive
                         ? 'bg-[#1c5f27] text-[#cff060] dark:bg-[#cff060] dark:text-[#1c5f27] border-[var(--border)] shadow-sm font-semibold'
@@ -2893,6 +2918,8 @@ export default function HomePage() {
         activeTabId={activeTabId}
         onSelectTab={(tabId) => {
           setActiveTabId(tabId);
+          setCalculatorOutput(null);
+          setAiResult(null);
           setIsCommandPaletteOpen(false);
         }}
         onSelectTemplate={(tpl) => {
@@ -2952,6 +2979,7 @@ export default function HomePage() {
           rawCanvasText={canvasCode}
           formattedTotal={exportTotalFormatted}
           totalFormatted={exportTotalFormatted}
+          theme={resolvedTheme === 'light' ? 'light' : 'dark'}
         />
       </div>
     </div>

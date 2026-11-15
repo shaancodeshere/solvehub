@@ -5,9 +5,11 @@ import { useWorkspace } from '@/lib/WorkspaceContext';
 import { toPng } from 'html-to-image';
 import { ExportReceiptCard } from '@/components/export/ExportReceiptCard';
 import { isTextReasoningOrError } from '@/lib/evaluator';
+import { useTheme } from 'next-themes';
 
 export default function SectionC() {
     const { receipt, rawScratchpad } = useWorkspace();
+    const { resolvedTheme } = useTheme();
     const [copied, setCopied] = useState(false);
     const [isExportingCard, setIsExportingCard] = useState(false);
     const [isCardExported, setIsCardExported] = useState(false);
@@ -400,6 +402,7 @@ export default function SectionC() {
                     rawCanvasText={rawScratchpad}
                     formattedTotal={receipt.primaryValue || '0'}
                     totalFormatted={receipt.primaryValue || '0'}
+                    theme={resolvedTheme === 'light' ? 'light' : 'dark'}
                 />
             </div>
         </aside>

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef, useMemo, useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 
 export interface ExportReceiptItem {
   label?: string;
@@ -17,6 +18,7 @@ export interface ExportReceiptCardProps {
   rawCanvasText?: string;
   totalFormatted?: string;
   formattedTotal?: string;
+  theme?: 'light' | 'dark';
 }
 
 export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardProps>(
@@ -29,16 +31,27 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
       rawCanvasText,
       totalFormatted = '0',
       formattedTotal: propFormattedTotal,
+      theme: propTheme,
     },
     ref
   ) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    const { resolvedTheme } = useTheme();
+    const activeTheme = propTheme || (resolvedTheme === 'light' ? 'light' : 'dark');
+    const isDark = activeTheme === 'dark';
+
     const formattedTotal = propFormattedTotal || totalFormatted || '0';
 
     const formattedDate =
       dateStr ||
       new Intl.DateTimeFormat('en-GB', {
         day: 'numeric',
-        month: 'long',
+        month: 'short',
         year: 'numeric',
       }).format(new Date());
 
@@ -129,133 +142,164 @@ export const ExportReceiptCard = forwardRef<HTMLDivElement, ExportReceiptCardPro
       return sum > 0 ? `${symbol}${sum.toLocaleString('en-US', { maximumFractionDigits: 2 })}` : (formattedTotal || '0');
     }, [formattedTotal, parsedItems]);
 
+    const cardBg = isDark ? '#1c5f27' : '#cff060';
+    const cardFg = isDark ? '#cff060' : '#1c5f27';
+    const dividerColor = isDark ? '#cff060' : '#1c5f27';
+    const bannerBg = isDark ? '#cff060' : '#1c5f27';
+    const bannerFg = isDark ? '#1c5f27' : '#cff060';
+    const footerTextColor = isDark ? 'rgba(207, 240, 96, 0.72)' : 'rgba(28, 95, 39, 0.72)';
+    const footerBorderColor = isDark ? 'rgba(207, 240, 96, 0.35)' : 'rgba(28, 95, 39, 0.35)';
+
+    // Asymmetrical Line-Wrap Calibration for Sheet Title:
+    // Line 1 wraps before 's' in solvhub (124px right spacer).
+    // Line 2+ may extend further right, wrapping before '|' + logo mark (36px right spacer).
+    const effectiveTitle = sheetTitle || 'Untitled Calculation';
+    const titleLen = effectiveTitle.length;
+    const spacer2Lines = titleLen <= 18 ? 0 : Math.min(5, Math.ceil((titleLen - 18) / 20));
+    const spacer2Height = `${spacer2Lines * 1.25}em`;
+
+    if (!mounted) {
+      return null;
+    }
+
     return (
       <div
         ref={ref}
-        className="w-[480px] h-auto p-8 relative flex flex-col bg-[#D9D9D9] text-black select-none"
+        className={`w-[480px] h-auto relative flex flex-col select-none overflow-hidden ${
+          isDark ? 'bg-[#1c5f27] text-[#cff060]' : 'bg-[#cff060] text-[#1c5f27]'
+        }`}
         style={{
-          backgroundColor: '#D9D9D9',
-          color: '#000000',
+          backgroundColor: cardBg,
+          color: cardFg,
           fontFamily:
             'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         }}
       >
+        {/* Full-bleed Seamless Toroidal Grain Overlay */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-10"
+          style={{
+            backgroundImage: isDark ? 'url("/grain-dark.png")' : 'url("/grain-light.png")',
+            backgroundRepeat: 'repeat',
+            backgroundSize: '256px 256px',
+            opacity: 1,
+          }}
+        />
+
         {/* Top Header Section */}
-        <div className="mb-6">
-          {/* Top-Right SolveHub Brand Lockup */}
-          <div className="flex items-center justify-end gap-2 text-black font-mono">
-            <span className="text-xl font-bold tracking-tight text-black font-sans">
-              solvhub
-            </span>
-            <div
-              className="w-[1px] h-5 bg-black"
-              style={{ backgroundColor: '#000000', width: '1px' }}
-            />
-            <img
-              src="/logo-mark.svg"
-              alt="SolveHub Logo"
-              className="w-5 h-5 object-contain brightness-0"
-              crossOrigin="anonymous"
-            />
-          </div>
-
-          {/* Dynamic Date & Sheet Metadata (Shifted Upwards) */}
-          <div className="mt-5 space-y-2">
-            <div className="text-xs font-bold text-black">
+        <div className="pt-6 px-6 relative z-10">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold tracking-tight" style={{ color: cardFg }}>
               {formattedDate}
-            </div>
-            <div>
-              <span className="text-xs font-bold text-black block mb-0.5">
-                Sheet:
+            </span>
+            <div className="flex items-center gap-2 font-mono">
+              <span className="text-xl font-bold tracking-tight font-sans" style={{ color: cardFg }}>
+                solvhub
               </span>
-              <h2 className="text-base font-bold text-black tracking-tight leading-tight">
-                {sheetTitle || 'Untitled Calculation'}
-              </h2>
+              <div
+                className="w-[1px] h-4"
+                style={{ backgroundColor: dividerColor }}
+              />
+              <img
+                src={isDark ? '/logo-mark.svg' : '/logo-mark-light.svg'}
+                alt="SolveHub Logo"
+                className="w-5 h-5 object-contain"
+                crossOrigin="anonymous"
+              />
             </div>
           </div>
+          <div className="w-full border-t mt-3.5" style={{ borderColor: dividerColor }} />
         </div>
 
-        {/* Horizontal Rule */}
-        <div className="w-full border-t border-black mb-4" />
+        {/* Main Content Section */}
+        <div className="px-10 mt-8 flex-1 flex flex-col relative z-10">
+          {/* Sheet Title with Asymmetrical Line-Wrap Spacers */}
+          <h2
+            className="text-2xl sm:text-[28px] font-extrabold tracking-tight leading-tight mb-8 break-words"
+            style={{ color: cardFg }}
+          >
+            {/* Spacer 1: Line 1 stops before 's' in solvhub (~124px right exclusion) */}
+            <span
+              aria-hidden="true"
+              className="float-right h-[1.25em] w-[124px] pointer-events-none"
+            />
+            {/* Spacer 2: Line 2+ stops before '|' + logo mark (~36px right exclusion) */}
+            {spacer2Lines > 0 && (
+              <span
+                aria-hidden="true"
+                className="float-right clear-right w-[36px] pointer-events-none"
+                style={{ height: spacer2Height }}
+              />
+            )}
+            {effectiveTitle}
+          </h2>
 
-        {/* Ledger Items Container */}
-        <div className="relative mb-6">
-          {/* Full vertical dividing line spanning only the rendered rows */}
+          {/* Line Items Container */}
+          <div className="w-full mb-4">
+            {parsedItems.length === 0 ? (
+              <div className="text-sm font-medium italic py-2" style={{ color: cardFg, opacity: 0.7 }}>
+                No line items recorded
+              </div>
+            ) : (
+              parsedItems.map((item, idx) => (
+                <div key={idx} className="w-full">
+                  <div className="flex items-center justify-between py-2.5">
+                    <span className="text-sm font-bold tracking-tight pr-4 break-words" style={{ color: cardFg }}>
+                      {item.label}
+                    </span>
+                    <span className="text-sm font-bold font-mono tracking-tight text-right shrink-0" style={{ color: cardFg }}>
+                      {item.value}
+                    </span>
+                  </div>
+                  {idx < parsedItems.length - 1 && (
+                    <div className="w-full border-t" style={{ borderColor: dividerColor }} />
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Statement Total Banner */}
           <div
-            className="absolute right-[130px] top-0 bottom-0 w-[1px] bg-black pointer-events-none"
-            style={{ backgroundColor: '#000000', width: '1px' }}
-          />
-
-          <div className="grid grid-cols-[1fr_auto] gap-x-6">
-            {/* Render all line items */}
-            <div className="space-y-3.5 pr-6">
-              {parsedItems.length === 0 ? (
-                <div className="text-sm font-medium text-neutral-600 italic">
-                  No line items recorded
-                </div>
-              ) : (
-                parsedItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="text-sm font-bold text-black leading-snug break-words"
-                  >
-                    {item.label}
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="space-y-3.5 pl-6 text-right w-[130px]">
-              {parsedItems.length === 0 ? (
-                <div className="text-sm font-bold text-neutral-600 font-mono">
-                  -
-                </div>
-              ) : (
-                parsedItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="text-sm font-bold text-black font-mono"
-                  >
-                    {item.value}
-                  </div>
-                ))
-              )}
-            </div>
+            className="w-full flex items-center justify-between px-4 py-3 mt-4"
+            style={{
+              backgroundColor: bannerBg,
+              color: bannerFg,
+            }}
+          >
+            <span className="text-sm font-extrabold tracking-tight">Statement Total</span>
+            <span className="text-sm font-bold font-mono tracking-tight text-right">{finalDisplayTotal}</span>
           </div>
-        </div>
-
-        {/* Statement Total Anchor */}
-        <div className="grid grid-cols-[1fr_auto] gap-x-6 pt-4 border-t border-neutral-400 mb-8">
-          <span className="text-base font-bold text-black">
-            Statement Total
-          </span>
-          <span className="text-base font-bold text-black font-mono text-right w-[130px]">
-            {finalDisplayTotal}
-          </span>
         </div>
 
         {/* Bottom Crowd Artwork Container */}
-        <div className="w-full relative overflow-hidden h-[140px] flex items-end">
+        <div className="w-full mt-10 relative overflow-hidden flex items-end justify-center z-10">
           <img
             src="/export-crowd.png"
             alt="SolveHub Community Crowd"
             crossOrigin="anonymous"
-            className="w-full absolute bottom-0 left-0"
+            className="w-full object-contain pointer-events-none"
           />
         </div>
 
-        {/* Hairline Divider with Centered Badge */}
-        <div className="relative mt-4">
-          <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <div className="w-full border-t border-neutral-400" />
-          </div>
-          <div className="relative flex justify-center">
+        {/* Bottom Hairline Watermark Footer */}
+        <div className="w-full px-6 pb-6 mt-3 relative z-10">
+          <div className="flex items-center gap-3 w-full">
+            <div
+              className="flex-1 h-[1px]"
+              style={{ backgroundColor: footerBorderColor }}
+            />
             <span
-              className="bg-[#D9D9D9] px-2 text-[11px] font-mono text-neutral-800"
-              style={{ backgroundColor: '#D9D9D9', color: '#262626' }}
+              className="font-mono text-[11px] tracking-wide whitespace-nowrap"
+              style={{ color: footerTextColor }}
             >
               calculated on solvehub.app
             </span>
+            <div
+              className="flex-1 h-[1px]"
+              style={{ backgroundColor: footerBorderColor }}
+            />
           </div>
         </div>
       </div>
