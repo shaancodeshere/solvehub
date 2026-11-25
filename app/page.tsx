@@ -22,6 +22,7 @@ import { toPng } from 'html-to-image';
 import { ExportReceiptCard } from '@/components/export/ExportReceiptCard';
 import { isTextReasoningOrError } from '@/lib/evaluator';
 import { useTheme } from 'next-themes';
+import { FEEDBACK_URL } from '@/lib/constants';
 
 export interface CanvasTab {
   id: string;
@@ -1995,6 +1996,16 @@ export default function HomePage() {
                 <ClearTrashIcon className="w-3.5 h-3.5 text-[var(--muted)] group-hover:text-[var(--foreground)] shrink-0" />
                 <span className="hidden md:inline">Clear</span>
               </button>
+
+              <a
+                href={FEEDBACK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-mono opacity-70 hover:opacity-100 transition-opacity underline underline-offset-2 hidden sm:inline-flex items-center ml-1 px-1.5 text-[var(--muted)] hover:text-[var(--foreground)]"
+                title="Send Feedback"
+              >
+                Feedback
+              </a>
             </div>
           </div>
 

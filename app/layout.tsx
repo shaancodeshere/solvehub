@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -16,9 +16,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://solvehub.app"),
   title: "SolveHub — Computational Canvas & Universal Calculators",
   description: "Natural language computational canvas with 487 domain calculators and live structured ledger.",
+  openGraph: {
+    title: "SolveHub — Computational Canvas & Universal Calculators",
+    description: "Natural language computational canvas with 487 domain calculators and live structured ledger.",
+    url: "https://solvehub.app",
+    siteName: "SolveHub",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SolveHub — Computational Canvas & Universal Calculators",
+    description: "Natural language computational canvas with 487 domain calculators and live structured ledger.",
+  },
 };
 
 export default function RootLayout({

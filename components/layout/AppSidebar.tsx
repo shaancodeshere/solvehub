@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useSidebar } from './AppShell';
+import { FEEDBACK_URL } from '@/lib/constants';
 
 export function CanvasModeIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -362,9 +363,20 @@ export default function AppSidebar() {
                 <ThemeToggle className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] shadow-sm transition-all active:scale-95 cursor-pointer" />
               </div>
 
-              <div className="h-4 flex items-center gap-2 text-[11px] font-mono text-[var(--muted)]">
-                <span className="w-2 h-2 rounded-full bg-[#1c5f27] dark:bg-[#cff060] shrink-0"></span>
-                <span className="truncate leading-none">Canonical Ledger Active</span>
+              <div className="h-4 flex items-center justify-between text-[11px] font-mono text-[var(--muted)]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-2 h-2 rounded-full bg-[#1c5f27] dark:bg-[#cff060] shrink-0"></span>
+                  <span className="truncate leading-none">Canonical Ledger Active</span>
+                </div>
+                <a
+                  href={FEEDBACK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-mono opacity-70 hover:opacity-100 transition-opacity underline underline-offset-2 shrink-0 ml-1.5"
+                  title="Send Feedback"
+                >
+                  Feedback
+                </a>
               </div>
             </>
           )}
@@ -526,9 +538,20 @@ export default function AppSidebar() {
                 <ThemeToggle className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-[var(--surface)] hover:bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--foreground)] shadow-sm transition-all active:scale-95 cursor-pointer" />
               </div>
 
-              <div className="h-4 flex items-center gap-2 text-[11px] font-mono text-[var(--muted)]">
-                <span className="w-2 h-2 rounded-full bg-[#1c5f27] dark:bg-[#cff060] shrink-0"></span>
-                <span className="leading-none">Canonical Ledger Active</span>
+              <div className="h-4 flex items-center justify-between text-[11px] font-mono text-[var(--muted)]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-2 h-2 rounded-full bg-[#1c5f27] dark:bg-[#cff060] shrink-0"></span>
+                  <span className="leading-none">Canonical Ledger Active</span>
+                </div>
+                <a
+                  href={FEEDBACK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-mono opacity-70 hover:opacity-100 transition-opacity underline underline-offset-2 shrink-0"
+                  title="Send Feedback"
+                >
+                  Feedback
+                </a>
               </div>
             </div>
           </div>
